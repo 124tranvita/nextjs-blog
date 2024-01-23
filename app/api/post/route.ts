@@ -45,6 +45,7 @@ export async function POST(request: Request) {
       title,
       cover,
       content,
+      createdAt: new Date(),
     });
 
     return Response.json(post);
@@ -82,6 +83,7 @@ export async function PATCH(request: Request) {
           title: title,
           cover: cover,
           content: content,
+          updatedAt: new Date(),
         },
       }
     );
