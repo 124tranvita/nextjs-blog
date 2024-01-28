@@ -21,3 +21,7 @@ export const truncateText = (text: string, maxLength: number) => {
   }
   return truncated;
 };
+
+export const classNames = (...classes: any) => {
+  return classes.filter(Boolean).join(" ");
+};

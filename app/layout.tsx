@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Navbar from "@/app/lib/components/navbar";
 import "./globals.css";
-
-import { ThemeProvider } from "@/components/material-tailwind";
-import StickyNavbar from "@/components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,9 +18,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider>
-          <StickyNavbar>{children}</StickyNavbar>
-        </ThemeProvider>
+        <Navbar />
+        {children}
       </body>
     </html>
   );

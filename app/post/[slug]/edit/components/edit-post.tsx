@@ -1,54 +1,53 @@
 "use client";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import React, { FC, useCallback, useRef, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Input, Button, Typography } from "@material-tailwind/react";
-import LongDialog from "@/components/dialog";
-import PostPreview from "@/components/post-preview";
-import {
-  Inputs,
-  PostPreview as PostPreviewType,
-  initPostPreview,
-} from "@/common/types";
-
-type Props = {
-  title: string;
-  cover: string;
-  content: string;
-};
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { editPost } from "@/app/actions";
+import { Post } from "@/app/lib/model";
+import ScrollableDialog from "@/app/lib/components/scrollable-dialog";
+import PostPreview from "@/app/lib/components/post-review";
+import Input from "@/app/lib/components/input";
+import { Button } from "@/app/lib/components/button";
 
 const TinyEditor = dynamic(
   () => {
-    return import("@/components/tiny-editor");
+    return import("@/app/lib/tiny-editor");
   },
   { ssr: false }
 );
 
-const EditPost: FC<PostPreviewType> = ({ title, cover, content }) => {
-  const editorRef = useRef<any>(null);
-  const [previewData, setPreviewData] =
-    useState<PostPreviewType>(initPostPreview);
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    formState: { errors },
-  } = useForm<Inputs>({
+type Inputs = Pick<Post, "title" | "cover">;
+
+const EditPost: FC<{ post: Post }> = ({ post }) => {
+  const { _id, title, cover, content } = post;
+  const router = useRouter();
+  const methods = useForm<Inputs>({
     defaultValues: {
       title,
       cover,
     },
+  });
+  const editorRef = useRef<any>(null);
+  const [previewData, setPreviewData] = useState<
+    Pick<Post, "title" | "cover" | "content">
+  >({
+    title: "",
+    cover: "",
+    content: "",
   });
 
   /** Handle submit */
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     if (editorRef.current) {
       const post = {
+        _id,
         title: data.title,
         cover: data.cover,
         content: editorRef.current.getContent(),
       };
       localStorage.setItem("post", JSON.stringify({ ...post }));
+      editPost(post);
     }
   };
 
@@ -59,60 +58,56 @@ const EditPost: FC<PostPreviewType> = ({ title, cover, content }) => {
 
   /** Handle preview event */
   const onPreview = useCallback(() => {
-    const values = getValues();
+    const values = methods.getValues();
     setPreviewData({
       title: values.title,
       cover: values.cover,
       content: editorRef.current ? editorRef.current.getContent() : "",
     });
-  }, [getValues]);
+  }, [methods]);
+
+  /** Handle back event */
+  const hanldeBack = useCallback(() => {
+    router.push(`/post/${_id}`);
+  }, [_id, router]);
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
         <div className="mb-3">
-          <Typography variant="h6" color="blue-gray" className="mb-1">
-            Title
-          </Typography>
           <Input
-            type="text"
-            size="lg"
+            name="title"
+            label="Title"
             placeholder="Title"
-            className=" !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white"
-            labelProps={{
-              className: "before:content-none after:content-none",
-            }}
-            {...register("title", { required: true, maxLength: 128 })}
+            options={{ required: "Title is required.", maxLength: 128 }}
           />
         </div>
         <div className="mb-3">
-          <Typography variant="h6" color="blue-gray">
-            Cover
-          </Typography>
           <Input
-            type="text"
-            size="lg"
-            placeholder="Image"
-            className=" !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white"
-            labelProps={{
-              className: "before:content-none after:content-none",
-            }}
-            {...register("cover", { required: true })}
+            name="cover"
+            label="Cover Url"
+            placeholder="Cover Url"
+            options={{ required: "Cover Url is required." }}
           />
         </div>
         <div className="mt-6">
           <TinyEditor initialValue={content} onInit={onInit} />
         </div>
         <div>
-          <LongDialog btnLabel="Preview" title="Post Preview">
+          <ScrollableDialog btnLabel="Preview" title="Post Preview">
             <PostPreview previewData={previewData} onPreview={onPreview} />
-          </LongDialog>
+          </ScrollableDialog>
         </div>
-        <Button type="submit" className="mt-6" fullWidth>
-          Save
-        </Button>
+        <Button variant="primary" type="submit" label="Save" fullWidth />
+        <Button
+          variant="danger"
+          type="button"
+          label="Back"
+          fullWidth
+          onClick={hanldeBack}
+        />
       </form>
-    </>
+    </FormProvider>
   );
 };
 

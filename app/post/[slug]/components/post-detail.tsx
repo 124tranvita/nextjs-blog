@@ -1,59 +1,53 @@
 "use client";
-import { FC } from "react";
-import Image from "next/image";
+
 import Link from "next/link";
-import { Card, Typography, Button } from "@material-tailwind/react";
-import { createMarkup } from "@/common/utils";
-import { Post } from "@/common/model";
+import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
+import PostHeading from "@/app/lib/components/post-heading";
+import { Post } from "@/app/lib/model";
+import { createMarkup } from "@/app/lib/utils";
+import { deletePost } from "@/app/actions";
 
 type Props = {
   post: Post;
 };
 
-const PostDetail: FC<Props> = ({ post }) => {
-  const { title, content, cover, createdAt, id } = post;
+export default function PostDetail({ post }: Props) {
+  const { title, content, cover, createdAt, updatedAt, _id, author } = post;
   return (
     <section className="mb-12">
-      <Card className="mb-12 overflow-hidden">
-        <Image
-          src={cover}
-          alt={`${title}_image`}
-          height={0}
-          width={0}
-          sizes="100vw"
-          style={{ width: "auto", height: "512px", objectFit: "cover" }}
-        />
-      </Card>
-      <Link href={`/post/${id}`}>
-        <Typography
-          variant="h2"
-          color="blue-gray"
-          className="mb-2 cursor-pointer"
-        >
-          {title}
-        </Typography>
-      </Link>
-      <Typography as={"span"} color="gray" className="font-normal mb-4">
+      <PostHeading
+        _id={_id}
+        title={title}
+        cover={cover}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        author={author || "Author"}
+      />
+      <div className="block antialiased font-sans text-base leading-relaxed text-gray-700 font-normal mb-4">
         <article
-          className="text-pretty text-justify"
+          className="m-0 prose prose-slate mx-auto lg:prose-lg max-w-full"
           dangerouslySetInnerHTML={createMarkup(content)}
         />
-      </Typography>
-      <div className="flex justify-between w-64">
-        <Typography variant="small" color="gray" className="italic">
-          {createdAt.toLocaleString()}
-        </Typography>
-        <Typography variant="small" color="gray" className="italic">
-          By: Author
-        </Typography>
       </div>
-      <div>
-        <Link href={`/post/${id}/edit`}>
-          <Button>Edit</Button>
+      <div className="fixed right-10 bottom-12 md:right-16 md:bottom-20 flex flex-col">
+        <Link href={`/post/${_id}/edit`}>
+          <button className="bg-blue-500 hover:bg-blue-700 text-white h-12 w-12 rounded-full shadow-lg mb-3">
+            <PencilIcon
+              className="m-auto h-5 w-5 flex-shrink-0 text-white"
+              aria-hidden="true"
+            />
+          </button>
         </Link>
+        <button
+          className="bg-red-500 hover:bg-red-700 text-white h-12 w-12 rounded-full shadow-lg mb-3"
+          onClick={() => deletePost(_id)}
+        >
+          <TrashIcon
+            className="m-auto h-5 w-5 flex-shrink-0 text-white"
+            aria-hidden="true"
+          />
+        </button>
       </div>
     </section>
   );
-};
-
-export default PostDetail;
+}
