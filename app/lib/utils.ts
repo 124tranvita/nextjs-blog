@@ -25,3 +25,31 @@ export const truncateText = (text: string, maxLength: number) => {
 export const classNames = (...classes: any) => {
   return classes.filter(Boolean).join(" ");
 };
+
+/**
+ * Date formater
+ * Timezone refs: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+ * @param value - Input value
+ * @returns - Formated result
+ */
+export const formatDate = (value: Date | string) => {
+  return new Date(value).toLocaleString("vi-VN", { timeZone: "Asia/Bangkok" });
+};
+
+export const pathNameMapping = (pathName: string) => {
+  if (pathName === "/") return "Home";
+
+  const splitted = pathName.split("/");
+
+  const length = splitted.length;
+
+  if (length > 0) {
+    if (splitted[length - 1] === "new") {
+      return "New Post";
+    } else if (splitted[length - 1] === "edit") {
+      return "Edit Post";
+    } else {
+      return "Post Detail";
+    }
+  }
+};

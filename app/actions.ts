@@ -98,3 +98,20 @@ export async function deletePost(id: string): Promise<Post> {
 
   redirect(`/`);
 }
+
+export async function getSearchPosts(searchTerm: string): Promise<Post[]> {
+  const res = await fetch(
+    `https://3000.nezumi.asia/api/search?searchTerm=${searchTerm}`,
+    {
+      method: "GET",
+      cache: "no-cache",
+    }
+  );
+
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data");
+  }
+
+  return res.json();
+}

@@ -10,9 +10,9 @@ import PostPreview from "@/app/lib/components/post-review";
 import Input from "@/app/lib/components/input";
 import { Button } from "@/app/lib/components/button";
 
-const TinyEditor = dynamic(
+const JoditEditor = dynamic(
   () => {
-    return import("@/app/lib/tiny-editor");
+    return import("@/app/lib/jodit-editor");
   },
   { ssr: false }
 );
@@ -44,7 +44,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         _id,
         title: data.title,
         cover: data.cover,
-        content: editorRef.current.getContent(),
+        content: editorRef.current,
       };
       localStorage.setItem("post", JSON.stringify({ ...post }));
       editPost(post);
@@ -52,8 +52,8 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   };
 
   /** Handle editor onInit event */
-  const onInit = useCallback((event: any, editor: any) => {
-    editorRef.current = editor;
+  const onBlur = useCallback((newContent: string) => {
+    editorRef.current = newContent;
   }, []);
 
   /** Handle preview event */
@@ -62,9 +62,9 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
     setPreviewData({
       title: values.title,
       cover: values.cover,
-      content: editorRef.current ? editorRef.current.getContent() : "",
+      content: editorRef.current ? editorRef.current : content,
     });
-  }, [methods]);
+  }, [methods, content]);
 
   /** Handle back event */
   const hanldeBack = useCallback(() => {
@@ -91,7 +91,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
           />
         </div>
         <div className="mt-6">
-          <TinyEditor initialValue={content} onInit={onInit} />
+          <JoditEditor onBlur={onBlur} initialValue={content} />
         </div>
         <div>
           <ScrollableDialog btnLabel="Preview" title="Post Preview">

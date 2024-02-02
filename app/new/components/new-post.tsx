@@ -10,9 +10,9 @@ import { Post } from "@/app/lib/model";
 import PostPreview from "@/app/lib/components/post-review";
 import { createPost } from "@/app/actions";
 
-const TinyEditor = dynamic(
+const JoditEditor = dynamic(
   () => {
-    return import("@/app/lib/tiny-editor");
+    return import("@/app/lib/jodit-editor");
   },
   { ssr: false }
 );
@@ -37,7 +37,7 @@ const NewPost: FC = () => {
       const post = {
         title: data.title,
         cover: data.cover,
-        content: editorRef.current.getContent(),
+        content: editorRef.current,
         author: "Author",
       };
       localStorage.setItem("post", JSON.stringify({ ...post }));
@@ -46,8 +46,8 @@ const NewPost: FC = () => {
   };
 
   /** Handle editor onInit event */
-  const onInit = useCallback((event: any, editor: any) => {
-    editorRef.current = editor;
+  const onBlur = useCallback((newContent: string) => {
+    editorRef.current = newContent;
   }, []);
 
   /** Handle preview event */
@@ -56,7 +56,7 @@ const NewPost: FC = () => {
     setPreviewData({
       title: values.title,
       cover: values.cover,
-      content: editorRef.current ? editorRef.current.getContent() : "",
+      content: editorRef.current ? editorRef.current : "",
     });
   }, [methods]);
 
@@ -85,7 +85,7 @@ const NewPost: FC = () => {
           />
         </div>
         <div className="mt-6">
-          <TinyEditor initialValue="<p>Hello world!</p>" onInit={onInit} />
+          <JoditEditor onBlur={onBlur} placeholder="Start typing..." />
         </div>
         <div>
           <ScrollableDialog btnLabel="Preview" title="Post Preview">

@@ -35,3 +35,29 @@ figure {
 p {
   line-height: normal;
 }
+
+.tooltip {
+  @apply invisible absolute text-center;
+  width: 96px;
+  top: -41px;
+  left: -24px;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.has-tooltip:hover .tooltip {
+  @apply visible z-50;
+}
+
+.jodit-react-container {
+  @apply prose max-w-full;
+}
