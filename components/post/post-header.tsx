@@ -1,14 +1,15 @@
 import Image from "next/image";
-import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
-import { Post } from "../model";
 import Link from "next/link";
+import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
+import { Post } from "@/app/lib/model";
+import { formatDate } from "@/app/lib/utils";
 
 type Props = Pick<
   Post,
   "_id" | "author" | "cover" | "title" | "createdAt" | "updatedAt"
 >;
 
-export default function PostHeading({
+export default function PostHeader({
   _id,
   author,
   cover,
@@ -19,7 +20,7 @@ export default function PostHeading({
   return (
     <section className="w-full mb-8">
       <Link href={`/post/${_id}`}>
-        <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-512">
+        <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-[512px]">
           <Image
             src={cover}
             alt={`${title}_image`}
@@ -32,7 +33,7 @@ export default function PostHeading({
       <div className="lg:flex lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1">
           <Link href={`/post/${_id}`}>
-            <h2 className="text-4xl font-bold mb-3 sm:leading-7 md:leading-9 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+            <h2 className="text-4xl font-bold mb-3 sm:leading-7 md:leading-9 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight dark:text-gray-100">
               {title}
             </h2>
           </Link>
@@ -50,7 +51,7 @@ export default function PostHeading({
                 className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                 aria-hidden="true"
               />
-              {createdAt.toLocaleString()}
+              {formatDate(createdAt)}
             </div>
             {updatedAt && (
               <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -58,7 +59,7 @@ export default function PostHeading({
                   className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                   aria-hidden="true"
                 />
-                {updatedAt.toLocaleString()}
+                {formatDate(updatedAt)}
               </div>
             )}
           </div>

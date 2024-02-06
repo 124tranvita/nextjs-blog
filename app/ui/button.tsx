@@ -1,23 +1,26 @@
 import React, { ButtonHTMLAttributes } from "react";
 import classNames from "classnames";
+import Link from "next/link";
 
 enum Variant {
   Primary = "primary",
   Success = "success",
   Danger = "danger",
+  Black = "black",
 }
 
 const VariantMap = {
-  [Variant.Primary]: "bg-gray-900 text-white hover:bg-blue-200",
+  [Variant.Primary]: "bg-blue-500 text-white hover:bg-blue-700",
   [Variant.Success]: "bg-green-100 text-green-900 hover:bg-green-200",
-  [Variant.Danger]: "bg-red-100 text-red-900 hover:bg-red-200",
+  [Variant.Danger]: "bg-red-500 hover:bg-red-700 text-white",
+  [Variant.Black]: "bg-gray-900 text-white hover:bg-gray-700",
 };
 
 // const Disabled = "bg-slate-200 text-slate-400 hover:bg-slate-200";
 
 type ButtonProps = {
   label?: string | React.ReactNode;
-  variant: "primary" | "success" | "danger";
+  variant: "primary" | "success" | "danger" | "black";
   onClick?: () => void;
   fullWidth?: boolean;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
@@ -42,9 +45,45 @@ export const Button: React.FC<ButtonProps> = ({
         )}
         onClick={onClick}
         disabled={disabled}
+        data-tooltip-target="tooltip-default"
       >
         {label}
       </button>
+    </div>
+  );
+};
+
+type FloatIconWithTooltipProps = {
+  icon: React.ReactNode;
+  tooltip: string;
+  variant: "primary" | "success" | "danger" | "black";
+  path?: string;
+  onClick?: () => void;
+};
+
+export const FloatIconWithTooltip: React.FC<FloatIconWithTooltipProps> = ({
+  icon,
+  tooltip,
+  variant = "primary",
+  path,
+  onClick,
+}) => {
+  return (
+    <div className="has-tooltip">
+      <span className="tooltip rounded p-1 bg-gray-900 text-gray-100">
+        {tooltip}
+      </span>
+      <Link href={path || "/"}>
+        <button
+          onClick={onClick}
+          className={classNames(
+            "h-12 w-12 rounded-full shadow-lg mb-3",
+            VariantMap[variant]
+          )}
+        >
+          {icon}
+        </button>
+      </Link>
     </div>
   );
 };

@@ -2,9 +2,11 @@
 
 import { FC } from "react";
 import Link from "next/link";
-import { Post } from "../lib/model";
-import PostHeading from "../lib/components/post-heading";
-import { createMarkup, truncateText } from "../lib/utils";
+import { Post } from "@/app/lib/model";
+import { truncateText } from "@/app/lib/utils";
+import PostHeader from "@/components/post/post-header";
+import PostContent from "@/components/post/post-content";
+import PostReact from "@/components/post/post-react";
 
 type Props = {
   post: Post;
@@ -13,8 +15,9 @@ type Props = {
 const HomePost: FC<Props> = ({ post }) => {
   const { title, content, cover, createdAt, _id, author, updatedAt } = post;
   return (
-    <section className="mb-12">
-      <PostHeading
+    <section className="relative mb-12">
+      <PostReact />
+      <PostHeader
         _id={_id}
         title={title}
         cover={cover}
@@ -22,12 +25,7 @@ const HomePost: FC<Props> = ({ post }) => {
         updatedAt={updatedAt}
         author={author || "Author"}
       />
-      <div className="block antialiased font-sans text-base leading-relaxed text-gray-700 font-normal mb-4">
-        <article
-          className="m-0 prose prose-slate mx-auto lg:prose-md max-w-full"
-          dangerouslySetInnerHTML={createMarkup(truncateText(content, 250))}
-        />
-      </div>
+      <PostContent content={truncateText(content, 250)} />
       <Link href={`/post/${_id}`}>
         <p className="font-normal text-center text-gray-500 dark:text-gray-400 underline underline-offset-2">
           Read more
