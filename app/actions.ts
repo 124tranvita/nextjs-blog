@@ -7,7 +7,7 @@ export async function createPost(
   data: Omit<Post, "_id" | "createdAt" | "updatedAt">
 ): Promise<Post> {
   const { title, cover, content, author } = data;
-  const res = await fetch("https://3000.nezumi.asia/api/post", {
+  const res = await fetch(`${process.env.URL}/api/post`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -36,7 +36,7 @@ export async function editPost(
 ): Promise<Post> {
   const { _id, title, cover, content } = data;
 
-  const res = await fetch(`https://3000.nezumi.asia/api/post?id=${_id}`, {
+  const res = await fetch(`${process.env.URL}/api/post?id=${_id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers: {
@@ -58,7 +58,7 @@ export async function editPost(
 }
 
 export async function getPosts(): Promise<Post[]> {
-  const res = await fetch("https://3000.nezumi.asia/api/post", {
+  const res = await fetch(`${process.env.URL}/api/post`, {
     method: "GET",
     cache: "no-cache",
   });
@@ -72,7 +72,7 @@ export async function getPosts(): Promise<Post[]> {
 }
 
 export async function getPost(id: string): Promise<Post> {
-  const res = await fetch(`https://3000.nezumi.asia/api/post?id=${id}`, {
+  const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
     method: "GET",
     cache: "no-cache",
   });
@@ -86,7 +86,7 @@ export async function getPost(id: string): Promise<Post> {
 }
 
 export async function deletePost(id: string): Promise<Post> {
-  const res = await fetch(`https://3000.nezumi.asia/api/post?id=${id}`, {
+  const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
     method: "DELETE",
     cache: "no-cache",
   });
@@ -101,7 +101,7 @@ export async function deletePost(id: string): Promise<Post> {
 
 export async function getSearchPosts(searchTerm: string): Promise<Post[]> {
   const res = await fetch(
-    `https://3000.nezumi.asia/api/search?searchTerm=${searchTerm}`,
+    `${process.env.URL}/api/search?searchTerm=${searchTerm}`,
     {
       method: "GET",
       cache: "no-cache",

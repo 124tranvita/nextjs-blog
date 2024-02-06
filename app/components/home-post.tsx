@@ -2,11 +2,15 @@
 
 import { FC } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Post } from "@/app/lib/model";
 import { truncateText } from "@/app/lib/utils";
 import PostHeader from "@/components/post/post-header";
-import PostContent from "@/components/post/post-content";
 import PostReact from "@/components/post/post-react";
+
+const PostContent = dynamic(() => import("@/components/post/post-content"), {
+  ssr: false,
+});
 
 type Props = {
   post: Post;
