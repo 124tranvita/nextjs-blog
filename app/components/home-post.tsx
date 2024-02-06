@@ -2,10 +2,11 @@
 
 import { FC } from "react";
 import Link from "next/link";
-import PostHeader from "@/app/lib/components/post-header";
-import PostContent from "@/app/lib/components/post-content";
 import { Post } from "@/app/lib/model";
 import { truncateText } from "@/app/lib/utils";
+import PostHeader from "@/components/post/post-header";
+import PostContent from "@/components/post/post-content";
+import PostReact from "@/components/post/post-react";
 
 type Props = {
   post: Post;
@@ -14,7 +15,8 @@ type Props = {
 const HomePost: FC<Props> = ({ post }) => {
   const { title, content, cover, createdAt, _id, author, updatedAt } = post;
   return (
-    <section className="mb-12">
+    <section className="relative mb-12">
+      <PostReact />
       <PostHeader
         _id={_id}
         title={title}

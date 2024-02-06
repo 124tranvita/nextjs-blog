@@ -2,14 +2,14 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SearchIcon } from "@/ui/icons";
-import { BasicInput } from "@/ui/inputs";
+import { SearchIcon } from "@/app/ui/icons";
+import { BasicInput } from "@/app/ui/inputs";
 
 export default function SearchBar() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSearch = useCallback(async () => {
+  const handleSearch = useCallback(() => {
     router.push(`/search?q=${searchTerm}`);
   }, [router, searchTerm]);
 

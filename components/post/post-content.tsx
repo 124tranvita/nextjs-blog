@@ -1,4 +1,4 @@
-import { createMarkup } from "../utils";
+import { createMarkup } from "@/app/lib/utils";
 
 type Props = {
   content: string;

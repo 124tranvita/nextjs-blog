@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { NAVIGATION } from "@/app/lib/constants";
-import SearchBar from "@/app/components/search-bar";
+import SearchBar from "@/components/search-bar";
 
 type Props = {
   className: string;
@@ -33,7 +33,7 @@ export const Navbar: FC = () => {
   return (
     <Disclosure
       as="nav"
-      className="bg-white bg-opacity-95 sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-4 lg:py-2 shadow-lg dark:bg-gray-900"
+      className="bg-white sticky top-0 z-50 h-max max-w-full rounded-none px-4 py-2 lg:px-4 lg:py-2 shadow-lg dark:bg-gray-900"
     >
       {({ open }) => (
         <>

@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { createMarkup } from "@/app/lib/utils";
 import { useEffect } from "react";
-import { Post } from "../model";
-import noImage from "../../../public/image_not_available.png";
+import noImage from "../../public/image_not_available.png";
 import PostContent from "./post-content";
+import { Post } from "@/app/lib/model";
 
 type Props = {
   previewData: Pick<Post, "title" | "cover" | "content">;

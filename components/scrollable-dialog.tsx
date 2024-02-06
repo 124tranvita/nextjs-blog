@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@/app/ui/button";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, ReactNode, useState } from "react";
-import { Button } from "./button";
 
 type Props = {
   btnLabel: string;

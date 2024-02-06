@@ -3,16 +3,16 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import React, { FC, useCallback, useRef, useState } from "react";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import Input from "@/app/lib/components/input";
-import { Button } from "@/app/lib/components/button";
-import ScrollableDialog from "@/app/lib/components/scrollable-dialog";
 import { Post } from "@/app/lib/model";
-import PostPreview from "@/app/lib/components/post-review";
 import { createPost } from "@/app/actions";
+import { Button } from "@/app/ui/button";
+import Input from "@/components/react-hook-form/input";
+import ScrollableDialog from "@/components/scrollable-dialog";
+import PostPreview from "@/components/post/post-review";
 
 const JoditEditor = dynamic(
   () => {
-    return import("@/app/lib/jodit-editor");
+    return import("@/components/jodit-editor");
   },
   { ssr: false }
 );

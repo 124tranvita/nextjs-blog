@@ -1,12 +1,12 @@
 "use client";
 
 import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
-import PostHeader from "@/app/lib/components/post-header";
 import { Post } from "@/app/lib/model";
-import { createMarkup } from "@/app/lib/utils";
 import { deletePost } from "@/app/actions";
-import { FloatIconWithTooltip } from "@/app/lib/components/button";
-import PostContent from "@/app/lib/components/post-content";
+import { FloatIconWithTooltip } from "@/app/ui/button";
+import PostHeader from "@/components/post/post-header";
+import PostContent from "@/components/post/post-content";
+import PostReact from "@/components/post/post-react";
 
 type Props = {
   post: Post;
@@ -15,7 +15,8 @@ type Props = {
 export default function PostDetail({ post }: Props) {
   const { title, content, cover, createdAt, updatedAt, _id, author } = post;
   return (
-    <section className="mb-12">
+    <section className="relative mb-12">
+      <PostReact />
       <PostHeader
         _id={_id}
         title={title}

@@ -2,7 +2,6 @@
 
 import { getSearchPosts } from "@/app/actions";
 import HomePost from "@/app/components/home-post";
-import PostCard from "@/app/components/post-card";
 import { Post } from "@/app/lib/model";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

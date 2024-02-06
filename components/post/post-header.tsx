@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
-import { Post } from "../model";
 import Link from "next/link";
-import { formatDate } from "../utils";
+import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
+import { Post } from "@/app/lib/model";
+import { formatDate } from "@/app/lib/utils";
 
 type Props = Pick<
   Post,
@@ -20,7 +20,7 @@ export default function PostHeader({
   return (
     <section className="w-full mb-8">
       <Link href={`/post/${_id}`}>
-        <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-512">
+        <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-[512px]">
           <Image
             src={cover}
             alt={`${title}_image`}

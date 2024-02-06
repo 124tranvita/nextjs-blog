@@ -1,13 +1,14 @@
 import { getPosts } from "@/app/actions";
 import HomePost from "./components/home-post";
 import { PencilIcon } from "@heroicons/react/20/solid";
-import { FloatIconWithTooltip } from "./lib/components/button";
+import { FloatIconWithTooltip } from "@/app/ui/button";
+import { Main } from "@/components/common";
 
 export default async function Page() {
   const posts = await getPosts();
 
   return (
-    <main className="max-w-screen-md min-h-screen p-6 mx-auto overflow-hidden">
+    <Main>
       {posts.length > 0 ? (
         posts.map((post, index) => <HomePost key={index} post={post} />)
       ) : (
@@ -28,6 +29,6 @@ export default async function Page() {
           variant="primary"
         />
       </div>
-    </main>
+    </Main>
   );
 }
