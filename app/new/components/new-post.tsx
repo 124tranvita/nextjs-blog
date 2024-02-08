@@ -9,6 +9,8 @@ import { Button } from "@/app/ui/button";
 import Input from "@/components/react-hook-form/input";
 import ScrollableDialog from "@/components/scrollable-dialog";
 import PostPreview from "@/components/post/post-review";
+import FileSelector from "@/components/react-hook-form/file-selector";
+import ImagePreview from "@/components/image-upload/image-preview";
 
 const JoditEditor = dynamic(
   () => {
@@ -17,12 +19,14 @@ const JoditEditor = dynamic(
   { ssr: false }
 );
 
-type Inputs = Pick<Post, "title" | "cover">;
+type Inputs = {
+  title: string;
+  cover: File[];
+};
 
 const NewPost: FC = () => {
   const router = useRouter();
   const editorRef = useRef<any>(null);
-  const methods = useForm<Inputs>();
   const [previewData, setPreviewData] = useState<
     Pick<Post, "title" | "cover" | "content">
   >({
@@ -30,6 +34,16 @@ const NewPost: FC = () => {
     cover: "",
     content: "",
   });
+  const {
+    handleSubmit,
+    register,
+    getValues,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>();
+  const [cover] = watch(["cover"]);
+
+  console.log(cover);
 
   /** Handle submit */
   const onSubmit: SubmitHandler<Inputs> = (data) => {
@@ -41,7 +55,7 @@ const NewPost: FC = () => {
         author: "Author",
       };
       localStorage.setItem("post", JSON.stringify({ ...post }));
-      createPost(post);
+      // createPost(post);
     }
   };
 
@@ -52,56 +66,61 @@ const NewPost: FC = () => {
 
   /** Handle preview event */
   const onPreview = useCallback(() => {
-    const values = methods.getValues();
+    const values = getValues();
     setPreviewData({
       title: values.title,
-      cover: values.cover,
+      cover: "",
       content: editorRef.current ? editorRef.current : "",
     });
-  }, [methods]);
+  }, [getValues]);
 
   /** Handle back event */
   const hanldeBack = useCallback(() => {
     router.push(`/`);
   }, [router]);
 
+  // {...register(name, { ...options })}
+
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <div className="mb-3">
-          <Input
-            name="title"
-            label="Title"
-            placeholder="Title"
-            options={{ required: "Title is required.", maxLength: 128 }}
-          />
-        </div>
-        <div className="mb-3">
-          <Input
-            name="cover"
-            label="Cover Url"
-            placeholder="Cover Url"
-            options={{ required: "Cover Url is required." }}
-          />
-        </div>
-        <div className="mt-6">
-          <JoditEditor onBlur={onBlur} placeholder="Start typing..." />
-        </div>
-        <div>
-          <ScrollableDialog btnLabel="Preview" title="Post Preview">
-            <PostPreview previewData={previewData} onPreview={onPreview} />
-          </ScrollableDialog>
-        </div>
-        <Button variant="primary" type="submit" label="Submit" fullWidth />
-        <Button
-          variant="danger"
-          type="button"
-          label="Back"
-          fullWidth
-          onClick={hanldeBack}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="mb-3">
+        <Input
+          label="Title"
+          placeholder="Title"
+          errors={errors}
+          {...register("title", {
+            required: "Title is required.",
+            maxLength: 128,
+          })}
         />
-      </form>
-    </FormProvider>
+      </div>
+      <div className="mb-3">
+        <FileSelector
+          label="Cover Image"
+          errors={errors}
+          {...register("cover", {
+            required: "Cover Image is required.",
+          })}
+        />
+        {cover && cover.length > 0 && <ImagePreview images={cover} />}
+      </div>
+      <div className="mt-6">
+        <JoditEditor onBlur={onBlur} placeholder="Start typing..." />
+      </div>
+      <div>
+        <ScrollableDialog btnLabel="Preview" title="Post Preview">
+          <PostPreview previewData={previewData} onPreview={onPreview} />
+        </ScrollableDialog>
+      </div>
+      <Button variant="primary" type="submit" label="Submit" fullWidth />
+      <Button
+        variant="danger"
+        type="button"
+        label="Back"
+        fullWidth
+        onClick={hanldeBack}
+      />
+    </form>
   );
 };
 

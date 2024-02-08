@@ -40,3 +40,6 @@ https://nextjs.org/docs/app/api-reference/functions/generate-metadata
 
 Adding Autocomplete To Your NextJS Applications With Atlas Search
 https://www.mongodb.com/developer/products/atlas/autocomplete-atlas-search-nextjs/
+
+How to Create React Multiple File Upload using NextJS and Typescript
+https://reacthustle.com/blog/how-to-create-react-multiple-file-upload-using-nextjs-and-typescript
