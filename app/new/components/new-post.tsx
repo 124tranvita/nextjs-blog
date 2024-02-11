@@ -2,9 +2,9 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import React, { FC, useCallback, useRef, useState } from "react";
-import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { Post } from "@/app/lib/model";
-import { createPost } from "@/app/actions";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { PostPreview as PostPreviewType } from "@/app/lib/model";
+import { createPost, uploadImg } from "@/app/actions";
 import { Button } from "@/app/ui/button";
 import Input from "@/components/react-hook-form/input";
 import ScrollableDialog from "@/components/scrollable-dialog";
@@ -21,15 +21,14 @@ const JoditEditor = dynamic(
 
 type Inputs = {
   title: string;
-  cover: File[];
+  coverUrl: string;
+  coversUpload: File[];
 };
 
 const NewPost: FC = () => {
   const router = useRouter();
   const editorRef = useRef<any>(null);
-  const [previewData, setPreviewData] = useState<
-    Pick<Post, "title" | "cover" | "content">
-  >({
+  const [previewData, setPreviewData] = useState<PostPreviewType>({
     title: "",
     cover: "",
     content: "",
@@ -38,24 +37,38 @@ const NewPost: FC = () => {
     handleSubmit,
     register,
     getValues,
+    setValue,
     watch,
     formState: { errors },
   } = useForm<Inputs>();
-  const [cover] = watch(["cover"]);
-
-  console.log(cover);
+  const [coverUrl] = watch(["coverUrl"]);
+  const [coversUpload] = watch(["coversUpload"]);
 
   /** Handle submit */
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const formData = new FormData();
+
     if (editorRef.current) {
-      const post = {
-        title: data.title,
-        cover: data.cover,
-        content: editorRef.current,
-        author: "Author",
-      };
-      localStorage.setItem("post", JSON.stringify({ ...post }));
-      // createPost(post);
+      formData.append("title", data.title);
+      formData.append(
+        "cover",
+        coversUpload && coversUpload.length > 0
+          ? coversUpload[0].name
+          : coverUrl
+      );
+      formData.append("content", editorRef.current);
+      formData.append("author", "Author");
+
+      createPost(formData);
+
+      if (coversUpload && coversUpload.length > 0) {
+        const formData = new FormData();
+        for (const file of Array.from(coversUpload ?? [])) {
+          formData.append(file.name, file);
+        }
+
+        uploadImg(formData);
+      }
     }
   };
 
@@ -69,20 +82,27 @@ const NewPost: FC = () => {
     const values = getValues();
     setPreviewData({
       title: values.title,
-      cover: "",
+      cover:
+        coversUpload && coversUpload.length > 0
+          ? (URL.createObjectURL(coversUpload[0]) as string)
+          : coverUrl
+          ? coverUrl
+          : "",
       content: editorRef.current ? editorRef.current : "",
     });
-  }, [getValues]);
+  }, [getValues, coverUrl, coversUpload]);
+
+  const onClearUploadImg = useCallback(() => {
+    setValue("coversUpload", []);
+  }, [setValue]);
 
   /** Handle back event */
   const hanldeBack = useCallback(() => {
     router.push(`/`);
   }, [router]);
 
-  // {...register(name, { ...options })}
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
       <div className="mb-3">
         <Input
           label="Title"
@@ -95,14 +115,28 @@ const NewPost: FC = () => {
         />
       </div>
       <div className="mb-3">
-        <FileSelector
+        <Input
           label="Cover Image"
+          placeholder="Cover Url"
           errors={errors}
-          {...register("cover", {
-            required: "Cover Image is required.",
+          {...register("coverUrl", {
+            maxLength: 128,
+            validate: (value) =>
+              value ||
+              (!value &&
+                getValues().coversUpload &&
+                getValues().coversUpload.length > 0)
+                ? true
+                : "Cover Image is required",
           })}
+          disabled={Boolean(coversUpload && coversUpload.length > 0)}
         />
-        {cover && cover.length > 0 && <ImagePreview images={cover} />}
+      </div>
+      <div className="mb-3">
+        <FileSelector errors={errors} {...register("coversUpload")} />
+        {coversUpload && coversUpload.length > 0 && (
+          <ImagePreview images={coversUpload} onClick={onClearUploadImg} />
+        )}
       </div>
       <div className="mt-6">
         <JoditEditor onBlur={onBlur} placeholder="Start typing..." />

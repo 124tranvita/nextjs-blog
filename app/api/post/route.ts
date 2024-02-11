@@ -1,11 +1,12 @@
 import { ObjectId } from "mongodb";
-import clientPromise from "../../lib/mongodb";
+import { connectToDb } from "@/app/lib/mongodb";
+import { Readable } from "stream";
 
 export const dynamic = "force-dynamic"; // defaults to auto
 export async function GET(request: Request) {
   try {
     /** Connect to database */
-    const client = await clientPromise;
+    const { client } = await connectToDb();
     const db = client.db("blog");
 
     /** Get query params */
@@ -34,17 +35,23 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     /** Connect to database */
-    const client = await clientPromise;
+    const { client } = await connectToDb();
     const db = client.db("blog");
 
     /** Get request body */
-    const { title, cover, content } = await request.json();
+    const formData = await request.formData();
+
+    const title = formData.get("title");
+    const cover = formData.get("cover");
+    const content = formData.get("content");
+    const author = formData.get("author");
 
     /** Create post */
     const post = await db.collection("posts").insertOne({
       title,
       cover,
       content,
+      author,
       createdAt: new Date(),
     });
 
@@ -58,7 +65,7 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     /** Connect to database */
-    const client = await clientPromise;
+    const { client } = await connectToDb();
     const db = client.db("blog");
 
     /** Get query params */
@@ -98,7 +105,7 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     /** Connect to database */
-    const client = await clientPromise;
+    const { client } = await connectToDb();
     const db = client.db("blog");
 
     /** Get query params */

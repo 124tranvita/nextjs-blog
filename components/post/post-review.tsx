@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useEffect } from "react";
 import noImage from "../../public/image_not_available.png";
 import PostContent from "./post-content";
-import { Post } from "@/app/lib/model";
+import { PostPreview } from "@/app/lib/model";
 
 type Props = {
-  previewData: Pick<Post, "title" | "cover" | "content">;
+  previewData: PostPreview;
   onPreview: () => void;
 };
 
@@ -16,6 +16,7 @@ export default function PostPreview({ previewData, onPreview }: Props) {
     onPreview();
   }, [onPreview]);
   console.log({ previewData });
+
   return (
     <section className="w-full mb-8">
       <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-512">

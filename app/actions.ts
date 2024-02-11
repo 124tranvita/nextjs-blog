@@ -3,22 +3,12 @@
 import { redirect } from "next/navigation";
 import { Post } from "@/app/lib/model";
 
-export async function createPost(
-  data: Omit<Post, "_id" | "createdAt" | "updatedAt">
-): Promise<Post> {
-  const { title, cover, content, author } = data;
+export async function createPost(formData: FormData): Promise<Post> {
+  console.log({ formData: formData.get("cover") });
   const res = await fetch(`${process.env.URL}/api/post`, {
     method: "POST",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      title,
-      cover,
-      content,
-      author,
-    }),
+    body: formData,
   });
 
   if (!res.ok) {
@@ -27,7 +17,6 @@ export async function createPost(
   }
 
   const { insertedId } = await res.json();
-
   redirect(`/post/${insertedId}`);
 }
 
@@ -114,4 +103,17 @@ export async function getSearchPosts(searchTerm: string): Promise<Post[]> {
   }
 
   return res.json();
+}
+
+export async function uploadImg(formData: FormData) {
+  const res = await fetch(`${process.env.URL}/api/upload`, {
+    method: "POST",
+    cache: "no-cache",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data");
+  }
 }

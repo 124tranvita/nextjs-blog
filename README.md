@@ -43,3 +43,9 @@ https://www.mongodb.com/developer/products/atlas/autocomplete-atlas-search-nextj
 
 How to Create React Multiple File Upload using NextJS and Typescript
 https://reacthustle.com/blog/how-to-create-react-multiple-file-upload-using-nextjs-and-typescript
+
+Convert data file to blob
+https://stackoverflow.com/questions/33855167/convert-data-file-to-blob
+
+How to Submit NextJS Form to API using FormData (Typescript)
+https://reacthustle.com/blog/nextjs-submit-form-to-api-using-formdata

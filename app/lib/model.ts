@@ -7,3 +7,9 @@ export type Post = {
   createdAt: string | Date;
   updatedAt: string | Date;
 };
+
+export type PostPreview = {
+  title: string;
+  cover: string;
+  content: string;
+};
