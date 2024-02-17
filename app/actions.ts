@@ -1,10 +1,10 @@
 "use server";
 
+import { promises as fs } from "fs";
 import { redirect } from "next/navigation";
 import { Post } from "@/app/lib/model";
 
 export async function createPost(formData: FormData): Promise<Post> {
-  console.log({ formData: formData.get("cover") });
   const res = await fetch(`${process.env.URL}/api/post`, {
     method: "POST",
     cache: "no-cache",
@@ -116,4 +116,24 @@ export async function uploadImg(formData: FormData) {
     // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
   }
+}
+
+export async function fetchImage(url: string) {
+  const res = await fetch(url, {
+    method: "GET",
+    cache: "no-cache",
+  });
+
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data");
+  }
+
+  const blob = await res.blob();
+
+  let buffer = Buffer.from(await blob.arrayBuffer());
+
+  return "data:" + blob.type + ";base64," + buffer.toString("base64");
+
+  // https://stackoverflow.com/questions/54099802/blob-to-base64-in-nodejs-without-filereader
 }

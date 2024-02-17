@@ -5,10 +5,15 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { Post } from "@/app/lib/model";
 import { deletePost } from "@/app/actions";
 import { FloatIconWithTooltip } from "@/app/ui/button";
-import PostHeader from "@/components/post/post-header";
 import PostReact from "@/components/post/post-react";
 
+const PostHeader = dynamic(() => import("@/components/post/post-header"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
 const PostContent = dynamic(() => import("@/components/post/post-content"), {
+  loading: () => <p>Loading...</p>,
   ssr: false,
 });
 
@@ -18,6 +23,7 @@ type Props = {
 
 export default function PostDetail({ post }: Props) {
   const { title, content, cover, createdAt, updatedAt, _id, author } = post;
+
   return (
     <section className="relative mb-12">
       <PostReact />

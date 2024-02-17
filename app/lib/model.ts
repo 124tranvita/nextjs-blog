@@ -1,7 +1,7 @@
 export type Post = {
   _id: string;
   title: string;
-  cover: string;
+  cover: Buffer;
   content: string;
   author: string;
   createdAt: string | Date;
@@ -12,4 +12,10 @@ export type PostPreview = {
   title: string;
   cover: string;
   content: string;
+};
+
+export const initPostPreview: PostPreview = {
+  title: "",
+  cover: "",
+  content: "",
 };

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
 import { Post } from "@/app/lib/model";
-import { formatDate } from "@/app/lib/utils";
+import { base64ToBlob, binaryToBlob, formatDate } from "@/app/lib/utils";
 
 type Props = Pick<
   Post,
@@ -17,7 +17,9 @@ export default function PostHeader({
   createdAt,
   updatedAt,
 }: Props) {
-  const src = cover instanceof File ? URL.createObjectURL(cover) : cover;
+  const blobCover = base64ToBlob(cover.toString("base64"));
+  const src = URL.createObjectURL(blobCover);
+  console.log({ cover, blobCover, src });
   return (
     <section className="w-full mb-8">
       <Link href={`/post/${_id}`}>

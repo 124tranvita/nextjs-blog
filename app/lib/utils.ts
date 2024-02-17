@@ -53,3 +53,50 @@ export const pathNameMapping = (pathName: string) => {
     }
   }
 };
+
+/**
+ * Convert Base64 to Blob
+ */
+export const base64ToBlob = (base64String: string, contentType = "") => {
+  const splitted = base64String.split(",");
+
+  console.log({ splitted, base64String });
+
+  const byteCharacters =
+    splitted.length > 1 ? atob(splitted[1]) : atob(base64String);
+  const byteArrays = [];
+
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteArrays.push(byteCharacters.charCodeAt(i));
+  }
+
+  const byteArray = new Uint8Array(byteArrays);
+  return new Blob([byteArray], { type: contentType });
+
+  // https://stackoverflow.com/questions/27980612/converting-base64-to-blob-in-javascript
+};
+
+/**
+ * Convert Blob to Base64
+ */
+export const blobToBase64 = async (blob: Blob | File) => {
+  let buffer = Buffer.from(await blob.arrayBuffer());
+  return "data:" + blob.type + ";base64," + buffer.toString("base64");
+};
+
+/**
+ * Convert Blob to Binary
+ */
+export const blobToBinary = async (blob: Blob | File) => {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  const base64 = buffer.toString("base64");
+
+  return Buffer.from(base64, "base64");
+};
+
+/**
+ * Conver Binary to Blob
+ */
+export const binaryToBlob = (buffer: Buffer) => {
+  return new Blob([buffer]);
+};

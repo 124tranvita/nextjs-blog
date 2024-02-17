@@ -1,6 +1,7 @@
+// app/api/post
 import { ObjectId } from "mongodb";
 import { connectToDb } from "@/app/lib/mongodb";
-import { Readable } from "stream";
+import { blobToBinary } from "@/app/lib/utils";
 
 export const dynamic = "force-dynamic"; // defaults to auto
 export async function GET(request: Request) {
@@ -42,14 +43,20 @@ export async function POST(request: Request) {
     const formData = await request.formData();
 
     const title = formData.get("title");
-    const cover = formData.get("cover");
+    const cover = formData.get("cover") as Blob;
     const content = formData.get("content");
     const author = formData.get("author");
+
+    console.log({ cover });
+
+    const coverAsBuffer = Buffer.from(await cover.arrayBuffer());
+
+    const byteArray = new Uint8Array(coverAsBuffer);
 
     /** Create post */
     const post = await db.collection("posts").insertOne({
       title,
-      cover,
+      cover: coverAsBuffer,
       content,
       author,
       createdAt: new Date(),

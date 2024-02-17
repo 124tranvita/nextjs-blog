@@ -5,13 +5,17 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Post } from "@/app/lib/model";
 import { truncateText } from "@/app/lib/utils";
-import PostHeader from "@/components/post/post-header";
 import PostReact from "@/components/post/post-react";
 
-const PostContent = dynamic(() => import("@/components/post/post-content"), {
+const PostHeader = dynamic(() => import("@/components/post/post-header"), {
+  loading: () => <p>Loading...</p>,
   ssr: false,
 });
 
+const PostContent = dynamic(() => import("@/components/post/post-content"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 type Props = {
   post: Post;
 };

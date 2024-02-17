@@ -49,3 +49,6 @@ https://stackoverflow.com/questions/33855167/convert-data-file-to-blob
 
 How to Submit NextJS Form to API using FormData (Typescript)
 https://reacthustle.com/blog/nextjs-submit-form-to-api-using-formdata
+
+How to Upload and Retrieve Images to and From MongoDB Using NextJS 13 App Router
+https://reacthustle.com/blog/how-to-upload-retrieve-images-to-mongodb-using-nextjs-13-app-router

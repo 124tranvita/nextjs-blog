@@ -1,17 +1,24 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import React, { FC, useCallback, useRef, useState } from "react";
+import React, { FC, useCallback, useMemo, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { PostPreview as PostPreviewType } from "@/app/lib/model";
-import { createPost, uploadImg } from "@/app/actions";
+import {
+  PostPreview as PostPreviewType,
+  initPostPreview,
+} from "@/app/lib/model";
+import { createPost, fetchImage, uploadImg } from "@/app/actions";
 import { Button } from "@/app/ui/button";
 import Input from "@/components/react-hook-form/input";
 import ScrollableDialog from "@/components/scrollable-dialog";
 import PostPreview from "@/components/post/post-review";
 import FileSelector from "@/components/react-hook-form/file-selector";
 import ImagePreview from "@/components/image-upload/image-preview";
+import { base64ToBlob, blobToBinary } from "@/app/lib/utils";
 
+/**
+ * Import JoitEditor
+ */
 const JoditEditor = dynamic(
   () => {
     return import("@/components/jodit-editor");
@@ -19,20 +26,25 @@ const JoditEditor = dynamic(
   { ssr: false }
 );
 
+/**
+ * Declare react-hook-form type
+ */
 type Inputs = {
   title: string;
-  coverUrl: string;
-  coversUpload: File[];
+  cloudImg: string;
+  localImage: File[];
 };
 
+/**
+ * Create new post component
+ * @returns - NewPost Component
+ */
 const NewPost: FC = () => {
   const router = useRouter();
   const editorRef = useRef<any>(null);
-  const [previewData, setPreviewData] = useState<PostPreviewType>({
-    title: "",
-    cover: "",
-    content: "",
-  });
+  const [imgData, setImgData] = useState<Blob | undefined>(undefined);
+  const [previewData, setPreviewData] =
+    useState<PostPreviewType>(initPostPreview);
   const {
     handleSubmit,
     register,
@@ -41,34 +53,43 @@ const NewPost: FC = () => {
     watch,
     formState: { errors },
   } = useForm<Inputs>();
-  const [coverUrl] = watch(["coverUrl"]);
-  const [coversUpload] = watch(["coversUpload"]);
+  const [cloudImg] = watch(["cloudImg"]);
+  const [localImage] = watch(["localImage"]);
 
-  /** Handle submit */
+  /**
+   * Disable flag for Cover image input
+   */
+  const disable = useMemo(() => {
+    return {
+      cloudImg: Boolean(localImage && localImage.length > 0),
+      localImage: Boolean(cloudImg),
+    };
+  }, [cloudImg, localImage]);
+
+  /**
+   * Handle submit new post
+   * @param data - Input form's data
+   */
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const formData = new FormData();
 
     if (editorRef.current) {
       formData.append("title", data.title);
-      formData.append(
-        "cover",
-        coversUpload && coversUpload.length > 0
-          ? coversUpload[0].name
-          : coverUrl
-      );
+      formData.append("cover", imgData as Blob);
       formData.append("content", editorRef.current);
       formData.append("author", "Author");
 
       createPost(formData);
+      // uploadImg(formData);
 
-      if (coversUpload && coversUpload.length > 0) {
-        const formData = new FormData();
-        for (const file of Array.from(coversUpload ?? [])) {
-          formData.append(file.name, file);
-        }
+      // if (localImage && coversUpload.length > 0) {
+      //   const formData = new FormData();
+      //   for (const file of Array.from(coversUpload ?? [])) {
+      //     formData.append(file.name, file);
+      //   }
 
-        uploadImg(formData);
-      }
+      //   uploadImg(formData);
+      // }
     }
   };
 
@@ -82,18 +103,50 @@ const NewPost: FC = () => {
     const values = getValues();
     setPreviewData({
       title: values.title,
-      cover:
-        coversUpload && coversUpload.length > 0
-          ? (URL.createObjectURL(coversUpload[0]) as string)
-          : coverUrl
-          ? coverUrl
-          : "",
+      cover: imgData ? (URL.createObjectURL(imgData) as string) : "",
       content: editorRef.current ? editorRef.current : "",
     });
-  }, [getValues, coverUrl, coversUpload]);
+  }, [getValues, imgData]);
 
-  const onClearUploadImg = useCallback(() => {
-    setValue("coversUpload", []);
+  /**
+   * Hanlde fetch the image from the input url and show in preview.
+   * @param value - Cover Image input value
+   */
+  const onBlurCoverImgInput = useCallback(async (value: string) => {
+    try {
+      if (!value) {
+        return setImgData(undefined);
+      }
+      const base64Img = await fetchImage(value);
+      setImgData(base64ToBlob(base64Img, "image/jpeg"));
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  /**
+   * Hanlde get the image from the choosen file and show in preview.
+   * @param value - Choose image value
+   */
+  const onChangeFileSelector = useCallback(async (value: FileList | null) => {
+    try {
+      if (!value) {
+        return setImgData(undefined);
+      }
+      const uploadedImg = value && value.length > 0 ? value[0] : undefined;
+      setImgData(uploadedImg);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  /**
+   * Handle to clear the image in preview
+   */
+  const onClearPreviewImg = useCallback(() => {
+    setValue("localImage", []);
+    setValue("cloudImg", "");
+    setImgData(undefined);
   }, [setValue]);
 
   /** Handle back event */
@@ -119,23 +172,32 @@ const NewPost: FC = () => {
           label="Cover Image"
           placeholder="Cover Url"
           errors={errors}
-          {...register("coverUrl", {
+          {...register("cloudImg", {
             maxLength: 128,
+            onBlur: (e) => onBlurCoverImgInput(e.target.value),
             validate: (value) =>
               value ||
               (!value &&
-                getValues().coversUpload &&
-                getValues().coversUpload.length > 0)
+                getValues().localImage &&
+                getValues().localImage.length > 0)
                 ? true
                 : "Cover Image is required",
           })}
-          disabled={Boolean(coversUpload && coversUpload.length > 0)}
+          disabled={disable.cloudImg}
         />
       </div>
       <div className="mb-3">
-        <FileSelector errors={errors} {...register("coversUpload")} />
-        {coversUpload && coversUpload.length > 0 && (
-          <ImagePreview images={coversUpload} onClick={onClearUploadImg} />
+        <FileSelector
+          errors={errors}
+          {...register("localImage", {
+            onChange: (e) => onChangeFileSelector(e.target.files),
+          })}
+          disabled={disable.localImage}
+        />
+      </div>
+      <div className="mb-3">
+        {imgData && (
+          <ImagePreview image={imgData as File} onClick={onClearPreviewImg} />
         )}
       </div>
       <div className="mt-6">
