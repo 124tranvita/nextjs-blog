@@ -80,16 +80,6 @@ const NewPost: FC = () => {
       formData.append("author", "Author");
 
       createPost(formData);
-      // uploadImg(formData);
-
-      // if (localImage && coversUpload.length > 0) {
-      //   const formData = new FormData();
-      //   for (const file of Array.from(coversUpload ?? [])) {
-      //     formData.append(file.name, file);
-      //   }
-
-      //   uploadImg(formData);
-      // }
     }
   };
 
