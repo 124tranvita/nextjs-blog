@@ -9,7 +9,6 @@ type Props = {
 
 export default function ImagePreview({ image, onClick }: Props) {
   const src = URL.createObjectURL(image);
-  console.log({ src, image });
   return (
     <div>
       <div className="grid grid-cols-12 gap-2 my-2">
@@ -25,7 +24,7 @@ export default function ImagePreview({ image, onClick }: Props) {
           />
           <XMarkIcon
             onClick={onClick}
-            className="absolute z-50 -right-10 w-6 h-6 text-gray-50 bg-red-500 rounded-md hover:bg-red-600 duration-300 cursor-pointer"
+            className="absolute z-10 -right-10 w-6 h-6 text-gray-50 bg-red-500 rounded-md hover:bg-red-600 duration-300 cursor-pointer"
           />
         </div>
       </div>

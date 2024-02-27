@@ -1,3 +1,5 @@
+import { Readable } from "stream";
+
 /**
  * Rendering HTML text using dangerouslySetInnerHTML in Next.js
  * @param content - HTML content in plain text
@@ -60,8 +62,6 @@ export const pathNameMapping = (pathName: string) => {
 export const base64ToBlob = (base64String: string, contentType = "") => {
   const splitted = base64String.split(",");
 
-  console.log({ splitted, base64String });
-
   const byteCharacters =
     splitted.length > 1 ? atob(splitted[1]) : atob(base64String);
   const byteArrays = [];
@@ -95,8 +95,23 @@ export const blobToBinary = async (blob: Blob | File) => {
 };
 
 /**
- * Conver Binary to Blob
+ * Convert buffer to blob
+ * @param buffer - Buffer array
+ * @param type - Media type
+ * @returns - Base64 encoded string
  */
-export const binaryToBlob = (buffer: Buffer) => {
-  return new Blob([buffer]);
+export const bufferToBlob = (buffer: Buffer, type: string = "image/jpg") => {
+  return new Blob([buffer], { type: type });
+};
+
+/**
+ * Conver blob to readable stream
+ * @param blob - Blob object
+ * @returns - Readable stream object
+ */
+export const blodToReadable = async (blob: Blob | File) => {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  const readable = Readable.from(buffer);
+
+  return readable;
 };

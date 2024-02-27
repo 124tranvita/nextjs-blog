@@ -1,31 +1,53 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
 import { Post } from "@/app/lib/model";
-import { base64ToBlob, binaryToBlob, formatDate } from "@/app/lib/utils";
+import { base64ToBlob, bufferToBlob, formatDate } from "@/app/lib/utils";
+import { downloadFile } from "@/app/lib/google-drive";
+import noImagePlaceholder from "../../public/no-image-placeholder.webp";
+import { getCoverImg } from "@/app/actions";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = Pick<
   Post,
-  "_id" | "author" | "cover" | "title" | "createdAt" | "updatedAt"
+  "_id" | "author" | "coverImgFileId" | "title" | "createdAt" | "updatedAt"
 >;
 
 export default function PostHeader({
   _id,
   author,
-  cover,
+  coverImgFileId,
   title,
   createdAt,
   updatedAt,
 }: Props) {
-  const blobCover = base64ToBlob(cover.toString("base64"));
-  const src = URL.createObjectURL(blobCover);
-  console.log({ cover, blobCover, src });
+  const [coverImg, setCoverImg] = useState<Blob | undefined>(undefined);
+
+  /** Create object url */
+  const createObjectURL = useMemo(() => {
+    return coverImg ? URL.createObjectURL(coverImg) : noImagePlaceholder;
+  }, [coverImg]);
+
+  /** Download imge file from Google drive */
+  useEffect(() => {
+    const getFile = async (fileId: string) => {
+      const res = await getCoverImg(fileId);
+
+      if (res) {
+        setCoverImg(base64ToBlob(res.base64, res.type));
+      }
+    };
+
+    getFile(coverImgFileId);
+  }, [coverImgFileId]);
+
   return (
     <section className="w-full mb-8">
       <Link href={`/post/${_id}`}>
         <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-[512px]">
           <Image
-            src={src}
+            src={createObjectURL}
             alt={`${title}_image`}
             fill={true}
             sizes="100vw"

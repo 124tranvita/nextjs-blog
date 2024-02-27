@@ -9,7 +9,6 @@ import PostReact from "@/components/post/post-react";
 
 const PostHeader = dynamic(() => import("@/components/post/post-header"), {
   loading: () => <p>Loading...</p>,
-  ssr: false,
 });
 
 const PostContent = dynamic(() => import("@/components/post/post-content"), {
@@ -22,7 +21,8 @@ type Props = {
 };
 
 export default function PostDetail({ post }: Props) {
-  const { title, content, cover, createdAt, updatedAt, _id, author } = post;
+  const { title, content, coverImgFileId, createdAt, updatedAt, _id, author } =
+    post;
 
   return (
     <section className="relative mb-12">
@@ -30,7 +30,7 @@ export default function PostDetail({ post }: Props) {
       <PostHeader
         _id={_id}
         title={title}
-        cover={cover}
+        coverImgFileId={coverImgFileId}
         createdAt={createdAt}
         updatedAt={updatedAt}
         author={author || "Author"}

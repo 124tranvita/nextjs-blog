@@ -1,9 +1,16 @@
 // app/api/post
 import { ObjectId } from "mongodb";
 import { connectToDb } from "@/app/lib/mongodb";
-import { blobToBinary } from "@/app/lib/utils";
+import { downloadFile, fileUpload } from "@/app/lib/google-drive";
+import { blodToReadable, bufferToBase64, bufferToBlob } from "@/app/lib/utils";
 
 export const dynamic = "force-dynamic"; // defaults to auto
+
+/**
+ * GET Request (Query all posts, Query post by id params)
+ * @param request - Request data
+ * @returns - Respone (list of queried post)
+ */
 export async function GET(request: Request) {
   try {
     /** Connect to database */
@@ -33,6 +40,11 @@ export async function GET(request: Request) {
   }
 }
 
+/**
+ * POST Request (Create new post)
+ * @param request - Request data
+ * @returns - Response (new created post)
+ */
 export async function POST(request: Request) {
   try {
     /** Connect to database */
@@ -42,21 +54,19 @@ export async function POST(request: Request) {
     /** Get request body */
     const formData = await request.formData();
 
-    const title = formData.get("title");
-    const cover = formData.get("cover") as Blob;
-    const content = formData.get("content");
-    const author = formData.get("author");
+    const title = formData.get("title") as string;
+    const coverImg = formData.get("coverImg") as Blob;
+    const content = formData.get("content") as string;
+    const author = formData.get("author") as string;
 
-    console.log({ cover });
+    const readable = await blodToReadable(coverImg);
 
-    const coverAsBuffer = Buffer.from(await cover.arrayBuffer());
-
-    const byteArray = new Uint8Array(coverAsBuffer);
+    const googleFileId = await fileUpload(title, coverImg.type, readable);
 
     /** Create post */
     const post = await db.collection("posts").insertOne({
       title,
-      cover: coverAsBuffer,
+      coverImgFileId: googleFileId,
       content,
       author,
       createdAt: new Date(),
@@ -69,6 +79,11 @@ export async function POST(request: Request) {
   }
 }
 
+/**
+ * PATH Request (Edit selected post)
+ * @param request - Request data
+ * @returns - Response (New updated post)
+ */
 export async function PATCH(request: Request) {
   try {
     /** Connect to database */
@@ -109,6 +124,11 @@ export async function PATCH(request: Request) {
   }
 }
 
+/**
+ * DELETE Request
+ * @param request - Request data
+ * @returns - Response (deleted post)
+ */
 export async function DELETE(request: Request) {
   try {
     /** Connect to database */

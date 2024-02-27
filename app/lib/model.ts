@@ -1,7 +1,8 @@
 export type Post = {
   _id: string;
   title: string;
-  cover: Buffer;
+  coverImgFileId: string;
+  cover: Buffer | Blob;
   content: string;
   author: string;
   createdAt: string | Date;

@@ -21,14 +21,15 @@ type Props = {
 };
 
 const HomePost: FC<Props> = ({ post }) => {
-  const { title, content, cover, createdAt, _id, author, updatedAt } = post;
+  const { title, content, coverImgFileId, createdAt, _id, author, updatedAt } =
+    post;
   return (
     <section className="relative mb-12">
       <PostReact />
       <PostHeader
         _id={_id}
         title={title}
-        cover={cover}
+        coverImgFileId={coverImgFileId}
         createdAt={createdAt}
         updatedAt={updatedAt}
         author={author || "Author"}

@@ -75,7 +75,7 @@ const NewPost: FC = () => {
 
     if (editorRef.current) {
       formData.append("title", data.title);
-      formData.append("cover", imgData as Blob);
+      formData.append("coverImg", imgData as Blob);
       formData.append("content", editorRef.current);
       formData.append("author", "Author");
 
@@ -102,17 +102,22 @@ const NewPost: FC = () => {
    * Hanlde fetch the image from the input url and show in preview.
    * @param value - Cover Image input value
    */
-  const onBlurCoverImgInput = useCallback(async (value: string) => {
-    try {
-      if (!value) {
-        return setImgData(undefined);
+  const onBlurCoverImgInput = useCallback(
+    async (value: string) => {
+      try {
+        if (imgData) return;
+
+        if (!value) {
+          return setImgData(undefined);
+        }
+        const base64Img = await fetchImage(value);
+        setImgData(base64ToBlob(base64Img, "image/jpeg"));
+      } catch (error) {
+        console.error(error);
       }
-      const base64Img = await fetchImage(value);
-      setImgData(base64ToBlob(base64Img, "image/jpeg"));
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+    },
+    [imgData]
+  );
 
   /**
    * Hanlde get the image from the choosen file and show in preview.
@@ -163,7 +168,6 @@ const NewPost: FC = () => {
           placeholder="Cover Url"
           errors={errors}
           {...register("cloudImg", {
-            maxLength: 128,
             onBlur: (e) => onBlurCoverImgInput(e.target.value),
             validate: (value) =>
               value ||
