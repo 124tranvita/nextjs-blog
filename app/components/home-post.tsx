@@ -3,9 +3,10 @@
 import { FC } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import PostReact from "@/components/post/post-react";
+import { joditPlaintextConverter } from "@/components/jodit-editor";
 import { Post } from "@/app/lib/model";
 import { truncateText } from "@/app/lib/utils";
-import PostReact from "@/components/post/post-react";
 
 const PostHeader = dynamic(() => import("@/components/post/post-header"), {
   loading: () => <p>Loading...</p>,
@@ -23,6 +24,9 @@ type Props = {
 const HomePost: FC<Props> = ({ post }) => {
   const { title, content, coverImgFileId, createdAt, _id, author, updatedAt } =
     post;
+
+  const plaintext = joditPlaintextConverter(content);
+
   return (
     <section className="relative mb-12">
       <PostReact />
@@ -34,7 +38,7 @@ const HomePost: FC<Props> = ({ post }) => {
         updatedAt={updatedAt}
         author={author || "Author"}
       />
-      <PostContent content={truncateText(content, 250)} />
+      <PostContent content={truncateText(plaintext, 250)} />
       <Link href={`/post/${_id}`}>
         <p className="font-normal text-center text-gray-500 dark:text-gray-400 underline underline-offset-2">
           Read more

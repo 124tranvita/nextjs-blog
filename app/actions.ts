@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { downloadFile } from "./lib/google-drive";
+import { deleteFile, downloadFile } from "./lib/google-drive";
 import * as Utils from "./lib/utils";
 import { Post } from "@/app/lib/model";
 
@@ -31,22 +31,11 @@ export async function createPost(formData: FormData): Promise<Post> {
  * @param formData - Request FormData
  * @returns - Redirect to post detail page
  */
-export async function editPost(
-  data: Omit<Post, "createdAt" | "updatedAt" | "author">
-): Promise<Post> {
-  const { _id, title, cover, content } = data;
-
-  const res = await fetch(`${process.env.URL}/api/post?id=${_id}`, {
+export async function editPost(id: string, formData: FormData): Promise<Post> {
+  const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
     method: "PATCH",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      title,
-      cover,
-      content,
-    }),
+    body: formData,
   });
 
   if (!res.ok) {
@@ -54,7 +43,7 @@ export async function editPost(
     throw new Error("Failed to fetch data");
   }
 
-  redirect(`/post/${_id}`);
+  redirect(`/post/${id}`);
 }
 
 export async function getPosts(): Promise<Post[]> {
@@ -85,7 +74,7 @@ export async function getPost(id: string): Promise<Post> {
   return res.json();
 }
 
-export async function deletePost(id: string): Promise<Post> {
+export async function deletePost(id: string, fileId: string): Promise<Post> {
   const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
     method: "DELETE",
     cache: "no-cache",
@@ -95,6 +84,8 @@ export async function deletePost(id: string): Promise<Post> {
     // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
   }
+
+  await deleteFile(fileId);
 
   redirect(`/`);
 }

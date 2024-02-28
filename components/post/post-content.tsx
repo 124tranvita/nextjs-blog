@@ -8,7 +8,7 @@ export default function PostContent({ content }: Props) {
   return (
     <div className="block antialiased font-sans text-base leading-relaxed font-normal mb-4">
       <article
-        className="m-0 prose prose-slate mx-auto lg:prose-lg max-w-full dark:prose-invert"
+        className="max-w-full m-0 mx-auto prose prose-slate lg:prose-lg dark:prose-invert"
         dangerouslySetInnerHTML={createMarkup(content)}
       />
     </div>

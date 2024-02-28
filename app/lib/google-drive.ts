@@ -136,3 +136,21 @@ export async function downloadFile(realFileId: string) {
     console.error({ error });
   }
 }
+
+/**
+ * Delete a file
+ * @param realFileId - file id
+ * @return - Downloaded file as `ArrayBuffer`
+ * */
+export async function deleteFile(fileId: string) {
+  try {
+    const file = await drive.files.delete({
+      fileId: fileId,
+      fields: "files(id, name)",
+    });
+
+    return file.status;
+  } catch (error) {
+    console.error({ error });
+  }
+}

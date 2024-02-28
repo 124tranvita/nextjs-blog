@@ -62,7 +62,7 @@ export default function PostDetail({ post }: Props) {
             </>
           }
           tooltip="Delete post"
-          onClick={() => deletePost(_id)}
+          onClick={() => deletePost(_id, coverImgFileId)}
           variant="danger"
         />
       </div>

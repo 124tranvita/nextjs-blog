@@ -1,20 +1,22 @@
 "use client";
+
+import React, { FC, useCallback, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import React, { FC, useCallback, useMemo, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  PostPreview as PostPreviewType,
-  initPostPreview,
-} from "@/app/lib/model";
-import { createPost, fetchImage, uploadImg } from "@/app/actions";
-import { Button } from "@/app/ui/button";
 import Input from "@/components/react-hook-form/input";
 import ScrollableDialog from "@/components/scrollable-dialog";
 import PostPreview from "@/components/post/post-review";
 import FileSelector from "@/components/react-hook-form/file-selector";
 import ImagePreview from "@/components/image-upload/image-preview";
-import { base64ToBlob, blobToBinary } from "@/app/lib/utils";
+import useUnchanged from "@/hooks/useUnchanged";
+import {
+  PostPreview as PostPreviewType,
+  initPostPreview,
+} from "@/app/lib/model";
+import { createPost, fetchImage } from "@/app/actions";
+import { Button } from "@/app/ui/button";
+import * as Utils from "@/app/lib/utils";
 
 /**
  * Import JoitEditor
@@ -43,6 +45,7 @@ const NewPost: FC = () => {
   const router = useRouter();
   const editorRef = useRef<any>(null);
   const [imgData, setImgData] = useState<Blob | undefined>(undefined);
+  const { isUnChanged } = useUnchanged();
   const [previewData, setPreviewData] =
     useState<PostPreviewType>(initPostPreview);
   const {
@@ -50,6 +53,8 @@ const NewPost: FC = () => {
     register,
     getValues,
     setValue,
+    setError,
+    clearErrors,
     watch,
     formState: { errors },
   } = useForm<Inputs>();
@@ -57,7 +62,7 @@ const NewPost: FC = () => {
   const [localImage] = watch(["localImage"]);
 
   /**
-   * Disable flag for Cover image input
+   * Disable flag for cover image input
    */
   const disable = useMemo(() => {
     return {
@@ -105,18 +110,26 @@ const NewPost: FC = () => {
   const onBlurCoverImgInput = useCallback(
     async (value: string) => {
       try {
-        if (imgData) return;
+        clearErrors();
 
         if (!value) {
           return setImgData(undefined);
         }
+
+        if (isUnChanged(value)) return;
+
+        if (!Utils.isValidUrl(value)) {
+          setError("cloudImg", { message: "Invalid URL!" });
+          return;
+        }
+
         const base64Img = await fetchImage(value);
-        setImgData(base64ToBlob(base64Img, "image/jpeg"));
+        setImgData(Utils.base64ToBlob(base64Img, "image/jpeg"));
       } catch (error) {
         console.error(error);
       }
     },
-    [imgData]
+    [isUnChanged, setError, clearErrors]
   );
 
   /**

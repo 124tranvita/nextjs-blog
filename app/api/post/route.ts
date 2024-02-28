@@ -1,8 +1,8 @@
 // app/api/post
 import { ObjectId } from "mongodb";
 import { connectToDb } from "@/app/lib/mongodb";
-import { downloadFile, fileUpload } from "@/app/lib/google-drive";
-import { blodToReadable, bufferToBase64, bufferToBlob } from "@/app/lib/utils";
+import { fileUpload } from "@/app/lib/google-drive";
+import { blodToReadable } from "@/app/lib/utils";
 
 export const dynamic = "force-dynamic"; // defaults to auto
 
@@ -94,13 +94,21 @@ export async function PATCH(request: Request) {
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
 
-    /** Get request body */
-    const { title, cover, content } = await request.json();
-
     /** Check if post is exsiting */
     if (!id) {
-      throw new Error("Post not found.");
+      throw new Error("Id not found");
     }
+
+    /** Get request body */
+    const formData = await request.formData();
+
+    const title = formData.get("title") as string;
+    const coverImg = formData.get("coverImg") as Blob;
+    const content = formData.get("content") as string;
+
+    const readable = await blodToReadable(coverImg);
+
+    const googleFileId = await fileUpload(title, coverImg.type, readable);
 
     /** Update post */
     const post = await db.collection("posts").updateOne(
@@ -110,7 +118,7 @@ export async function PATCH(request: Request) {
       {
         $set: {
           title: title,
-          cover: cover,
+          coverImgFileId: googleFileId,
           content: content,
           updatedAt: new Date(),
         },

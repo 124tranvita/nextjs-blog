@@ -115,3 +115,31 @@ export const blodToReadable = async (blob: Blob | File) => {
 
   return readable;
 };
+
+/**
+ * Get image file format type
+ */
+export const getExtsType = (type?: string) => {
+  if (!type) return "jpg";
+
+  return type.split("/")[1];
+};
+
+/**
+ * Compare tow blob object
+ * @param blob1
+ * @param blob2
+ * @returns - True if equal
+ */
+export const areBlobsEqual = async (blob1: Blob, blob2: Blob) => {
+  return !Buffer.from(await blob1.arrayBuffer()).compare(
+    Buffer.from(await blob2.arrayBuffer())
+  );
+};
+
+export const isValidUrl = (value: string) => {
+  const regx =
+    /^(ftp|http|https):\/\/[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%._+~#?&//=]*)$/;
+
+  return regx.test(value);
+};

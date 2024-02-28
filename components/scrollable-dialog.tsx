@@ -34,7 +34,7 @@ export default function ScrollableDialog({ btnLabel, title, children }: Props) {
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="relative z-50" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -58,16 +58,18 @@ export default function ScrollableDialog({ btnLabel, title, children }: Props) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md md:max-w-2xl lg:max-w-5xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="relative w-full max-w-md md:max-w-2xl lg:max-w-5xl transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
+                    as="div"
+                    className="absolute top-0 left-0 z-[9999] h-[52px] bg-white w-full p-4 shadow-md text-lg font-bold leading-6 text-gray-900"
                   >
                     {title}
                   </Dialog.Title>
-                  <div className="mt-2">{children}</div>
+                  <div className="mt-[50px] pl-4 pr-2 py-2 overflow-y-scroll max-h-[82vh]">
+                    {children}
+                  </div>
 
-                  <div className="text-end mt-4">
+                  <div className="text-end p-4">
                     <Button
                       type="button"
                       variant="danger"

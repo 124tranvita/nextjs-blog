@@ -1,5 +1,6 @@
 import React, { useMemo, FC } from "react";
 import JoditEditor from "jodit-react";
+import { Jodit as JoditModules } from "jodit/esm/index";
 
 type Props = {
   onBlur: (newContent: string) => void;
@@ -24,6 +25,10 @@ const Jodit: FC<Props> = ({ initialValue, onBlur, placeholder }) => {
       onChange={(newContent) => {}}
     />
   );
+};
+
+export const joditPlaintextConverter = (content: string) => {
+  return JoditModules.modules.Helpers.stripTags(content);
 };
 
 export default Jodit;
