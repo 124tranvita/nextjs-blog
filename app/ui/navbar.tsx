@@ -33,7 +33,7 @@ export const Navbar: FC = () => {
   return (
     <Disclosure
       as="nav"
-      className="bg-white sticky top-0 z-50 h-max max-w-full rounded-none px-4 py-2 lg:px-4 lg:py-2 shadow-lg dark:bg-gray-900"
+      className="bg-white sticky top-0 z-40 h-max max-w-full rounded-none px-4 py-2 lg:px-4 lg:py-2 shadow-lg dark:bg-gray-900"
     >
       {({ open }) => (
         <>

@@ -10,7 +10,18 @@ export default async function Page() {
   return (
     <Main>
       {posts.length > 0 ? (
-        posts.map((post, index) => <HomePost key={index} post={post} />)
+        posts
+          .sort(
+            (a, b) =>
+              Date.parse(b.createdAt as string) -
+              Date.parse(a.createdAt as string)
+          )
+          .sort(
+            (a, b) =>
+              Date.parse(b.updatedAt as string) -
+              Date.parse(a.updatedAt as string)
+          )
+          .map((post, index) => <HomePost key={index} post={post} />)
       ) : (
         <></>
       )}

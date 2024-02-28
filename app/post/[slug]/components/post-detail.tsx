@@ -5,10 +5,14 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { Post } from "@/app/lib/model";
 import { deletePost } from "@/app/actions";
 import { FloatIconWithTooltip } from "@/app/ui/button";
-import PostHeader from "@/components/post/post-header";
 import PostReact from "@/components/post/post-react";
 
+const PostHeader = dynamic(() => import("@/components/post/post-header"), {
+  loading: () => <p>Loading...</p>,
+});
+
 const PostContent = dynamic(() => import("@/components/post/post-content"), {
+  loading: () => <p>Loading...</p>,
   ssr: false,
 });
 
@@ -17,14 +21,16 @@ type Props = {
 };
 
 export default function PostDetail({ post }: Props) {
-  const { title, content, cover, createdAt, updatedAt, _id, author } = post;
+  const { title, content, coverImgFileId, createdAt, updatedAt, _id, author } =
+    post;
+
   return (
     <section className="relative mb-12">
       <PostReact />
       <PostHeader
         _id={_id}
         title={title}
-        cover={cover}
+        coverImgFileId={coverImgFileId}
         createdAt={createdAt}
         updatedAt={updatedAt}
         author={author || "Author"}
@@ -56,7 +62,7 @@ export default function PostDetail({ post }: Props) {
             </>
           }
           tooltip="Delete post"
-          onClick={() => deletePost(_id)}
+          onClick={() => deletePost(_id, coverImgFileId)}
           variant="danger"
         />
       </div>

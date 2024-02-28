@@ -11,8 +11,6 @@ export default function SearchResult() {
   const search = searchParams.get("q");
   const [posts, setPosts] = useState<Post[]>([]);
 
-  console.log({ posts });
-
   useEffect(() => {
     async function fetchData(search: string) {
       const response = await getSearchPosts(search);

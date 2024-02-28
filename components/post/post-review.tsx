@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect } from "react";
-import noImage from "../../public/image_not_available.png";
+import Image from "next/image";
+import { PostPreview } from "@/app/lib/model";
+import noImagePlaceholder from "../../public/no-image-placeholder.webp";
 import PostContent from "./post-content";
-import { Post } from "@/app/lib/model";
 
 type Props = {
-  previewData: Pick<Post, "title" | "cover" | "content">;
+  previewData: PostPreview;
   onPreview: () => void;
 };
 
@@ -15,12 +15,14 @@ export default function PostPreview({ previewData, onPreview }: Props) {
   useEffect(() => {
     onPreview();
   }, [onPreview]);
+
   console.log({ previewData });
+
   return (
     <section className="w-full mb-8">
       <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-512">
         <Image
-          src={previewData.cover ? previewData.cover : noImage}
+          src={previewData.cover ? previewData.cover : noImagePlaceholder}
           alt={`${previewData.title}_image`}
           fill={true}
           sizes="100vw"
