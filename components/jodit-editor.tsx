@@ -1,6 +1,6 @@
 import React, { useMemo, FC } from "react";
 import JoditEditor from "jodit-react";
-import { Jodit as JoditModules } from "jodit/esm/index";
+import { Jodit as JoditModules } from "jodit";
 
 type Props = {
   onBlur: (newContent: string) => void;

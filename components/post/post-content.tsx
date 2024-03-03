@@ -1,3 +1,4 @@
+"use client";
 import { createMarkup } from "@/app/lib/utils";
 
 type Props = {
