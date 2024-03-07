@@ -18,6 +18,7 @@ import FileSelector from "@/components/react-hook-form/file-selector";
 import ImagePreview from "@/components/image-upload/image-preview";
 import useUnchanged from "@/hooks/useUnchanged";
 import { editPost, fetchImage, getCoverImg } from "@/app/actions";
+import { NextPageLoading } from "@/app/loader";
 import { Button } from "@/app/ui/button";
 import {
   Post,
@@ -54,6 +55,8 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   const { isUnChanged } = useUnchanged();
   const [previewData, setPreviewData] =
     useState<PostPreviewType>(initPostPreview);
+  const [isMovingNext, setIsMovingNext] = useState(false);
+
   const {
     handleSubmit,
     register,
@@ -70,6 +73,8 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   });
   const [cloudImg] = watch(["cloudImg"]);
   const [localImage] = watch(["localImage"]);
+
+  console.log({ errors });
 
   /** Download imge file from Google drive */
   useEffect(() => {
@@ -108,8 +113,10 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
       formData.append("title", data.title);
       formData.append("coverImg", imgData as Blob);
       formData.append("content", editorRef.current);
-      editPost(_id, formData);
+      editPost(_id, formData, coverImgFileId);
     }
+
+    setIsMovingNext(true);
   };
 
   /** Handle editor onInit event */
@@ -185,67 +192,71 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   }, [_id, router]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-      <div className="mb-3">
-        <Input
-          label="Title"
-          errors={errors}
-          {...register("title", {
-            required: "Title is required.",
-            maxLength: 128,
-          })}
+    <>
+      {isMovingNext && <NextPageLoading />}
+
+      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+        <div className="mb-3">
+          <Input
+            label="Title"
+            errors={errors}
+            {...register("title", {
+              required: "Title is required.",
+              maxLength: 128,
+            })}
+          />
+        </div>
+        <div className="mb-3">
+          <Input
+            label="Cover Image"
+            placeholder={imgData ? `${title}.${imgExts}` : ""}
+            errors={errors}
+            {...register("cloudImg", {
+              onBlur: (e) => onBlurCoverImgInput(e.target.value),
+              validate: (value) =>
+                imgData ||
+                value ||
+                (!value &&
+                  getValues().localImage &&
+                  getValues().localImage.length > 0)
+                  ? true
+                  : "Cover Image is required",
+            })}
+            disabled={disable.cloudImg}
+          />
+        </div>
+        <div className="mb-3">
+          <FileSelector
+            errors={errors}
+            {...register("localImage", {
+              onChange: (e) => onChangeFileSelector(e.target.files),
+            })}
+            disabled={disable.localImage}
+          />
+        </div>
+        <div className="mb-3">
+          {imgData && (
+            <ImagePreview image={imgData as File} onClick={onClearPreviewImg} />
+          )}
+        </div>
+        <div className="mt-6">
+          <JoditEditor onBlur={onBlur} initialValue={content} />
+        </div>
+        <div>
+          <ScrollableDialog btnLabel="Preview" title="Post Preview">
+            <PostPreview previewData={previewData} onPreview={onPreview} />
+          </ScrollableDialog>
+        </div>
+        <Button variant="primary" type="submit" label="Save" fullWidth />
+        <Button
+          variant="danger"
+          type="button"
+          label="Back"
+          fullWidth
+          onClick={hanldeBack}
         />
-      </div>
-      <div className="mb-3">
-        <Input
-          label="Cover Image"
-          placeholder={imgData ? `${title}.${imgExts}` : ""}
-          errors={errors}
-          {...register("cloudImg", {
-            onBlur: (e) => onBlurCoverImgInput(e.target.value),
-            validate: (value) =>
-              imgData ||
-              value ||
-              (!value &&
-                getValues().localImage &&
-                getValues().localImage.length > 0)
-                ? true
-                : "Cover Image is required",
-          })}
-          disabled={disable.cloudImg}
-        />
-      </div>
-      <div className="mb-3">
-        <FileSelector
-          errors={errors}
-          {...register("localImage", {
-            onChange: (e) => onChangeFileSelector(e.target.files),
-          })}
-          disabled={disable.localImage}
-        />
-      </div>
-      <div className="mb-3">
-        {imgData && (
-          <ImagePreview image={imgData as File} onClick={onClearPreviewImg} />
-        )}
-      </div>
-      <div className="mt-6">
-        <JoditEditor onBlur={onBlur} initialValue={content} />
-      </div>
-      <div>
-        <ScrollableDialog btnLabel="Preview" title="Post Preview">
-          <PostPreview previewData={previewData} onPreview={onPreview} />
-        </ScrollableDialog>
-      </div>
-      <Button variant="primary" type="submit" label="Save" fullWidth />
-      <Button
-        variant="danger"
-        type="button"
-        label="Back"
-        fullWidth
-        onClick={hanldeBack}
-      />
-    </form>
+      </form>
+    </>
   );
 };
 

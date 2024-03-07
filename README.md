@@ -52,3 +52,6 @@ https://reacthustle.com/blog/nextjs-submit-form-to-api-using-formdata
 
 How to Upload and Retrieve Images to and From MongoDB Using NextJS 13 App Router
 https://reacthustle.com/blog/how-to-upload-retrieve-images-to-mongodb-using-nextjs-13-app-router
+
+Streaming a WebCam using Express, OpenCV, and Socket IO
+https://www.youtube.com/watch?v=qexy4Ph66JE

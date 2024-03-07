@@ -31,7 +31,11 @@ export async function createPost(formData: FormData): Promise<Post> {
  * @param formData - Request FormData
  * @returns - Redirect to post detail page
  */
-export async function editPost(id: string, formData: FormData): Promise<Post> {
+export async function editPost(
+  id: string,
+  formData: FormData,
+  fileId: string
+): Promise<Post> {
   const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
     method: "PATCH",
     cache: "no-cache",
@@ -42,6 +46,9 @@ export async function editPost(id: string, formData: FormData): Promise<Post> {
     // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
   }
+
+  // Delete previous cover image on drive
+  await deleteFile(fileId);
 
   redirect(`/post/${id}`);
 }

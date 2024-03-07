@@ -14,6 +14,7 @@ import {
   PostPreview as PostPreviewType,
   initPostPreview,
 } from "@/app/lib/model";
+import { NextPageLoading } from "@/app/loader";
 import { createPost, fetchImage } from "@/app/actions";
 import { Button } from "@/app/ui/button";
 import * as Utils from "@/app/lib/utils";
@@ -48,6 +49,8 @@ const NewPost: FC = () => {
   const { isUnChanged } = useUnchanged();
   const [previewData, setPreviewData] =
     useState<PostPreviewType>(initPostPreview);
+  const [isMovingNext, setIsMovingNext] = useState(false);
+
   const {
     handleSubmit,
     register,
@@ -86,6 +89,8 @@ const NewPost: FC = () => {
 
       createPost(formData);
     }
+
+    setIsMovingNext(true);
   };
 
   /** Handle editor onInit event */
@@ -163,67 +168,70 @@ const NewPost: FC = () => {
   }, [router]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-      <div className="mb-3">
-        <Input
-          label="Title"
-          placeholder="Title"
-          errors={errors}
-          {...register("title", {
-            required: "Title is required.",
-            maxLength: 128,
-          })}
+    <>
+      {isMovingNext && <NextPageLoading />}
+      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+        <div className="mb-3">
+          <Input
+            label="Title"
+            placeholder="Title"
+            errors={errors}
+            {...register("title", {
+              required: "Title is required.",
+              maxLength: 128,
+            })}
+          />
+        </div>
+        <div className="mb-3">
+          <Input
+            label="Cover Image"
+            placeholder="Cover Url"
+            errors={errors}
+            {...register("cloudImg", {
+              onBlur: (e) => onBlurCoverImgInput(e.target.value),
+              validate: (value) =>
+                value ||
+                (!value &&
+                  getValues().localImage &&
+                  getValues().localImage.length > 0)
+                  ? true
+                  : "Cover Image is required",
+            })}
+            disabled={disable.cloudImg}
+          />
+        </div>
+        <div className="mb-3">
+          <FileSelector
+            errors={errors}
+            {...register("localImage", {
+              onChange: (e) => onChangeFileSelector(e.target.files),
+            })}
+            disabled={disable.localImage}
+          />
+        </div>
+        <div className="mb-3">
+          {imgData && (
+            <ImagePreview image={imgData as File} onClick={onClearPreviewImg} />
+          )}
+        </div>
+        <div className="mt-6">
+          <JoditEditor onBlur={onBlur} placeholder="Start typing..." />
+        </div>
+        <div>
+          <ScrollableDialog btnLabel="Preview" title="Post Preview">
+            <PostPreview previewData={previewData} onPreview={onPreview} />
+          </ScrollableDialog>
+        </div>
+        <Button variant="primary" type="submit" label="Submit" fullWidth />
+        <Button
+          variant="danger"
+          type="button"
+          label="Back"
+          fullWidth
+          onClick={hanldeBack}
         />
-      </div>
-      <div className="mb-3">
-        <Input
-          label="Cover Image"
-          placeholder="Cover Url"
-          errors={errors}
-          {...register("cloudImg", {
-            onBlur: (e) => onBlurCoverImgInput(e.target.value),
-            validate: (value) =>
-              value ||
-              (!value &&
-                getValues().localImage &&
-                getValues().localImage.length > 0)
-                ? true
-                : "Cover Image is required",
-          })}
-          disabled={disable.cloudImg}
-        />
-      </div>
-      <div className="mb-3">
-        <FileSelector
-          errors={errors}
-          {...register("localImage", {
-            onChange: (e) => onChangeFileSelector(e.target.files),
-          })}
-          disabled={disable.localImage}
-        />
-      </div>
-      <div className="mb-3">
-        {imgData && (
-          <ImagePreview image={imgData as File} onClick={onClearPreviewImg} />
-        )}
-      </div>
-      <div className="mt-6">
-        <JoditEditor onBlur={onBlur} placeholder="Start typing..." />
-      </div>
-      <div>
-        <ScrollableDialog btnLabel="Preview" title="Post Preview">
-          <PostPreview previewData={previewData} onPreview={onPreview} />
-        </ScrollableDialog>
-      </div>
-      <Button variant="primary" type="submit" label="Submit" fullWidth />
-      <Button
-        variant="danger"
-        type="button"
-        label="Back"
-        fullWidth
-        onClick={hanldeBack}
-      />
-    </form>
+      </form>
+    </>
   );
 };
 
