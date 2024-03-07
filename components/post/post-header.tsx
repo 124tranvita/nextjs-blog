@@ -13,7 +13,7 @@ import noImagePlaceholder from "../../public/no-image-placeholder.webp";
 type Props = Pick<
   Post,
   "_id" | "author" | "coverImgFileId" | "title" | "createdAt" | "updatedAt"
->;
+> & { onClick?: () => void };
 
 export default function PostHeader({
   _id,
@@ -22,6 +22,7 @@ export default function PostHeader({
   title,
   createdAt,
   updatedAt,
+  onClick,
 }: Props) {
   const [coverImg, setCoverImg] = useState<Blob | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -53,7 +54,7 @@ export default function PostHeader({
           <ImageLoadingSkelton />
         </>
       ) : (
-        <Link href={`/post/${_id}`}>
+        <Link href={`/post/${_id}`} onClick={onClick}>
           <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-[512px]">
             <Image
               src={createObjectURL}
