@@ -1,11 +1,11 @@
-import clientPromise from "../../lib/mongodb";
+import { connectToDb } from "@/app/lib/mongodb";
 
 export const dynamic = "force-dynamic"; // defaults to auto
 export async function GET(request: Request) {
   try {
     /** Connect to database */
-    const client = await clientPromise;
-    const db = client.db("blog");
+    const { client } = await connectToDb();
+    const db = client.db("blog_prod");
 
     /** Get query params */
     const url = new URL(request.url);
