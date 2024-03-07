@@ -2,17 +2,19 @@
 
 import dynamic from "next/dynamic";
 import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
+import PostReact from "@/components/post/post-react";
 import { Post } from "@/app/lib/model";
 import { deletePost } from "@/app/actions";
 import { FloatIconWithTooltip } from "@/app/ui/button";
-import PostReact from "@/components/post/post-react";
+import { ContentLoading, HeaderLoading } from "@/app/loader";
 
 const PostHeader = dynamic(() => import("@/components/post/post-header"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <HeaderLoading />,
+  ssr: false,
 });
 
 const PostContent = dynamic(() => import("@/components/post/post-content"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <ContentLoading />,
   ssr: false,
 });
 

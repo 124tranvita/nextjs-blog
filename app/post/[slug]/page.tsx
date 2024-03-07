@@ -2,6 +2,8 @@
 import { getPost } from "@/app/actions";
 import PostDetail from "./components/post-detail";
 import { Metadata } from "next";
+import { Main } from "@/components/common";
+import { Suspense } from "react";
 
 type Props = {
   params: { slug: string };
@@ -21,8 +23,9 @@ export default async function Page({ params }: Props) {
   const post = await getPost(params.slug);
 
   return (
-    <main className="max-w-screen-lg min-h-screen p-6 mx-auto overflow-hidden">
+    <Main>
+      <Suspense fallback={<p>Loading feed...</p>}></Suspense>
       {post && <PostDetail post={post} />}
-    </main>
+    </Main>
   );
 }
