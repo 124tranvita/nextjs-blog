@@ -9,16 +9,15 @@ import React, {
   useMemo,
 } from "react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Input from "@/components/react-hook-form/input";
-import ScrollableDialog from "@/components/scrollable-dialog";
+import ScrollableDialog from "@/components/dialog/scrollable-dialog";
 import PostPreview from "@/components/post/post-review";
 import FileSelector from "@/components/react-hook-form/file-selector";
 import ImagePreview from "@/components/image-upload/image-preview";
 import useUnchanged from "@/hooks/useUnchanged";
 import { editPost, fetchImage, getCoverImg } from "@/app/actions";
-import { NextPageLoading } from "@/app/loader";
+import { NextPageLoading } from "@/app/[lang]/loader";
 import { Button } from "@/app/ui/button";
 import {
   Post,
@@ -26,6 +25,8 @@ import {
   initPostPreview,
 } from "@/app/lib/model";
 import * as Utils from "@/app/lib/utils";
+import useScreenPath from "@/app/hooks/useScreenPath";
+import useDictionary from "@/app/hooks/useDictionary";
 
 /**
  * Import JoitEditor
@@ -48,7 +49,8 @@ type Inputs = {
 
 const EditPost: FC<{ post: Post }> = ({ post }) => {
   const { _id, title, coverImgFileId, content } = post;
-  const router = useRouter();
+  const { next } = useScreenPath();
+  const { d } = useDictionary();
   const editorRef = useRef<any>(null);
   const [imgData, setImgData] = useState<Blob | undefined>(undefined);
   const [imgExts, setImgExts] = useState<string>("");
@@ -74,14 +76,10 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   const [cloudImg] = watch(["cloudImg"]);
   const [localImage] = watch(["localImage"]);
 
-  console.log({ errors });
-
   /** Download imge file from Google drive */
   useEffect(() => {
     const getFile = async (fileId: string) => {
       const res = await getCoverImg(fileId);
-
-      console.log({ res });
 
       if (res) {
         setImgData(Utils.base64ToBlob(res.base64, res.type));
@@ -148,7 +146,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         if (isUnChanged(value)) return;
 
         if (!Utils.isValidUrl(value)) {
-          setError("cloudImg", { message: "Invalid URL!" });
+          setError("cloudImg", { message: d("errors.invalidUrl") });
           return;
         }
 
@@ -158,7 +156,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         console.error(error);
       }
     },
-    [isUnChanged, setError, clearErrors]
+    [isUnChanged, setError, clearErrors, d]
   );
 
   /**
@@ -188,8 +186,8 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
 
   /** Handle back event */
   const hanldeBack = useCallback(() => {
-    router.push(`/post/${_id}`);
-  }, [_id, router]);
+    next(`/post/${_id}`);
+  }, [_id, next]);
 
   return (
     <>
@@ -198,17 +196,17 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         <div className="mb-3">
           <Input
-            label="Title"
+            label={d("editor.title")}
             errors={errors}
             {...register("title", {
-              required: "Title is required.",
+              required: d("errors.input"),
               maxLength: 128,
             })}
           />
         </div>
         <div className="mb-3">
           <Input
-            label="Cover Image"
+            label={d("editor.coverImg")}
             placeholder={imgData ? `${title}.${imgExts}` : ""}
             errors={errors}
             {...register("cloudImg", {
@@ -220,7 +218,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
                   getValues().localImage &&
                   getValues().localImage.length > 0)
                   ? true
-                  : "Cover Image is required",
+                  : d("errors.coverImg"),
             })}
             disabled={disable.cloudImg}
           />
@@ -243,15 +241,23 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
           <JoditEditor onBlur={onBlur} initialValue={content} />
         </div>
         <div>
-          <ScrollableDialog btnLabel="Preview" title="Post Preview">
+          <ScrollableDialog
+            btnLabel={d("editor.preview")}
+            title={d("editor.preview")}
+          >
             <PostPreview previewData={previewData} onPreview={onPreview} />
           </ScrollableDialog>
         </div>
-        <Button variant="primary" type="submit" label="Save" fullWidth />
+        <Button
+          variant="primary"
+          type="submit"
+          label={d("editor.save")}
+          fullWidth
+        />
         <Button
           variant="danger"
           type="button"
-          label="Back"
+          label={d("editor.back")}
           fullWidth
           onClick={hanldeBack}
         />

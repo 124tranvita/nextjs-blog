@@ -1,11 +1,10 @@
 "use client";
 
 import React, { FC, useCallback, useMemo, useRef, useState } from "react";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import dynamic from "next/dynamic";
 import Input from "@/components/react-hook-form/input";
-import ScrollableDialog from "@/components/scrollable-dialog";
+import ScrollableDialog from "@/components/dialog/scrollable-dialog";
 import PostPreview from "@/components/post/post-review";
 import FileSelector from "@/components/react-hook-form/file-selector";
 import ImagePreview from "@/components/image-upload/image-preview";
@@ -14,10 +13,12 @@ import {
   PostPreview as PostPreviewType,
   initPostPreview,
 } from "@/app/lib/model";
-import { NextPageLoading } from "@/app/loader";
+import { NextPageLoading } from "@/app/[lang]/loader";
 import { createPost, fetchImage } from "@/app/actions";
 import { Button } from "@/app/ui/button";
 import * as Utils from "@/app/lib/utils";
+import useDictionary from "@/app/hooks/useDictionary";
+import useScreenPath from "@/app/hooks/useScreenPath";
 
 /**
  * Import JoitEditor
@@ -43,7 +44,8 @@ type Inputs = {
  * @returns - NewPost Component
  */
 const NewPost: FC = () => {
-  const router = useRouter();
+  const { d } = useDictionary();
+  const { next } = useScreenPath();
   const editorRef = useRef<any>(null);
   const [imgData, setImgData] = useState<Blob | undefined>(undefined);
   const { isUnChanged } = useUnchanged();
@@ -124,7 +126,7 @@ const NewPost: FC = () => {
         if (isUnChanged(value)) return;
 
         if (!Utils.isValidUrl(value)) {
-          setError("cloudImg", { message: "Invalid URL!" });
+          setError("cloudImg", { message: d("errors.invalidUrl") });
           return;
         }
 
@@ -134,7 +136,7 @@ const NewPost: FC = () => {
         console.error(error);
       }
     },
-    [isUnChanged, setError, clearErrors]
+    [isUnChanged, setError, clearErrors, d]
   );
 
   /**
@@ -164,8 +166,8 @@ const NewPost: FC = () => {
 
   /** Handle back event */
   const hanldeBack = useCallback(() => {
-    router.push(`/`);
-  }, [router]);
+    next(`/`);
+  }, [next]);
 
   return (
     <>
@@ -173,19 +175,19 @@ const NewPost: FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         <div className="mb-3">
           <Input
-            label="Title"
-            placeholder="Title"
+            label={d("editor.title")}
+            placeholder={d("editor.placeholder")}
             errors={errors}
             {...register("title", {
-              required: "Title is required.",
+              required: d("errors.input"),
               maxLength: 128,
             })}
           />
         </div>
         <div className="mb-3">
           <Input
-            label="Cover Image"
-            placeholder="Cover Url"
+            label={d("editor.coverImg")}
+            placeholder={d("editor.placeholderCoverImg")}
             errors={errors}
             {...register("cloudImg", {
               onBlur: (e) => onBlurCoverImgInput(e.target.value),
@@ -195,7 +197,7 @@ const NewPost: FC = () => {
                   getValues().localImage &&
                   getValues().localImage.length > 0)
                   ? true
-                  : "Cover Image is required",
+                  : d("errors.coverImg"),
             })}
             disabled={disable.cloudImg}
           />
@@ -218,15 +220,23 @@ const NewPost: FC = () => {
           <JoditEditor onBlur={onBlur} placeholder="Start typing..." />
         </div>
         <div>
-          <ScrollableDialog btnLabel="Preview" title="Post Preview">
+          <ScrollableDialog
+            btnLabel={d("editor.preview")}
+            title={d("editor.preview")}
+          >
             <PostPreview previewData={previewData} onPreview={onPreview} />
           </ScrollableDialog>
         </div>
-        <Button variant="primary" type="submit" label="Submit" fullWidth />
+        <Button
+          variant="primary"
+          type="submit"
+          label={d("editor.submit")}
+          fullWidth
+        />
         <Button
           variant="danger"
           type="button"
-          label="Back"
+          label={d("editor.back")}
           fullWidth
           onClick={hanldeBack}
         />

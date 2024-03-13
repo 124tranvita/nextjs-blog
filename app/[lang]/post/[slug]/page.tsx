@@ -4,6 +4,8 @@ import PostDetail from "./components/post-detail";
 import { Metadata } from "next";
 import { Main } from "@/components/common";
 import { Suspense } from "react";
+import SideControl from "@/components/side-control";
+import { NextPageLoading } from "../../loader";
 
 type Props = {
   params: { slug: string };
@@ -23,9 +25,15 @@ export default async function Page({ params }: Props) {
   const post = await getPost(params.slug);
 
   return (
-    <Main>
-      <Suspense fallback={<p>Loading feed...</p>}></Suspense>
-      {post && <PostDetail post={post} />}
-    </Main>
+    <Suspense fallback={<NextPageLoading />}>
+      <Main>
+        {post && (
+          <>
+            <PostDetail post={post} />
+            <SideControl id={post._id} coverImgFileId={post.coverImgFileId} />
+          </>
+        )}
+      </Main>
+    </Suspense>
   );
 }

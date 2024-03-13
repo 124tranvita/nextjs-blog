@@ -15,7 +15,9 @@ export async function GET(request: Request) {
   try {
     /** Connect to database */
     const { client } = await connectToDb();
-    const db = client.db("blog_prod");
+    const db = client.db(
+      process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
+    );
 
     /** Get query params */
     const url = new URL(request.url);
@@ -49,7 +51,9 @@ export async function POST(request: Request) {
   try {
     /** Connect to database */
     const { client } = await connectToDb();
-    const db = client.db("blog_prod");
+    const db = client.db(
+      process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
+    );
 
     /** Get request body */
     const formData = await request.formData();
@@ -88,7 +92,9 @@ export async function PATCH(request: Request) {
   try {
     /** Connect to database */
     const { client } = await connectToDb();
-    const db = client.db("blog_prod");
+    const db = client.db(
+      process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
+    );
 
     /** Get query params */
     const url = new URL(request.url);
@@ -141,7 +147,9 @@ export async function DELETE(request: Request) {
   try {
     /** Connect to database */
     const { client } = await connectToDb();
-    const db = client.db("blog_prod");
+    const db = client.db(
+      process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
+    );
 
     /** Get query params */
     const url = new URL(request.url);

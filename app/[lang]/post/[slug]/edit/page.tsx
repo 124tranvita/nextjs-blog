@@ -1,7 +1,10 @@
 // app/posts/[slug]/editpage.tsx
-import { getPost } from "@/app/actions";
+import { Suspense } from "react";
 import { Metadata } from "next";
+import { getPost } from "@/app/actions";
+import { Main } from "@/components/common";
 import EditPost from "./components/edit-post";
+import { NextPageLoading } from "@/app/[lang]/loader";
 
 type Props = {
   params: { slug: string };
@@ -21,12 +24,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const post = await getPost(params.slug);
 
   return (
-    <main className="max-w-screen-lg min-h-screen p-6 mx-auto overflow-hidden">
-      {post && (
-        <>
-          <EditPost post={post} />
-        </>
-      )}
-    </main>
+    <Suspense fallback={<NextPageLoading />}>
+      <Main>
+        {post && (
+          <>
+            <EditPost post={post} />
+          </>
+        )}
+      </Main>
+    </Suspense>
   );
 }

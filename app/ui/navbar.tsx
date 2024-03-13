@@ -6,15 +6,19 @@ import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { NAVIGATION } from "@/app/lib/constants";
 import SearchBar from "@/components/search-bar";
+import ThemeToggle from "@/components/toggle/theme-toggle";
+import LanguageToggle from "@/components/toggle/language-toggle";
+import useDictionary from "../hooks/useDictionary";
 
 type Props = {
   className: string;
 };
 
 export const BrandName: FC<Props> = ({ className }) => {
+  const { lang } = useDictionary();
   return (
     <div className={className}>
-      <Link href={"/"}>
+      <Link href={`/${lang}`}>
         <h1 className="text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white">
           <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">
             My
@@ -61,15 +65,19 @@ export const Navbar: FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <button
-                  type="button"
-                  className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
+              <div className="flex align-baseline items-center">
+                <ThemeToggle />
+                <LanguageToggle />
+                {/* <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                  <button
+                    type="button"
+                    className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  >
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">View notifications</span>
+                    <BellIcon className="h-6 w-6" aria-hidden="true" />
+                  </button>
+                </div> */}
               </div>
             </div>
           </div>

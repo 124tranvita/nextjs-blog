@@ -8,6 +8,7 @@ const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
 const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
 const FOLDER = process.env.GOOGLE_FOLDER;
+const NODE_ENV = process.env.NODE_ENV;
 
 /** Set OAuth2Client credential */
 const oauth2Client = new google.auth.OAuth2(
@@ -55,8 +56,10 @@ export async function listFiles() {
  * @param folderName - Folder name
  * @returns - Name, Id of the queried folder.
  */
-export async function getFolder(folderName: string) {
+export async function getFolder(folderName?: string) {
   try {
+    if (!folderName) return undefined;
+
     const res = await drive.files.list({
       q: "mimeType='application/vnd.google-apps.folder' and trashed=false",
       pageSize: 10,
@@ -96,7 +99,9 @@ export async function fileUpload(name: string, type: string, data: any) {
     body: data,
   };
   try {
-    const storeFolder = await getFolder(FOLDER || "nextjs-blog");
+    const storeFolder = await getFolder(
+      NODE_ENV && NODE_ENV === "production" ? FOLDER : "nextjs-blog-dev"
+    );
 
     const file = await drive.files.create({
       requestBody: {

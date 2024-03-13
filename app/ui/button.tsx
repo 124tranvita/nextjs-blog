@@ -65,25 +65,22 @@ export const FloatIconWithTooltip: React.FC<FloatIconWithTooltipProps> = ({
   icon,
   tooltip,
   variant = "primary",
-  path,
   onClick,
 }) => {
   return (
     <div className="has-tooltip">
+      <button
+        onClick={onClick}
+        className={classNames(
+          "h-12 w-12 rounded-full shadow-lg mb-3",
+          VariantMap[variant]
+        )}
+      >
+        {icon}
+      </button>
       <span className="tooltip rounded p-1 bg-gray-900 text-gray-100">
         {tooltip}
       </span>
-      <Link href={path || "/"}>
-        <button
-          onClick={onClick}
-          className={classNames(
-            "h-12 w-12 rounded-full shadow-lg mb-3",
-            VariantMap[variant]
-          )}
-        >
-          {icon}
-        </button>
-      </Link>
     </div>
   );
 };

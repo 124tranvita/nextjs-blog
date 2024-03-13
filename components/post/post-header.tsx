@@ -6,6 +6,7 @@ import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
 import { Post } from "@/app/lib/model";
 import { base64ToBlob, formatDate } from "@/app/lib/utils";
 import { getCoverImg } from "@/app/actions";
+import useDictionary from "@/app/hooks/useDictionary";
 import ImageLoadingSkelton from "../loading-skeleton/image-loading-skeleton";
 
 import noImagePlaceholder from "../../public/no-image-placeholder.webp";
@@ -24,6 +25,7 @@ export default function PostHeader({
   updatedAt,
   onClick,
 }: Props) {
+  const { lang } = useDictionary();
   const [coverImg, setCoverImg] = useState<Blob | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -54,7 +56,7 @@ export default function PostHeader({
           <ImageLoadingSkelton />
         </>
       ) : (
-        <Link href={`/post/${_id}`} onClick={onClick}>
+        <Link href={`/${lang}/post/${_id}`} onClick={onClick}>
           <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-[512px]">
             <Image
               src={createObjectURL}
@@ -68,7 +70,7 @@ export default function PostHeader({
       )}
       <div className="lg:flex lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1">
-          <Link href={`/post/${_id}`}>
+          <Link href={`/${lang}/post/${_id}`}>
             <h2 className="text-4xl font-bold mb-3 sm:leading-7 md:leading-9 text-gray-900 sm:text-3xl sm:tracking-tight dark:text-gray-100">
               {title}
             </h2>
