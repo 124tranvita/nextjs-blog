@@ -1,8 +1,9 @@
 "use client";
 
-import { Button } from "@/app/ui/button";
-import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, ReactNode, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Button } from "@/app/ui/button";
+import useDictionary from "@/app/hooks/useDictionary";
 
 type Props = {
   btnLabel: string;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function ScrollableDialog({ btnLabel, title, children }: Props) {
+  const { d } = useDictionary();
   let [isOpen, setIsOpen] = useState(false);
 
   function closeModal() {
@@ -74,7 +76,7 @@ export default function ScrollableDialog({ btnLabel, title, children }: Props) {
                       type="button"
                       variant="danger"
                       onClick={closeModal}
-                      label="Close"
+                      label={d("close")}
                     />
                   </div>
                 </Dialog.Panel>

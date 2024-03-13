@@ -1,7 +1,7 @@
 "use client";
 
 import { getSearchPosts } from "@/app/actions";
-import HomePost from "@/app/components/home-post";
+import HomePost from "@/app/[lang]/components/home-post";
 import { Post } from "@/app/lib/model";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

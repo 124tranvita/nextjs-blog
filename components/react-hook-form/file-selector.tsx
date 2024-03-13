@@ -1,4 +1,4 @@
-import React, { ComponentPropsWithRef, ForwardedRef } from "react";
+import React, { ComponentPropsWithRef, ForwardedRef, useEffect } from "react";
 import { FieldErrors } from "react-hook-form";
 import classNames from "classnames";
 
@@ -17,14 +17,17 @@ const FileSelector = React.forwardRef(function (props: Props, ref: Ref) {
     <>
       <input
         ref={ref}
+        id={name}
         type="file"
+        accept=".jpg, .jpeg, .png"
         className={classNames({
           // Modify the Button shape, spacing, and colors using the `file`: directive
           // button colors
-          "file:bg-violet-50 file:text-violet-500 hover:file:bg-violet-100":
+          "file:bg-violet-50 file:text-slate-500 hover:file:bg-violet-100 file:dark:bg-slate-600 file:dark:text-slate-100":
             true,
           "file:rounded-lg": true,
           "file:px-4 file:py-2 file:mr-4 file:border-none": true,
+          "text-gray-600 dark:text-gray-100": true,
           // overall input styling
           // "hover:cursor-pointer border w-full border-gray-300 rounded-lg text-gray-400":
           //   true,

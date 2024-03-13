@@ -3,7 +3,11 @@
 import { FC, useState } from "react";
 import dynamic from "next/dynamic";
 import PostReact from "@/components/post/post-react";
-import { ContentLoading, HeaderLoading, NextPageLoading } from "@/app/loader";
+import {
+  ContentLoading,
+  HeaderLoading,
+  NextPageLoading,
+} from "@/app/[lang]/loader";
 import { Post } from "@/app/lib/model";
 
 const PostHeader = dynamic(() => import("@/components/post/post-header"), {
