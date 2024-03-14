@@ -5,9 +5,21 @@ type Props = {
 };
 
 export const Main: FC<Props> = ({ children }) => {
+  return <main className="h-screen pb-40 overflow-y-scroll">{children}</main>;
+};
+
+export const Article: FC<Props> = ({ children }) => {
   return (
-    <main className="max-w-screen-md min-h-screen p-6 mx-auto overflow-hidden">
+    <section className="relative max-w-screen-md mx-auto my-12">
       {children}
-    </main>
+    </section>
+  );
+};
+
+export const EditorContainer: FC<Props> = ({ children }) => {
+  return (
+    <section className="relative max-w-screen-lg mx-auto my-12">
+      {children}
+    </section>
   );
 };

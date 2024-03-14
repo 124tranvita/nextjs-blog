@@ -1,11 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import PostReact from "@/components/post/post-react";
 import { Post } from "@/app/lib/model";
-import { deletePost } from "@/app/actions";
-import { FloatIconWithTooltip } from "@/app/ui/button";
+import { Article } from "@/components/common";
 import { ContentLoading, HeaderLoading } from "@/app/[lang]/loader";
 
 const PostHeader = dynamic(() => import("@/components/post/post-header"), {
@@ -27,7 +25,7 @@ export default function PostDetail({ post }: Props) {
     post;
 
   return (
-    <section className="relative mb-12">
+    <Article>
       <PostReact />
       <PostHeader
         _id={_id}
@@ -38,6 +36,6 @@ export default function PostDetail({ post }: Props) {
         author={author || "Author"}
       />
       <PostContent content={content} />
-    </section>
+    </Article>
   );
 }

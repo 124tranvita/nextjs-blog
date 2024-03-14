@@ -5,7 +5,9 @@ export async function GET(request: Request) {
   try {
     /** Connect to database */
     const { client } = await connectToDb();
-    const db = client.db("blog_prod");
+    const db = client.db(
+      process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
+    );
 
     /** Get query params */
     const url = new URL(request.url);

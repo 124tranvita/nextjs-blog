@@ -13,6 +13,7 @@ const config = {
       },
       height: {
         "512": "512px",
+        main: "calc(100vh + 200px)",
       },
       keyframes: {
         "move-right": {
@@ -20,7 +21,11 @@ const config = {
           to: {
             transform: "translate3d(50px, 0, 0)",
           },
+          "0%": { opacity: "0" },
+          "25%": { opacity: ".2" },
           "50%": { opacity: ".5" },
+          "75%": { opacity: ".7" },
+          "100%": { opacity: "1" },
         },
       },
       animation: {

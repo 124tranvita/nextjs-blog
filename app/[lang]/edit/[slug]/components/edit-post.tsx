@@ -12,10 +12,11 @@ import dynamic from "next/dynamic";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Input from "@/components/react-hook-form/input";
 import ScrollableDialog from "@/components/dialog/scrollable-dialog";
-import PostPreview from "@/components/post/post-review";
+import PostPreview from "@/components/post/post-preview";
 import FileSelector from "@/components/react-hook-form/file-selector";
 import ImagePreview from "@/components/image-upload/image-preview";
-import useUnchanged from "@/hooks/useUnchanged";
+import { EditorContainer } from "@/components/common";
+import useUnchanged from "@/app/hooks/useUnchanged";
 import { editPost, fetchImage, getCoverImg } from "@/app/actions";
 import { NextPageLoading } from "@/app/[lang]/loader";
 import { Button } from "@/app/ui/button";
@@ -190,7 +191,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   }, [_id, next]);
 
   return (
-    <>
+    <EditorContainer>
       {isMovingNext && <NextPageLoading />}
 
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
@@ -262,7 +263,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
           onClick={hanldeBack}
         />
       </form>
-    </>
+    </EditorContainer>
   );
 };
 

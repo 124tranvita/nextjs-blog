@@ -60,10 +60,10 @@ export default function ScrollableDialog({ btnLabel, title, children }: Props) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative w-full max-w-md md:max-w-2xl lg:max-w-5xl transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="relative w-full max-w-md md:max-w-2xl lg:max-w-5xl transform overflow-hidden rounded-xl bg-white dark:bg-slate-800 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="div"
-                    className="absolute top-0 left-0 z-[9999] h-[52px] bg-white w-full p-4 shadow-md text-lg font-bold leading-6 text-gray-900"
+                    className="absolute top-0 left-0 z-[9999] h-[52px] bg-white dark:bg-slate-900 w-full p-4 shadow-md text-lg font-bold leading-6 text-gray-900 dark:text-gray-50"
                   >
                     {title}
                   </Dialog.Title>

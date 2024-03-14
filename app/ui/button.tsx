@@ -1,6 +1,5 @@
 import React, { ButtonHTMLAttributes } from "react";
 import classNames from "classnames";
-import Link from "next/link";
 
 enum Variant {
   Primary = "primary",
@@ -10,7 +9,8 @@ enum Variant {
 }
 
 const VariantMap = {
-  [Variant.Primary]: "bg-blue-500 text-white hover:bg-blue-700",
+  [Variant.Primary]:
+    "bg-blue-500 text-white hover:bg-blue-700 dark:bg-slate-600",
   [Variant.Success]: "bg-green-100 text-green-900 hover:bg-green-200",
   [Variant.Danger]: "bg-red-500 hover:bg-red-700 text-white",
   [Variant.Black]: "bg-gray-900 text-white hover:bg-gray-700",

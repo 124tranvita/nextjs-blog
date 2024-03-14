@@ -9,6 +9,7 @@ import {
   NextPageLoading,
 } from "@/app/[lang]/loader";
 import { Post } from "@/app/lib/model";
+import { Article } from "@/components/common";
 
 const PostHeader = dynamic(() => import("@/components/post/post-header"), {
   loading: () => <HeaderLoading />,
@@ -33,7 +34,7 @@ const HomePost: FC<Props> = ({ post }) => {
   return (
     <>
       {isMoveNext && <NextPageLoading />}
-      <section className="relative mb-12">
+      <Article>
         <PostReact />
         <PostHeader
           _id={_id}
@@ -49,7 +50,7 @@ const HomePost: FC<Props> = ({ post }) => {
           content={content}
           onClick={() => setIsMoveNext(true)}
         />
-      </section>
+      </Article>
     </>
   );
 };

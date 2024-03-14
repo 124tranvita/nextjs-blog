@@ -1,46 +1,54 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { getSearchPosts } from "@/app/actions";
 import HomePost from "@/app/[lang]/components/home-post";
 import { Post } from "@/app/lib/model";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Article } from "@/components/common";
+import { ContentLoading } from "../../loader";
 
 export default function SearchResult() {
   const searchParams = useSearchParams();
   const search = searchParams.get("q");
+  const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
 
+  /** Fetch post data base on search params */
   useEffect(() => {
     async function fetchData(search: string) {
       const response = await getSearchPosts(search);
       setPosts(response);
+      setIsLoading(false);
     }
     if (search) {
+      setIsLoading(true);
       fetchData(search);
     }
   }, [search]);
 
   return (
-    <>
+    <Article>
       <div className="mb-3">
-        <p className="text-2xl font-semibold">
+        <p className="text-2xl font-semibold text-slate-800 dark:text-slate-50">
           Search result for{" "}
-          <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">
+          <mark className="mx-2 px-2 text-white bg-blue-600 rounded dark:bg-blue-500">
             {search}
           </mark>
         </p>
-        <span className="text-mb italic text-gray-400">{`Total: ${posts.length}`}</span>
       </div>
-      {posts && posts.length > 0 ? (
-        posts.map((post: Post) => (
-          <>
-            <HomePost post={post} key={post._id} />
-          </>
-        ))
+      {isLoading ? (
+        <ContentLoading />
       ) : (
-        <>No result</>
+        <>
+          <span className="text-mb italic text-gray-400">{`Total: ${posts.length}`}</span>
+          {posts && posts.length > 0 ? (
+            posts.map((post: Post) => <HomePost post={post} key={post._id} />)
+          ) : (
+            <div className="text-slate-800 dark:text-slate-50">No result</div>
+          )}
+        </>
       )}
-    </>
+    </Article>
   );
 }
