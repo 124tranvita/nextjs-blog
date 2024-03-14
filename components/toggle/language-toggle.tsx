@@ -1,16 +1,31 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import useDictionary from "@/app/hooks/useDictionary";
 
 export default function LanguageToggle() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("q");
   const { lang } = useDictionary();
   const [mounted, setMounted] = useState(false);
 
-  // Check if is already mounted
+  const standardizedPathname = useMemo(() => {
+    // Regex: string not contain `search` word
+    const reg = /^((?!search).)*$/gm;
+
+    // If not a `search` url, return original pathname
+    if (reg.test(pathname)) {
+      return pathname;
+    }
+
+    // Add search params to the `search` pathname
+    return `${pathname}?q=${search}`;
+  }, [pathname, search]);
+
+  /** Check if is already mounted */
   useEffect(() => setMounted(true), []);
 
   if (!mounted)
@@ -20,7 +35,7 @@ export default function LanguageToggle() {
 
   if (lang === "vi") {
     return (
-      <Link href={pathname.replace(/^.{3}/g, "/en")}>
+      <Link href={standardizedPathname.replace(/^.{3}/g, "/en")}>
         <button className="mx-1 w-8 h-auto rounded-full p-1 text-slate-800 dark:text-slate-50 hover:bg-slate-800 hover:text-slate-50 duration-300">
           <span>Vi</span>
         </button>
@@ -30,7 +45,7 @@ export default function LanguageToggle() {
 
   if (lang === "en") {
     return (
-      <Link href={pathname.replace(/^.{3}/g, "/vi")}>
+      <Link href={standardizedPathname.replace(/^.{3}/g, "/vi")}>
         <button className="mx-1 w-8 h-auto rounded-full p-1 text-slate-800 dark:text-slate-50 hover:bg-slate-800 hover:text-slate-50 duration-300">
           <span>En</span>
         </button>

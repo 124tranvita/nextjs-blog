@@ -27,7 +27,7 @@ export default function SideControl({ id, coverImgFileId }: Props) {
     if (!id) return;
 
     setIsMoveNext(true);
-    next(`/post/${id}/edit`);
+    next(`/edit/${id}`);
   }, [id, next]);
 
   const handleDelete = useCallback(() => {
