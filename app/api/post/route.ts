@@ -1,6 +1,6 @@
 // app/api/post
 import { ObjectId } from "mongodb";
-import { connectToDb } from "@/app/lib/mongodb";
+import clientPromise from "@/app/lib/mongodb";
 import { fileUpload } from "@/app/lib/google-drive";
 import { blodToReadable } from "@/app/lib/utils";
 
@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic"; // defaults to auto
 export async function GET(request: Request) {
   try {
     /** Connect to database */
-    const { client } = await connectToDb();
+    const client = await clientPromise;
     const db = client.db(
       process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
     );
@@ -50,7 +50,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     /** Connect to database */
-    const { client } = await connectToDb();
+    const client = await clientPromise;
     const db = client.db(
       process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
     );
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     /** Connect to database */
-    const { client } = await connectToDb();
+    const client = await clientPromise;
     const db = client.db(
       process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
     );
@@ -146,7 +146,7 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     /** Connect to database */
-    const { client } = await connectToDb();
+    const client = await clientPromise;
     const db = client.db(
       process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
     );

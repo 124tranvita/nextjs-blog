@@ -33,7 +33,7 @@ const Input = forwardRef(function (props: Props, ref: Ref) {
         {...props}
       />
       {hasError && (
-        <p className="mt-2 text-sm text-red-800">
+        <p className="mt-2 text-sm text-red-500">
           {errors[name]?.message?.toString()}
         </p>
       )}

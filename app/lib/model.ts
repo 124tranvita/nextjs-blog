@@ -9,6 +9,20 @@ export type Post = {
   updatedAt: string | Date;
 };
 
+export type User = {
+  _id: string;
+  email: string;
+  name: string;
+  createdAt: string | Date;
+};
+
+export type CurrentUser = {
+  token: string;
+  data: {
+    user: User;
+  };
+};
+
 export type PostPreview = {
   title: string;
   cover: string;

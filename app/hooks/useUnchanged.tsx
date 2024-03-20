@@ -1,10 +1,12 @@
+// app/hooks/useUnchanged.tsx
+"use client";
+
 import { useCallback, useRef } from "react";
 
 export default function useUnchanged() {
   const ref = useRef<string>("");
 
   const isUnChanged = useCallback((value: string) => {
-    console.log({ value, ref: ref.current });
     let isChanged = false;
     if (!ref.current) {
       isChanged = false;
@@ -16,5 +18,9 @@ export default function useUnchanged() {
     return isChanged;
   }, []);
 
-  return { isUnChanged };
+  const setInitUnChangeValue = useCallback(() => {
+    ref.current = "";
+  }, []);
+
+  return { isUnChanged, setInitUnChangeValue };
 }

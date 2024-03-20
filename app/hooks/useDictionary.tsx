@@ -1,11 +1,11 @@
-// useDictionary custom hook
+// app/hooks/useDictionary.tsx
 "use client";
 
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Locale, i18n } from "@/i18n";
 import { getDictionary } from "../dictionaries";
-import { getPathValue, hasPath } from "../lib/utils";
+import { getPathValue, hasPath } from "./_lib/utils";
 
 export default function useDictionary() {
   const params = useParams();

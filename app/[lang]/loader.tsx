@@ -1,3 +1,4 @@
+// app/[lang]/loader.tsx
 import ContentLoadingSkeleton from "@/components/loading-skeleton/content-loading-skeleton";
 import HeaderLoadingSkeleton from "@/components/loading-skeleton/header-loading-skeleton";
 import MovePageLoadingSkeleton from "@/components/loading-skeleton/move-page-loading-skeleton";

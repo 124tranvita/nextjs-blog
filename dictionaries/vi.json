@@ -5,7 +5,8 @@
   "tooltips": {
     "create": "Tạo mới",
     "edit": "Chỉnh sửa",
-    "delete": "Xóa"
+    "delete": "Xóa",
+    "logout": "Đăng xuất"
   },
   "processing": "Đang xử lý...",
   "editor": {
@@ -21,7 +22,7 @@
     "submit": "Gửi"
   },
   "errors": {
-    "input": "Hãy nhập tiêu đề",
+    "input": "Yên cầu nhập dữ liệu",
     "coverImg": "Hãy chọn ảnh bìa",
     "invalidUrl": "URL không hợp lệ!"
   },
@@ -34,5 +35,13 @@
       "en": "Tiếng Anh",
       "vi": "Tiếng Việt"
     }
+  },
+  "login": {
+    "email": "Email",
+    "emailPlaceholder": "Email",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "Mật khẩu",
+    "loginBtn": "Đăng nhập",
+    "backBtn": "Trở lại"
   }
 }

@@ -1,4 +1,5 @@
-// app/posts/[slug]/editpage.tsx
+// app/[lang]/posts/[slug]/page.tsx
+
 import { Suspense } from "react";
 import { Metadata } from "next";
 import { getPost } from "@/app/actions";

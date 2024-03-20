@@ -1,9 +1,17 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { deleteFile, downloadFile } from "./lib/google-drive";
+import { deleteFile, downloadFile, getFileLink } from "./lib/google-drive";
 import * as Utils from "./lib/utils";
-import { Post } from "@/app/lib/model";
+import { CurrentUser, Post } from "@/app/lib/model";
+import { cookies } from "next/headers";
+import {
+  ResponseCookie,
+  CookieListItem,
+  ResponseCookies,
+  RequestCookies,
+} from "next/dist/compiled/@edge-runtime/cookies";
+import { encrypt } from "./lib/crypto";
 
 /**
  * Create the new post
@@ -147,24 +155,52 @@ export async function fetchImage(url: string) {
   // https://stackoverflow.com/questions/54099802/blob-to-base64-in-nodejs-without-filereader
 }
 
-export async function getCoverImg(fileId: string) {
-  try {
-    const file = await downloadFile(fileId);
+/**
+ * User login
+ * @param formData - Request FormData
+ * @returns - Redirect to main page
+ */
+export async function login(formData: FormData): Promise<CurrentUser> {
+  const res = await fetch(`${process.env.URL}/api/auth`, {
+    method: "POST",
+    cache: "no-cache",
+    body: formData,
+    credentials: "include",
+  });
 
-    if (file) {
-      const blob = Utils.bufferToBlob(
-        file.data as Buffer,
-        file.headers?.["content-type"]
-      );
-
-      return {
-        base64: await Utils.blobToBase64(blob),
-        type: file.headers?.["content-type"],
-      };
-    }
-
-    return undefined;
-  } catch (error) {
-    console.error({ error });
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch image data");
   }
+
+  /** Get data from response */
+  const data = await res.json();
+
+  const encryptedSessionData = encrypt({
+    jwt: data.token,
+    user: data.user,
+  });
+
+  /** Set session cookie */
+  cookies().set("session", encryptedSessionData, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 7, // One week
+    path: "/",
+  });
+
+  /** Return to the main page */
+  redirect(`/`);
+}
+
+/**
+ * User logout
+ * @returns - Redirect to main page
+ */
+export async function logout(): Promise<any> {
+  /** Clear session cookie */
+  cookies().delete("session");
+
+  /** Return to the main page */
+  redirect(`/`);
 }

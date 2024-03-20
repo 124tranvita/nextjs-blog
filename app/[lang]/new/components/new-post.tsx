@@ -1,58 +1,45 @@
+// app/[lang]/new/components/new-post.tsx
 "use client";
 
-import React, { FC, useCallback, useMemo, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import dynamic from "next/dynamic";
 import Input from "@/components/react-hook-form/input";
 import ScrollableDialog from "@/components/dialog/scrollable-dialog";
 import PostPreview from "@/components/post/post-preview";
 import FileSelector from "@/components/react-hook-form/file-selector";
-import ImagePreview from "@/components/image-upload/image-preview";
 import { EditorContainer } from "@/components/common";
 import {
   PostPreview as PostPreviewType,
   initPostPreview,
 } from "@/app/lib/model";
-import { NextPageLoading } from "@/app/[lang]/loader";
-import { createPost, fetchImage } from "@/app/actions";
+import { createPost } from "@/app/actions";
 import { Button } from "@/app/ui/button";
 import * as Utils from "@/app/lib/utils";
-import useUnchanged from "@/app/hooks/useUnchanged";
 import useDictionary from "@/app/hooks/useDictionary";
 import useScreenPath from "@/app/hooks/useScreenPath";
+import useImageUpload from "@/app/hooks/useImageUpload";
+import useEditor from "@/app/hooks/useEditor";
 
-/**
- * Import JoitEditor
- */
-const JoditEditor = dynamic(
-  () => {
-    return import("@/components/jodit-editor");
-  },
-  { ssr: false }
-);
-
-/**
- * Declare react-hook-form type
- */
-type Inputs = {
+type FormDataProps = {
   title: string;
   cloudImg: string;
   localImage: File[];
 };
 
 /**
- * Create new post component
- * @returns - NewPost Component
+ * Render the create new post screen
+ * @returns - Component
  */
 const NewPost: FC = () => {
-  const { d } = useDictionary();
-  const { next } = useScreenPath();
-  const editorRef = useRef<any>(null);
-  const [imgData, setImgData] = useState<Blob | undefined>(undefined);
-  const { isUnChanged } = useUnchanged();
   const [previewData, setPreviewData] =
     useState<PostPreviewType>(initPostPreview);
-  const [isMovingNext, setIsMovingNext] = useState(false);
+  const [isMoveNext, setIsMoveNext] = useState(false);
+
+  const { d } = useDictionary();
+  const { next } = useScreenPath();
+  const { processImageData, ImagePreview, imageData, isClearedUploadProcced } =
+    useImageUpload();
+  const { editorContent, Editor } = useEditor("", d("editor.placeholder"));
 
   const {
     handleSubmit,
@@ -63,13 +50,11 @@ const NewPost: FC = () => {
     clearErrors,
     watch,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<FormDataProps>();
   const [cloudImg] = watch(["cloudImg"]);
   const [localImage] = watch(["localImage"]);
 
-  /**
-   * Disable flag for cover image input
-   */
+  /** Disable flag for image input field */
   const disable = useMemo(() => {
     return {
       cloudImg: Boolean(localImage && localImage.length > 0),
@@ -77,102 +62,86 @@ const NewPost: FC = () => {
     };
   }, [cloudImg, localImage]);
 
-  /**
-   * Handle submit new post
-   * @param data - Input form's data
-   */
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  /** Hanlde submit form */
+  const onSubmit: SubmitHandler<FormDataProps> = async (data) => {
     const formData = new FormData();
 
-    if (editorRef.current) {
+    // Process when editor has content.
+    if (editorContent) {
       formData.append("title", data.title);
-      formData.append("coverImg", imgData as Blob);
-      formData.append("content", editorRef.current);
-      formData.append("author", "Author");
+      formData.append("coverImg", imageData as Blob);
+      formData.append("content", editorContent);
 
+      // Call `createPost` action
       createPost(formData);
     }
-
-    setIsMovingNext(true);
+    // Set `MovingPage` loading to true
+    setIsMoveNext(true);
   };
 
-  /** Handle editor onInit event */
-  const onBlur = useCallback((newContent: string) => {
-    editorRef.current = newContent;
-  }, []);
-
-  /** Handle preview event */
+  /** Handle post preview event */
   const onPreview = useCallback(() => {
     const values = getValues();
+
+    // Set preview value
     setPreviewData({
       title: values.title,
-      cover: imgData ? (URL.createObjectURL(imgData) as string) : "",
-      content: editorRef.current ? editorRef.current : "",
+      cover: imageData ? (URL.createObjectURL(imageData) as string) : "",
+      content: editorContent ? editorContent : "",
     });
-  }, [getValues, imgData]);
+  }, [getValues, imageData, editorContent]);
 
-  /**
-   * Hanlde fetch the image from the input url and show in preview.
-   * @param value - Cover Image input value
-   */
+  /** Hanlde process image data with url */
   const onBlurCoverImgInput = useCallback(
     async (value: string) => {
       try {
         clearErrors();
 
-        if (!value) {
-          return setImgData(undefined);
-        }
-
-        if (isUnChanged(value)) return;
+        if (!value) return;
 
         if (!Utils.isValidUrl(value)) {
           setError("cloudImg", { message: d("errors.invalidUrl") });
           return;
         }
 
-        const base64Img = await fetchImage(value);
-        setImgData(Utils.base64ToBlob(base64Img, "image/jpeg"));
+        processImageData(value);
       } catch (error) {
         console.error(error);
       }
     },
-    [isUnChanged, setError, clearErrors, d]
+    [processImageData, setError, clearErrors, d]
   );
 
-  /**
-   * Hanlde get the image from the choosen file and show in preview.
-   * @param value - Choose image value
-   */
-  const onChangeFileSelector = useCallback(async (value: FileList | null) => {
-    try {
-      if (!value) {
-        return setImgData(undefined);
-      }
-      const uploadedImg = value && value.length > 0 ? value[0] : undefined;
-      setImgData(uploadedImg);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  /** Hanlde process image data with local upload */
+  const onChangeFileSelector = useCallback(
+    async (value: FileList | null) => {
+      try {
+        if (!value) return;
 
-  /**
-   * Handle to clear the image in preview
-   */
-  const onClearPreviewImg = useCallback(() => {
-    setValue("localImage", []);
-    setValue("cloudImg", "");
-    setImgData(undefined);
-  }, [setValue]);
+        const uploadedImg = value && value.length > 0 ? value[0] : undefined;
+        processImageData(uploadedImg);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [processImageData]
+  );
 
   /** Handle back event */
   const hanldeBack = useCallback(() => {
     next(`/`);
   }, [next]);
 
+  /** Depend on clear upload image process */
+  useEffect(() => {
+    if (isClearedUploadProcced) {
+      setValue("localImage", []);
+      setValue("cloudImg", "");
+    }
+  }, [isClearedUploadProcced, setValue]);
+
   return (
-    <EditorContainer>
-      {isMovingNext && <NextPageLoading />}
+    <EditorContainer isMoveNext={isMoveNext}>
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         <div className="mb-3">
           <Input
@@ -212,14 +181,8 @@ const NewPost: FC = () => {
             disabled={disable.localImage}
           />
         </div>
-        <div className="mb-3">
-          {imgData && (
-            <ImagePreview image={imgData as File} onClick={onClearPreviewImg} />
-          )}
-        </div>
-        <div className="mt-6">
-          <JoditEditor onBlur={onBlur} placeholder="Start typing..." />
-        </div>
+        <div className="mb-3">{ImagePreview}</div>
+        <div className="mt-6">{Editor}</div>
         <div>
           <ScrollableDialog
             btnLabel={d("editor.preview")}

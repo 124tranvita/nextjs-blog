@@ -1,3 +1,4 @@
+// app/[lang]/post/[slug]/components/post-detail.tsx
 "use client";
 
 import dynamic from "next/dynamic";

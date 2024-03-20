@@ -5,7 +5,8 @@
   "tooltips": {
     "create": "Create",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "logout": "Logout"
   },
   "processing": "Processing...",
   "editor": {
@@ -34,5 +35,13 @@
       "en": "English",
       "vi": "Vietnamese"
     }
+  },
+  "login": {
+    "email": "Email",
+    "emailPlaceholder": "Email",
+    "password": "Password",
+    "passwordPlaceholder": "Password",
+    "loginBtn": "Login",
+    "backBtn": "Back"
   }
 }

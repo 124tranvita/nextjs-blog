@@ -1,15 +1,12 @@
+// app/[lang]/components/home-post.tsx
 "use client";
 
 import { FC, useState } from "react";
 import dynamic from "next/dynamic";
 import PostReact from "@/components/post/post-react";
-import {
-  ContentLoading,
-  HeaderLoading,
-  NextPageLoading,
-} from "@/app/[lang]/loader";
-import { Post } from "@/app/lib/model";
 import { Article } from "@/components/common";
+import { Post } from "@/app/lib/model";
+import { ContentLoading, HeaderLoading } from "@/app/[lang]/loader";
 
 const PostHeader = dynamic(() => import("@/components/post/post-header"), {
   loading: () => <HeaderLoading />,
@@ -33,8 +30,7 @@ const HomePost: FC<Props> = ({ post }) => {
 
   return (
     <>
-      {isMoveNext && <NextPageLoading />}
-      <Article>
+      <Article isMoveNext={isMoveNext}>
         <PostReact />
         <PostHeader
           _id={_id}
@@ -42,7 +38,7 @@ const HomePost: FC<Props> = ({ post }) => {
           coverImgFileId={coverImgFileId}
           createdAt={createdAt}
           updatedAt={updatedAt}
-          author={author || "Author"}
+          author={author || "Anonymous"}
           onClick={() => setIsMoveNext(true)}
         />
         <PostSummary

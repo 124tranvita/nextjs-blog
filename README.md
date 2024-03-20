@@ -55,3 +55,5 @@ https://reacthustle.com/blog/how-to-upload-retrieve-images-to-mongodb-using-next
 
 Streaming a WebCam using Express, OpenCV, and Socket IO
 https://www.youtube.com/watch?v=qexy4Ph66JE
+
+CookieSerializeOptions

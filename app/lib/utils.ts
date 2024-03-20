@@ -38,24 +38,6 @@ export const formatDate = (value: Date | string) => {
   return new Date(value).toLocaleString("vi-VN", { timeZone: "Asia/Bangkok" });
 };
 
-export const pathNameMapping = (pathName: string) => {
-  if (pathName === "/") return "Home";
-
-  const splitted = pathName.split("/");
-
-  const length = splitted.length;
-
-  if (length > 0) {
-    if (splitted[length - 1] === "new") {
-      return "New Post";
-    } else if (splitted[length - 1] === "edit") {
-      return "Edit Post";
-    } else {
-      return "Post Detail";
-    }
-  }
-};
-
 /**
  * Convert Base64 to Blob
  */
@@ -85,16 +67,6 @@ export const blobToBase64 = async (blob: Blob | File) => {
 };
 
 /**
- * Convert Blob to Binary
- */
-export const blobToBinary = async (blob: Blob | File) => {
-  const buffer = Buffer.from(await blob.arrayBuffer());
-  const base64 = buffer.toString("base64");
-
-  return Buffer.from(base64, "base64");
-};
-
-/**
  * Convert buffer to blob
  * @param buffer - Buffer array
  * @param type - Media type
@@ -117,15 +89,6 @@ export const blodToReadable = async (blob: Blob | File) => {
 };
 
 /**
- * Get image file format type
- */
-export const getExtsType = (type?: string) => {
-  if (!type) return "jpg";
-
-  return type.split("/")[1];
-};
-
-/**
  * Compare tow blob object
  * @param blob1
  * @param blob2
@@ -142,52 +105,4 @@ export const isValidUrl = (value: string) => {
     /^(ftp|http|https):\/\/[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%._+~#?&//=]*)$/;
 
   return regx.test(value);
-};
-
-/**
- * Check object has path
- * @param obj - Check object
- * @param path - Check path
- * @returns - True if path is existing
- */
-export const hasPath = (obj: Object, path: string | string[]) => {
-  let value: any;
-
-  if (path instanceof Array) {
-    path.forEach((item: string) => {
-      if (!value) {
-        value = obj[item as keyof typeof obj];
-      } else {
-        value = value[item];
-      }
-    });
-  } else {
-    value = obj[path as keyof typeof obj];
-  }
-
-  return Boolean(value);
-};
-
-/**
- * Get the value of object base on given path
- * @param obj - Object
- * @param path - Path
- * @returns - The value base on given path
- */
-export const getPathValue = (obj: Object, path: string | string[]) => {
-  let value: any;
-
-  if (path instanceof Array) {
-    path.forEach((item: string) => {
-      if (!value) {
-        value = obj[item as keyof typeof obj];
-      } else {
-        value = value[item];
-      }
-    });
-  } else {
-    value = obj[path as keyof typeof obj];
-  }
-
-  return value ? value : "";
 };
