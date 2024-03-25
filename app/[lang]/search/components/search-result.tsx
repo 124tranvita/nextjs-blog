@@ -1,3 +1,4 @@
+// app/[lang]/search/components/search-result.tsx
 "use client";
 
 import { useEffect, useState } from "react";

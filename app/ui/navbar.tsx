@@ -1,10 +1,9 @@
 "use client";
-import { FC, ReactNode } from "react";
-import Link from "next/link";
+
+import { FC } from "react";
 import classNames from "classnames";
 import { Disclosure } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { NAVIGATION } from "@/app/lib/constants";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/20/solid";
 import SearchBar from "@/components/search-bar";
 import ThemeToggle from "@/components/toggle/theme-toggle";
 import LanguageToggle from "@/components/toggle/language-toggle";
@@ -17,19 +16,21 @@ type Props = {
 export const BrandName: FC<Props> = ({ className }) => {
   const { lang } = useDictionary();
   return (
-    <div className={className}>
-      <Link href={`/${lang}`}>
-        <h1 className="text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white">
-          <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">
-            My
-          </mark>
-          Blog
-        </h1>
-      </Link>
-      <span className=" bg-gray-700 text-white text-xl font-semibold rounded-md px-2 py-1 mx-1">
-        {`/`}
-      </span>
-    </div>
+    <>
+      <div className={className}>
+        <a href={`/${lang}`}>
+          <h1 className="text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white">
+            <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">
+              My
+            </mark>
+            Blog
+          </h1>
+        </a>
+        <span className=" bg-gray-700 text-white text-xl font-semibold rounded-md px-2 py-1 mx-1">
+          {`/`}
+        </span>
+      </div>
+    </>
   );
 };
 
@@ -37,11 +38,11 @@ export const Navbar: FC = () => {
   return (
     <Disclosure
       as="nav"
-      className="bg-white sticky top-0 z-40 h-max max-w-full rounded-none px-4 py-2 lg:px-4 lg:py-2 shadow-lg dark:bg-gray-900"
+      className="bg-white sticky top-0 z-40 h-[75px] max-w-full rounded-none px-4 py-[5px] shadow-lg dark:bg-gray-900"
     >
       {({ open }) => (
         <>
-          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+          <div className="mx-auto h-[65px] max-w-7xl px-2 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
@@ -83,7 +84,7 @@ export const Navbar: FC = () => {
           </div>
 
           {/* Mobile panel */}
-          <Disclosure.Panel className="sm:hidden">
+          {/* <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
               {NAVIGATION.map((item) => (
                 <Disclosure.Button
@@ -102,7 +103,7 @@ export const Navbar: FC = () => {
                 </Disclosure.Button>
               ))}
             </div>
-          </Disclosure.Panel>
+          </Disclosure.Panel> */}
         </>
       )}
     </Disclosure>

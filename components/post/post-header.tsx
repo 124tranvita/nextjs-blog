@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
 import { Post } from "@/app/lib/model";
 import { base64ToBlob, formatDate } from "@/app/lib/utils";
-import { getCoverImg } from "@/app/actions";
+import { downloadFile } from "@/app/lib/google-drive";
 import useDictionary from "@/app/hooks/useDictionary";
 import ImageLoadingSkelton from "../loading-skeleton/image-loading-skeleton";
 
@@ -38,7 +38,7 @@ export default function PostHeader({
   useEffect(() => {
     const getFile = async (fileId: string) => {
       setIsLoading(true);
-      const res = await getCoverImg(fileId);
+      const res = await downloadFile(fileId);
 
       if (res) {
         setCoverImg(base64ToBlob(res.base64, res.type));

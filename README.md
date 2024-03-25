@@ -55,3 +55,11 @@ https://reacthustle.com/blog/how-to-upload-retrieve-images-to-mongodb-using-next
 
 Streaming a WebCam using Express, OpenCV, and Socket IO
 https://www.youtube.com/watch?v=qexy4Ph66JE
+
+CookieSerializeOptions
+
+Infinite Scroll with Next.js Server Actions: A Simple Guide
+https://medium.com/@ferlat.simon/infinite-scroll-with-nextjs-server-actions-a-simple-guide-76a894824cfd
+
+// https://medium.com/@ferlat.simon/infinite-scroll-with-nextjs-server-actions-a-simple-guide-76a894824cfd
+//https://medium.com/@satyam-dua/lazy-loading-components-in-next-js-with-intersection-observer-and-typescript-9e96f69fa171

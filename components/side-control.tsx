@@ -1,11 +1,15 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowUturnRightIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/20/solid";
 import { FloatIconWithTooltip } from "@/app/ui/button";
 import useDictionary from "@/app/hooks/useDictionary";
 import useScreenPath from "@/app/hooks/useScreenPath";
-import { deletePost } from "@/app/actions";
+import { deletePost, logout } from "@/app/actions";
 import { NextPageLoading } from "@/app/[lang]/loader";
 
 type Props = {
@@ -38,12 +42,17 @@ export default function SideControl({ id, coverImgFileId }: Props) {
     return;
   }, [id, coverImgFileId, next]);
 
+  const handleLogout = useCallback(async () => {
+    setIsMoveNext(true);
+    await logout();
+  }, []);
+
   return (
     <>
       {isMoveNext && <NextPageLoading />}
       {id ? (
         <>
-          <div className="fixed right-2 bottom-16 md:right-16 md:bottom-28 flex flex-col">
+          <div className="fixed right-2 bottom-16 md:right-16 md:bottom-32 flex flex-col">
             <FloatIconWithTooltip
               icon={
                 <>
@@ -58,7 +67,7 @@ export default function SideControl({ id, coverImgFileId }: Props) {
               onClick={handleEdit}
             />
           </div>
-          <div className="fixed right-2 bottom-0 md:right-16 md:bottom-12 flex flex-col">
+          <div className="fixed right-2 bottom-0 md:right-16 md:bottom-16 flex flex-col">
             <FloatIconWithTooltip
               icon={
                 <>
@@ -93,6 +102,21 @@ export default function SideControl({ id, coverImgFileId }: Props) {
           </div>
         </>
       )}
+      <div className="fixed right-2 bottom-0 md:right-16 flex flex-col">
+        <FloatIconWithTooltip
+          icon={
+            <>
+              <ArrowUturnRightIcon
+                className="m-auto h-5 w-5 flex-shrink-0 text-white"
+                aria-hidden="true"
+              />
+            </>
+          }
+          tooltip={d("tooltips.logout")}
+          onClick={handleLogout}
+          variant="danger"
+        />
+      </div>
     </>
   );
 }

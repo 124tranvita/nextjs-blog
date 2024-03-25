@@ -1,7 +1,8 @@
+// app/[lang]/search/page.tsx
 import { Suspense } from "react";
-import SearchResult from "./components/search-result";
 import { Metadata } from "next";
 import { Main } from "@/components/common";
+import SearchResult from "./components/search-result";
 
 type Props = {
   searchParams: any;

@@ -1,21 +1,22 @@
-// app/[lang]/new/page.tsx
+// app/[lang]/login/page.tsx
+
 import { Suspense } from "react";
 import { Metadata } from "next";
-import NewPost from "./components/new-post";
 import { Main } from "@/components/common";
 import { NextPageLoading } from "../loader";
+import Login from "./components/log-in";
 
 // Static metadata
 export const metadata: Metadata = {
-  title: "New post",
-  description: "Create new post",
+  title: "Login",
+  description: "User login page",
 };
 
 export default function Page() {
   return (
     <Suspense fallback={<NextPageLoading />}>
       <Main>
-        <NewPost />
+        <Login />
       </Main>
     </Suspense>
   );

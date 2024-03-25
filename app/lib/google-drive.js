@@ -1,7 +1,9 @@
+"use server";
 // https://developers.google.com/drive/api/quickstart/nodejs
 // https://anonystick.com/blog-developer/huong-dan-upload-file-to-google-drive-voi-nodejs-kem-video-2021101852263830
 
 import { google } from "googleapis";
+import * as Utils from "@/app/lib/utils";
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -53,10 +55,10 @@ export async function listFiles() {
 
 /**
  * Get the specific folder in the drive by given folder name
- * @param folderName - Folder name
+ * @param {string} folderName - Folder name
  * @returns - Name, Id of the queried folder.
  */
-export async function getFolder(folderName?: string) {
+export async function getFolder(folderName) {
   try {
     if (!folderName) return undefined;
 
@@ -82,12 +84,12 @@ export async function getFolder(folderName?: string) {
 
 /**
  * Upload file to the drive
- * @param name - File name
- * @param type - File type
- * @param data - Media data
+ * @param {string} name - File name
+ * @param {string} type - File type
+ * @param {*} data - Media data
  * @returns - Uploaded file's id
  */
-export async function fileUpload(name: string, type: string, data: any) {
+export async function fileUpload(name, type, data) {
   const filename = `${name}.${type.split("/")[1]}`;
 
   const requestBody = {
@@ -119,10 +121,10 @@ export async function fileUpload(name: string, type: string, data: any) {
 
 /**
  * Downloads a file
- * @param realFileId - file id
+ * @param {string} realFileId - file id
  * @return - Downloaded file as `ArrayBuffer`
  * */
-export async function downloadFile(realFileId: string) {
+export async function downloadFile(realFileId) {
   const fileId = realFileId;
 
   try {
@@ -136,6 +138,31 @@ export async function downloadFile(realFileId: string) {
       }
     );
 
+    const blob = Utils.bufferToBlob(file.data, file.headers?.["content-type"]);
+
+    return {
+      base64: await Utils.blobToBase64(blob),
+      type: file.headers?.["content-type"],
+    };
+  } catch (error) {
+    console.error({ error });
+  }
+}
+
+/**
+ * Downloads a file
+ * @param {string} realFileId - file id
+ * @return - Downloaded file as `ArrayBuffer`
+ * */
+export async function getFileLink(realFileId) {
+  const fileId = realFileId;
+
+  try {
+    const file = await drive.files.get({
+      fileId: fileId,
+      fields: "webViewLink, webContentLink",
+    });
+
     return file;
   } catch (error) {
     console.error({ error });
@@ -144,10 +171,10 @@ export async function downloadFile(realFileId: string) {
 
 /**
  * Delete a file
- * @param realFileId - file id
+ * @param {string} realFileId - file id
  * @return - Downloaded file as `ArrayBuffer`
  * */
-export async function deleteFile(fileId: string) {
+export async function deleteFile(fileId) {
   try {
     const file = await drive.files.delete({
       fileId: fileId,
