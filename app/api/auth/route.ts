@@ -7,7 +7,7 @@ import AppError from "../_lib/utils/app-error";
 import createSendToken from "../_lib/utils/jwt-handler";
 
 /**
- * POST Request (Create new user)
+ * POST Request (Login user)
  * @param request - Request data
  * @returns - Response (new created user)
  */

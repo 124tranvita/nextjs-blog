@@ -3,8 +3,7 @@
 import { FC } from "react";
 import classNames from "classnames";
 import { Disclosure } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { NAVIGATION } from "@/app/lib/constants";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/20/solid";
 import SearchBar from "@/components/search-bar";
 import ThemeToggle from "@/components/toggle/theme-toggle";
 import LanguageToggle from "@/components/toggle/language-toggle";
@@ -85,7 +84,7 @@ export const Navbar: FC = () => {
           </div>
 
           {/* Mobile panel */}
-          <Disclosure.Panel className="sm:hidden">
+          {/* <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
               {NAVIGATION.map((item) => (
                 <Disclosure.Button
@@ -104,7 +103,7 @@ export const Navbar: FC = () => {
                 </Disclosure.Button>
               ))}
             </div>
-          </Disclosure.Panel>
+          </Disclosure.Panel> */}
         </>
       )}
     </Disclosure>

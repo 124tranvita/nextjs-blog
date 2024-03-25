@@ -5,21 +5,23 @@ import { Main } from "@/components/common";
 import SideControl from "@/components/side-control";
 import { getPosts } from "@/app/actions";
 import { decrypt } from "../lib/crypto";
+import { PAGE_INIT, LIMIT } from "../lib/constants";
 import HomePost from "./components/home-post";
 import { NextPageLoading } from "./loader";
 
 export default async function Page() {
   const encryptedSessionData = cookies().get("session")?.value;
-  const sessionData = encryptedSessionData
+  const sessionData: any = encryptedSessionData
     ? JSON.parse(decrypt(encryptedSessionData))
     : null;
 
-  const posts = await getPosts();
+  const initialPosts = await getPosts(PAGE_INIT, LIMIT);
 
   return (
     <Suspense fallback={<NextPageLoading />}>
       <Main>
-        {posts.length > 0 ? (
+        <HomePost initialPosts={initialPosts} />
+        {/* {posts.length > 0 ? (
           posts
             .sort(
               (a, b) =>
@@ -34,7 +36,7 @@ export default async function Page() {
             .map((post, index) => <HomePost key={index} post={post} />)
         ) : (
           <></>
-        )}
+        )} */}
         {sessionData && sessionData.user && <SideControl />}
       </Main>
     </Suspense>

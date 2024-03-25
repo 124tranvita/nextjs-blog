@@ -11,6 +11,22 @@ const URI = process.env.MONGODB_URI.replace(
   process.env.MONGODB_PASSWORD
 );
 
+export const mongooseConnectState = () => {
+  switch (mongoose.connection.readyState) {
+    case 0:
+      return "disconnected";
+    case 1:
+      return "connected";
+    case 2:
+      return "connecting";
+    case 3:
+      return "disconnecting";
+
+    default:
+      return "uninitialized";
+  }
+};
+
 const connect = async () => {
   try {
     if (process.env.NODE_ENV === "development") {

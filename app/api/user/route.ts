@@ -11,6 +11,7 @@ export async function POST(request: Request) {
   try {
     /** Connect to database */
     await connect();
+
     /** Get request body */
     const formData = await request.formData();
 

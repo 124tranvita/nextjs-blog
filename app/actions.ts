@@ -1,75 +1,102 @@
+// app/[lang]/actions.ts
 "use server";
 
 import { redirect } from "next/navigation";
-import { deleteFile, downloadFile, getFileLink } from "./lib/google-drive";
-import * as Utils from "./lib/utils";
-import { CurrentUser, Post } from "@/app/lib/model";
+import { deleteFile } from "./lib/google-drive";
 import { cookies } from "next/headers";
-import {
-  ResponseCookie,
-  CookieListItem,
-  ResponseCookies,
-  RequestCookies,
-} from "next/dist/compiled/@edge-runtime/cookies";
-import { encrypt } from "./lib/crypto";
+import { CurrentUser, Post } from "@/app/lib/model";
+import { decrypt, encrypt } from "./lib/crypto";
 
 /**
- * Create the new post
+ * Actions: `Create` Post
  * @param formData - Request FormData
  * @returns - Redirect to post detail page
  */
 export async function createPost(formData: FormData): Promise<Post> {
+  // get session data
+  const encryptedSessionData = cookies().get("session")?.value;
+  const sessionData: any = encryptedSessionData
+    ? JSON.parse(decrypt(encryptedSessionData))
+    : null;
+
+  // append required data to FormData
+  formData.append("userId", sessionData.user.id);
+  formData.append("author", sessionData.user.name);
+
+  // call `post` api
   const res = await fetch(`${process.env.URL}/api/post`, {
     method: "POST",
     cache: "no-cache",
     body: formData,
   });
 
+  // if respone not ok
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+    const error = await res.json();
+    // this will activate the closest `error.js` Error Boundary
+    throw new Error(error.message);
   }
 
-  const { insertedId } = await res.json();
-  redirect(`/post/${insertedId}`);
+  // handle on successfully data
+  const data = await res.json();
+  redirect(`/post/${data.id}`);
 }
 
 /**
- * Edit selected post
+ * Actions: `Edit` Post
  * @param formData - Request FormData
- * @returns - Redirect to post detail page
+ * @returns - Redirect to current post detail page
  */
 export async function editPost(
   id: string,
   formData: FormData,
   fileId: string
 ): Promise<Post> {
+  // get session data
+  const encryptedSessionData = cookies().get("session")?.value;
+  const sessionData: any = encryptedSessionData
+    ? JSON.parse(decrypt(encryptedSessionData))
+    : null;
+
+  // append required data to FormData
+  formData.append("userId", sessionData.user.id);
+  formData.append("author", sessionData.user.name);
+
+  // call `post` api
   const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
     method: "PATCH",
     cache: "no-cache",
     body: formData,
   });
 
+  // if respone not ok
   if (!res.ok) {
+    const error = await res.json();
     // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+    throw new Error(error.message);
   }
 
   // Delete previous cover image on drive
   await deleteFile(fileId);
 
+  // redirect to post detail page
   redirect(`/post/${id}`);
 }
 
-export async function getPosts(): Promise<Post[]> {
-  const res = await fetch(`${process.env.URL}/api/post`, {
-    method: "GET",
-    cache: "no-cache",
-  });
+export async function getPosts(page: number, limit: number): Promise<Post[]> {
+  console.log({ page, limit });
+  const res = await fetch(
+    `${process.env.URL}/api/post?page=${page}&limit=${limit}`,
+    {
+      method: "GET",
+      cache: "no-cache",
+    }
+  );
 
   if (!res.ok) {
+    const error = await res.json();
     // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+    throw new Error(error.message);
   }
 
   return res.json();
@@ -82,8 +109,9 @@ export async function getPost(id: string): Promise<Post> {
   });
 
   if (!res.ok) {
+    const error = await res.json();
     // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+    throw new Error(error.message);
   }
 
   return res.json();

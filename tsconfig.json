@@ -30,7 +30,8 @@
     "app/api/_lib/utils/controllers/error-controller.js",
     "app/api/_lib/models/user.js",
     "app/lib/crypto.js",
-    "app/lib/google-drive.js"
+    "app/lib/google-drive.js",
+    "app/lib/constants.js"
   ],
   "exclude": ["node_modules"]
 }

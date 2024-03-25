@@ -2,7 +2,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 const JoditEditor = dynamic(
   () => {
@@ -16,6 +16,16 @@ export default function useEditor(
   placeholder: string = ""
 ) {
   const editorRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!initialValue) return;
+    editorRef.current = initialValue;
+  }, [initialValue]);
+
+  const getContent = useCallback(() => {
+    return editorRef.current;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorRef.current]);
 
   /** Handle editor onInit event */
   const onBlur = useCallback((newContent: string) => {
@@ -32,5 +42,5 @@ export default function useEditor(
     </>
   );
 
-  return { editorContent: editorRef.current, Editor };
+  return { getContent, Editor };
 }

@@ -49,7 +49,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   const { next } = useScreenPath();
   const { processImageData, ImagePreview, imageData, isClearedUploadProcced } =
     useImageUpload(coverImgFileId);
-  const { editorContent, Editor } = useEditor(content);
+  const { getContent, Editor } = useEditor(content);
 
   const {
     handleSubmit,
@@ -77,31 +77,37 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   }, [cloudImg, localImage]);
 
   /** Hanlde submit form */
-  const onSubmit: SubmitHandler<FormDataProps> = (data) => {
-    const formData = new FormData();
+  const onSubmit: SubmitHandler<FormDataProps> = useCallback(
+    (data) => {
+      const formData = new FormData();
+      const editorContent = getContent();
 
-    // Process when editor has content.
-    if (editorContent) {
-      formData.append("title", data.title);
-      formData.append("coverImg", imageData as Blob);
-      formData.append("content", editorContent);
+      // Process when editor has content.
+      if (editorContent) {
+        formData.append("title", data.title);
+        formData.append("coverImg", imageData as Blob);
+        formData.append("content", editorContent);
 
-      // Call `editPost` action
-      editPost(_id, formData, coverImgFileId);
-    }
-    // Set `MovingPage` loading to true
-    setIsMoveNext(true);
-  };
+        // Call `editPost` action
+        editPost(_id, formData, coverImgFileId);
+        // Set `MovingPage` loading to true
+        setIsMoveNext(true);
+      }
+    },
+    [_id, coverImgFileId, getContent, imageData]
+  );
 
   /** Handle post preview event */
   const onPreview = useCallback(() => {
     const values = getValues();
+    const editorContent = getContent();
+    // Set preview value
     setPreviewData({
       title: values.title,
       cover: imageData ? (URL.createObjectURL(imageData) as string) : "",
       content: editorContent ? editorContent : content,
     });
-  }, [getValues, imageData, editorContent, content]);
+  }, [getValues, getContent, imageData, , content]);
 
   /** Hanlde process image data with url */
   const onBlurCoverImgInput = useCallback(

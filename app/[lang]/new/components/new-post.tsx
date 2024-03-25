@@ -39,7 +39,7 @@ const NewPost: FC = () => {
   const { next } = useScreenPath();
   const { processImageData, ImagePreview, imageData, isClearedUploadProcced } =
     useImageUpload();
-  const { editorContent, Editor } = useEditor("", d("editor.placeholder"));
+  const { getContent, Editor } = useEditor("", d("editor.placeholder"));
 
   const {
     handleSubmit,
@@ -63,33 +63,37 @@ const NewPost: FC = () => {
   }, [cloudImg, localImage]);
 
   /** Hanlde submit form */
-  const onSubmit: SubmitHandler<FormDataProps> = async (data) => {
-    const formData = new FormData();
+  const onSubmit: SubmitHandler<FormDataProps> = useCallback(
+    async (data) => {
+      const formData = new FormData();
+      const editorContent = getContent();
 
-    // Process when editor has content.
-    if (editorContent) {
-      formData.append("title", data.title);
-      formData.append("coverImg", imageData as Blob);
-      formData.append("content", editorContent);
+      // Process when editor has content.
+      if (editorContent) {
+        formData.append("title", data.title);
+        formData.append("coverImg", imageData as Blob);
+        formData.append("content", editorContent);
 
-      // Call `createPost` action
-      createPost(formData);
-    }
-    // Set `MovingPage` loading to true
-    setIsMoveNext(true);
-  };
+        // Call `createPost` action
+        createPost(formData);
+        // Set `MovingPage` loading to true
+        setIsMoveNext(true);
+      }
+    },
+    [getContent, imageData]
+  );
 
   /** Handle post preview event */
   const onPreview = useCallback(() => {
     const values = getValues();
-
+    const editorContent = getContent();
     // Set preview value
     setPreviewData({
       title: values.title,
       cover: imageData ? (URL.createObjectURL(imageData) as string) : "",
       content: editorContent ? editorContent : "",
     });
-  }, [getValues, imageData, editorContent]);
+  }, [getValues, getContent, imageData]);
 
   /** Hanlde process image data with url */
   const onBlurCoverImgInput = useCallback(

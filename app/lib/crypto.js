@@ -7,11 +7,15 @@ import * as crypto from "node:crypto";
 const createCipherIvObj = () => {
   // encryption algorithm
   const algorithm = "aes-256-cbc";
+
+  // encryption key
   const key = crypto
     .createHash("sha256")
     .update(String(process.env.CRYPTO_SECRET))
     .digest("base64")
     .substring(0, 32);
+
+  // initialization vector
   const iv = crypto
     .createHash("sha256")
     .update(String(process.env.CRYPTO_SECRET))
