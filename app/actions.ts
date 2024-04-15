@@ -2,10 +2,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { deleteFile } from "./lib/google-drive";
 import { cookies } from "next/headers";
 import { CurrentUser, Post } from "@/app/lib/model";
 import { decrypt, encrypt } from "./lib/crypto";
+import { NextResponse } from "next/server";
 
 /**
  * Actions: `Create` Post
@@ -39,6 +41,7 @@ export async function createPost(formData: FormData): Promise<Post> {
 
   // handle on successfully data
   const data = await res.json();
+
   redirect(`/post/${data.id}`);
 }
 
@@ -80,6 +83,7 @@ export async function editPost(
   await deleteFile(fileId);
 
   // redirect to post detail page
+  revalidatePath(`/post/${id}`);
   redirect(`/post/${id}`);
 }
 
@@ -117,20 +121,23 @@ export async function getPost(id: string): Promise<Post> {
   return res.json();
 }
 
-export async function deletePost(id: string, fileId: string): Promise<Post> {
-  const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
-    method: "DELETE",
-    cache: "no-cache",
-  });
+export async function deletePost(id: string, fileId: string) {
+  const res = await fetch(
+    `${process.env.URL}/api/post?id=${id}&fileId=${fileId}`,
+    {
+      method: "DELETE",
+      cache: "no-cache",
+    }
+  );
 
   if (!res.ok) {
+    const error = await res.json();
     // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+    throw new Error(error.message);
   }
 
-  await deleteFile(fileId);
-
-  redirect(`/`);
+  revalidatePath("/");
+  redirect("/");
 }
 
 export async function getSearchPosts(searchTerm: string): Promise<Post[]> {
@@ -188,7 +195,10 @@ export async function fetchImage(url: string) {
  * @param formData - Request FormData
  * @returns - Redirect to main page
  */
-export async function login(formData: FormData): Promise<CurrentUser> {
+export async function login(
+  formData: FormData,
+  prevLink: string | null
+): Promise<CurrentUser> {
   const res = await fetch(`${process.env.URL}/api/auth`, {
     method: "POST",
     cache: "no-cache",
@@ -217,8 +227,17 @@ export async function login(formData: FormData): Promise<CurrentUser> {
     path: "/",
   });
 
-  /** Return to the main page */
-  redirect(`/`);
+  cookies().set("isSignedIn", "1", {
+    maxAge: 60 * 60 * 24 * 7, // One week
+  });
+
+  /** Return to the previous screen */
+  if (prevLink) {
+    redirect(prevLink);
+  } else {
+    // Or redirect to main page
+    redirect("/");
+  }
 }
 
 /**
@@ -226,9 +245,24 @@ export async function login(formData: FormData): Promise<CurrentUser> {
  * @returns - Redirect to main page
  */
 export async function logout(): Promise<any> {
-  /** Clear session cookie */
-  cookies().delete("session");
+  const res = await fetch(`${process.env.URL}/api/auth`, {
+    method: "GET",
+    cache: "no-cache",
+  });
 
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data");
+  }
+
+  // cookies().set("session", "", {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  //   maxAge: -1,
+  //   path: "/",
+  // });
+
+  cookies().delete("session");
   /** Return to the main page */
-  redirect(`/`);
+  return res.json();
 }

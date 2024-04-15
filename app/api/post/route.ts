@@ -3,7 +3,7 @@
 import { ObjectId } from "mongodb";
 import connect, { mongooseConnectState } from "@/app/lib/_mongodb";
 import clientPromise from "@/app/lib/mongodb";
-import { fileUpload } from "@/app/lib/google-drive";
+import { deleteFile, fileUpload } from "@/app/lib/google-drive";
 import { blodToReadable } from "@/app/lib/utils";
 import Post from "../_lib/models/post";
 import handleErrors from "../_lib/utils/error-handler";
@@ -158,15 +158,15 @@ export async function PATCH(request: Request) {
  */
 export async function DELETE(request: Request) {
   try {
-    /** Connect to database */
-    const client = await clientPromise;
-    const db = client.db(
-      process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
-    );
+    /** connect to database */
+    if (mongooseConnectState() === "disconnected") {
+      await connect();
+    }
 
     /** Get query params */
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
+    const fileId = url.searchParams.get("fileId");
 
     /** Check if post is exsiting */
     if (!id) {
@@ -174,13 +174,13 @@ export async function DELETE(request: Request) {
     }
 
     /** Delete post */
-    const post = await db.collection("posts").deleteOne({
-      _id: new ObjectId(id),
-    });
+    const post = await Post.findByIdAndDelete(id);
+
+    /** Delete image on google drive */
+    await deleteFile(fileId);
 
     return Response.json(post);
   } catch (error: Error | any) {
-    console.error(error);
-    throw new Error(error).message;
+    return handleErrors(error);
   }
 }

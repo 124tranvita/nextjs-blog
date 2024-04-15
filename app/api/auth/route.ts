@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import connect from "@/app/lib/_mongodb";
+import connect, { mongooseConnectState } from "@/app/lib/_mongodb";
 import User from "../_lib/models/user";
 import handleErrors from "../_lib/utils/error-handler";
 import AppError from "../_lib/utils/app-error";
@@ -14,7 +14,10 @@ import createSendToken from "../_lib/utils/jwt-handler";
 export async function POST(request: Request) {
   try {
     /** Connect to database */
-    await connect();
+    if (mongooseConnectState() === "disconnected") {
+      await connect();
+    }
+
     /** Get request body */
     const formData = await request.formData();
 
@@ -60,17 +63,11 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request) {
   try {
-    /** Connect to database */
-    await connect();
-
-    cookies().delete("jwt");
-    cookies().delete("currentUser");
-
     return Response.json(
       {
         status: "success",
       },
-      { status: 200 }
+      { status: 201 }
     );
   } catch (error: Error | any) {
     return handleErrors(error);

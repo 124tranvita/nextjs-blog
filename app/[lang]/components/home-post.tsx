@@ -4,7 +4,6 @@
 
 import { FC, useEffect, useState, useCallback, useRef, RefObject } from "react";
 import dynamic from "next/dynamic";
-import PostReact from "@/components/post/post-react";
 import { Article } from "@/components/common";
 import { Post } from "@/app/lib/model";
 import { LIMIT, PAGE_INIT } from "@/app/lib/constants";
@@ -12,7 +11,7 @@ import { LIMIT, PAGE_INIT } from "@/app/lib/constants";
 import {
   ContentLoading,
   HeaderLoading,
-  MorePosLoading,
+  MorePostLoading,
 } from "@/app/[lang]/loader";
 import { getPosts } from "@/app/actions";
 
@@ -58,13 +57,12 @@ const HomePost: FC<Props> = ({ initialPosts }) => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        console.log({ entry });
         if (entry.isIntersecting) {
           loadMorePosts();
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 1, rootMargin: "100px" }
+      { threshold: 1, rootMargin: "250px" }
     );
 
     const element = ref.current;
@@ -84,7 +82,6 @@ const HomePost: FC<Props> = ({ initialPosts }) => {
       {posts.length > 0 ? (
         posts.map((post) => (
           <Article key={post._id} isMoveNext={isMoveNext} ref={ref}>
-            <PostReact />
             <PostHeader
               _id={post._id}
               title={post.title}
@@ -104,7 +101,7 @@ const HomePost: FC<Props> = ({ initialPosts }) => {
       ) : (
         <></>
       )}
-      {isLoading && <MorePosLoading />}
+      {isLoading && <MorePostLoading />}
     </>
   );
 };

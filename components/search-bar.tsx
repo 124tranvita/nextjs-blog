@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, KeyboardEvent, useState } from "react";
 import { usePathname } from "next/navigation";
+import useDictionary from "@/hooks/useDictionary";
+import useScreenPath from "@/hooks/useScreenPath";
 import { SearchIcon } from "@/app/ui/icons";
 import { BasicInput } from "@/app/ui/inputs";
-import useDictionary from "@/app/hooks/useDictionary";
-import useScreenPath from "@/app/hooks/useScreenPath";
 
 export default function SearchBar() {
   const pathname = usePathname();

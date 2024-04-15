@@ -3,7 +3,7 @@
 import { Fragment, ReactNode, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Button } from "@/app/ui/button";
-import useDictionary from "@/app/hooks/useDictionary";
+import useDictionary from "@/hooks/useDictionary";
 
 type Props = {
   btnLabel: string;

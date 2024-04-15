@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { createMarkup, truncateText } from "@/app/lib/utils";
-import useDictionary from "@/app/hooks/useDictionary";
+import useDictionary from "@/hooks/useDictionary";
 import { joditPlaintextConverter } from "../jodit-editor";
 
 type Props = {

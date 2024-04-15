@@ -37,7 +37,7 @@ export default async function Page() {
         ) : (
           <></>
         )} */}
-        {sessionData && sessionData.user && <SideControl />}
+        {sessionData && sessionData.user && <SideControl mainPage />}
       </Main>
     </Suspense>
   );

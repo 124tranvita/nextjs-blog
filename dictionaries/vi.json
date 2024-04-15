@@ -6,7 +6,8 @@
     "create": "Tạo mới",
     "edit": "Chỉnh sửa",
     "delete": "Xóa",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "back": "Quay về"
   },
   "processing": "Đang xử lý...",
   "editor": {

@@ -8,6 +8,10 @@ import ScrollableDialog from "@/components/dialog/scrollable-dialog";
 import PostPreview from "@/components/post/post-preview";
 import FileSelector from "@/components/react-hook-form/file-selector";
 import { EditorContainer } from "@/components/common";
+import useDictionary from "@/hooks/useDictionary";
+import useScreenPath from "@/hooks/useScreenPath";
+import useImageUpload from "@/hooks/useImageUpload";
+import useEditor from "@/hooks/useEditor";
 import {
   PostPreview as PostPreviewType,
   initPostPreview,
@@ -15,10 +19,6 @@ import {
 import { createPost } from "@/app/actions";
 import { Button } from "@/app/ui/button";
 import * as Utils from "@/app/lib/utils";
-import useDictionary from "@/app/hooks/useDictionary";
-import useScreenPath from "@/app/hooks/useScreenPath";
-import useImageUpload from "@/app/hooks/useImageUpload";
-import useEditor from "@/app/hooks/useEditor";
 
 type FormDataProps = {
   title: string;

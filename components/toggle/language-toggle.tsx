@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import useDictionary from "@/app/hooks/useDictionary";
+import useDictionary from "@/hooks/useDictionary";
 
 export default function LanguageToggle() {
   const pathname = usePathname();
@@ -37,7 +37,7 @@ export default function LanguageToggle() {
     return (
       <Link href={standardizedPathname.replace(/^.{3}/g, "/en")}>
         <button className="mx-1 w-8 h-auto rounded-full p-1 text-slate-800 dark:text-slate-50 hover:bg-slate-800 hover:text-slate-50 duration-300">
-          <span>Vi</span>
+          <span className="font-semibold">Vi</span>
         </button>
       </Link>
     );
@@ -47,7 +47,7 @@ export default function LanguageToggle() {
     return (
       <Link href={standardizedPathname.replace(/^.{3}/g, "/vi")}>
         <button className="mx-1 w-8 h-auto rounded-full p-1 text-slate-800 dark:text-slate-50 hover:bg-slate-800 hover:text-slate-50 duration-300">
-          <span>En</span>
+          <span className="font-semibold">En</span>
         </button>
       </Link>
     );

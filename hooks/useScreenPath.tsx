@@ -1,4 +1,4 @@
-// app/hooks/useScreenPath.tsx
+// hooks/useScreenPath.tsx
 "use client";
 
 import { useCallback } from "react";
@@ -16,5 +16,9 @@ export default function useScreenPath() {
     [lang, router]
   );
 
-  return { next };
+  const back = useCallback(() => {
+    router.back();
+  }, [router]);
+
+  return { next, back };
 }

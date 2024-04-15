@@ -6,8 +6,9 @@ import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
 import { Post } from "@/app/lib/model";
 import { base64ToBlob, formatDate } from "@/app/lib/utils";
 import { downloadFile } from "@/app/lib/google-drive";
-import useDictionary from "@/app/hooks/useDictionary";
-import ImageLoadingSkelton from "../loading-skeleton/image-loading-skeleton";
+import useDictionary from "@/hooks/useDictionary";
+import ImageLoadingSkeleton from "../loading-skeleton/image-loading-skeleton";
+import PostReact from "./post-react";
 
 import noImagePlaceholder from "../../public/no-image-placeholder.webp";
 
@@ -50,14 +51,15 @@ export default function PostHeader({
   }, [coverImgFileId]);
 
   return (
-    <section className="w-full mb-8">
+    <section className="relative w-full">
+      <PostReact />
       {isLoading ? (
         <>
-          <ImageLoadingSkelton />
+          <ImageLoadingSkeleton />
         </>
       ) : (
         <Link href={`/${lang}/post/${_id}`} onClick={onClick}>
-          <div className="relative max-w-full mb-8 rounded-t-md overflow-hidden h-[512px]">
+          <div className="relative max-w-full mb-8 rounded-md overflow-hidden h-[312px] md:h-[412px] lg:h-[512px]">
             <Image
               src={createObjectURL}
               alt={`${title}_image`}
@@ -71,7 +73,7 @@ export default function PostHeader({
       <div className="lg:flex lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1">
           <Link href={`/${lang}/post/${_id}`}>
-            <h2 className="text-4xl font-bold mb-3 sm:leading-7 md:leading-9 text-gray-900 sm:text-3xl sm:tracking-tight dark:text-gray-100">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 sm:leading-7 md:leading-9 text-gray-900 sm:text-3xl sm:tracking-tight dark:text-gray-100">
               {title}
             </h2>
           </Link>

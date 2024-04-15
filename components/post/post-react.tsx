@@ -30,7 +30,7 @@ export default function PostReact() {
     setBookmarked(!bookmarked);
   }, [bookmarked]);
   return (
-    <div className="absolute top-0 left-0 px-2 w-12 h-[400px] mt-[56px] py-[2.5rem] bg-gray-900 bg-opacity-70 hover:bg-opacity-100 flex flex-col justify-between text-gray-500 z-10">
+    <div className="absolute top-0 left-0 px-2 w-12 h-[312px] lg:h-[400px]  md:mt-[56px] py-[2.5rem] rounded-s-md md:rounded-none bg-gray-900 bg-opacity-70 hover:bg-opacity-100 flex flex-col justify-between text-gray-500 z-10">
       <div className="flex flex-col items-center">
         {liked ? (
           <>

@@ -7,7 +7,8 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/20/solid";
 import SearchBar from "@/components/search-bar";
 import ThemeToggle from "@/components/toggle/theme-toggle";
 import LanguageToggle from "@/components/toggle/language-toggle";
-import useDictionary from "../hooks/useDictionary";
+import AuthToggle from "@/components/toggle/auth-toggle";
+import useDictionary from "@/hooks/useDictionary";
 
 type Props = {
   className: string;
@@ -69,6 +70,7 @@ export const Navbar: FC = () => {
               <div className="flex align-baseline items-center">
                 <ThemeToggle />
                 <LanguageToggle />
+                <AuthToggle />
                 {/* <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   <button
                     type="button"

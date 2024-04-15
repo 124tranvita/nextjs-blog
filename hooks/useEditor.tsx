@@ -1,4 +1,4 @@
-// app/hooks/useEditor.tsx
+// hooks/useEditor.tsx
 "use client";
 
 import dynamic from "next/dynamic";

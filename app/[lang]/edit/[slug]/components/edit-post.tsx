@@ -1,20 +1,17 @@
 // app/[lang]/edit/[slug]/components/edit-post.tsx
 "use client";
 
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useState,
-  useMemo,
-  useRef,
-} from "react";
+import React, { FC, useCallback, useEffect, useState, useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Input from "@/components/react-hook-form/input";
 import ScrollableDialog from "@/components/dialog/scrollable-dialog";
 import PostPreview from "@/components/post/post-preview";
 import FileSelector from "@/components/react-hook-form/file-selector";
 import { EditorContainer } from "@/components/common";
+import useScreenPath from "@/hooks/useScreenPath";
+import useDictionary from "@/hooks/useDictionary";
+import useImageUpload from "@/hooks/useImageUpload";
+import useEditor from "@/hooks/useEditor";
 import { editPost } from "@/app/actions";
 import { Button } from "@/app/ui/button";
 import {
@@ -23,10 +20,6 @@ import {
   initPostPreview,
 } from "@/app/lib/model";
 import * as Utils from "@/app/lib/utils";
-import useScreenPath from "@/app/hooks/useScreenPath";
-import useDictionary from "@/app/hooks/useDictionary";
-import useImageUpload from "@/app/hooks/useImageUpload";
-import useEditor from "@/app/hooks/useEditor";
 
 type FormDataProps = {
   title: string;

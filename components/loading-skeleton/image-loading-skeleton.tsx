@@ -1,7 +1,7 @@
-export default function ImageLoadingSkelton() {
+export default function ImageLoadingSkeleton() {
   return (
     <section>
-      <div className="relative max-w-full bg-slate-100 mb-8 rounded-t-md overflow-hidden h-[512px] dark:bg-slate-600">
+      <div className="relative max-w-full bg-slate-100 mb-8 rounded-t-md overflow-hidden h-[312px] md:h-[412px] lg:h-[512px] dark:bg-slate-600">
         <div className="absolute inset-0 flex flex-col justify-center text-center">
           <div role="status">
             <svg

@@ -2,8 +2,9 @@
 "use client";
 
 import { FC, useState } from "react";
-import useDictionary from "@/app/hooks/useDictionary";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
+import useDictionary from "@/hooks/useDictionary";
 import { login } from "@/app/actions";
 import Input from "@/components/react-hook-form/input";
 import { Button } from "@/app/ui/button";
@@ -19,6 +20,8 @@ type FormDataProps = {
 
 const Login: FC = () => {
   const { d } = useDictionary();
+  const searchParams = useSearchParams();
+  const prevLink = searchParams.get("prev");
   const [isMovingNext, setIsMovingNext] = useState(false);
   const {
     handleSubmit,
@@ -26,6 +29,7 @@ const Login: FC = () => {
     formState: { errors },
   } = useForm<FormDataProps>();
 
+  console.log(prevLink);
   /**
    * Handle submit login
    */
@@ -34,7 +38,8 @@ const Login: FC = () => {
 
     formData.append("email", data.email);
     formData.append("password", data.password);
-    login(formData);
+
+    login(formData, prevLink);
 
     setIsMovingNext(true);
   };

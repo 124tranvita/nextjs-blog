@@ -1,12 +1,12 @@
-// app/hooks/useUploadImage.tsx
+// hooks/useUploadImage.tsx
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { fetchImage } from "../actions";
+import { fetchImage } from "@/app/actions";
+import { downloadFile } from "@/app/lib/google-drive";
 import * as Utils from "@/app/lib/utils";
 import useUnchanged from "./useUnchanged";
 import * as ImagePreviewComponent from "@/components/image-preview";
-import { downloadFile } from "../lib/google-drive";
 
 export default function useImageUpload(googleFileId: string = "") {
   const { isUnChanged, setInitUnChangeValue } = useUnchanged();

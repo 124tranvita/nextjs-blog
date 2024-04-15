@@ -31,7 +31,7 @@
     "app/api/_lib/models/user.js",
     "app/lib/crypto.js",
     "app/lib/google-drive.js",
-    "app/lib/constants.js"
+    "app/lib/constants.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -28,7 +28,7 @@ export function NextPageLoading() {
   );
 }
 
-export function MorePosLoading() {
+export function MorePostLoading() {
   return (
     <>
       <MorePostLoadingSkeleton />

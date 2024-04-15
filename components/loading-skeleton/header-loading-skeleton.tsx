@@ -5,7 +5,7 @@ export default function HeaderLoadingSkeleton() {
     <div className="mb-8">
       <div
         role="status"
-        className="w-full flex items-center justify-center h-[512px] mb-8 bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700"
+        className="w-full flex items-center justify-center h-[312px] md:h-[412px] lg:h-[512px] mb-8 bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700"
       >
         <svg
           className="w-10 h-10 text-gray-200 dark:text-gray-600"

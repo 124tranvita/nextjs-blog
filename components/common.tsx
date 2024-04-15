@@ -16,11 +16,9 @@ type Ref = ForwardedRef<HTMLDivElement>;
 
 export const Main: FC<Props> = ({ children }) => {
   return (
-    <>
-      <section className="h-screen relative md:mt-0 mt-[75px] overflow-y-scroll">
-        {children}
-      </section>
-    </>
+    <section className="relative lg:mt-[75px] overflow-y-scroll">
+      {children}
+    </section>
   );
 };
 
@@ -29,7 +27,10 @@ export const Article = forwardRef(function (props: Props, ref: Ref) {
   return (
     <>
       {isMoveNext && <MovePageLoadingSkeleton />}
-      <section className="relative max-w-screen-md mx-auto my-12" ref={ref}>
+      <section
+        className="relative max-w-screen-md mx-auto py-8 pb-0 px-4 md:px-8"
+        ref={ref}
+      >
         {children}
       </section>
     </>

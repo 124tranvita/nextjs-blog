@@ -2,7 +2,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import PostReact from "@/components/post/post-react";
 import { Post } from "@/app/lib/model";
 import { Article } from "@/components/common";
 import { ContentLoading, HeaderLoading } from "@/app/[lang]/loader";
@@ -27,7 +26,6 @@ export default function PostDetail({ post }: Props) {
 
   return (
     <Article>
-      <PostReact />
       <PostHeader
         _id={_id}
         title={title}

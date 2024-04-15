@@ -7,20 +7,30 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import { FloatIconWithTooltip } from "@/app/ui/button";
-import useDictionary from "@/app/hooks/useDictionary";
-import useScreenPath from "@/app/hooks/useScreenPath";
+import useDictionary from "@/hooks/useDictionary";
+import useScreenPath from "@/hooks/useScreenPath";
 import { deletePost, logout } from "@/app/actions";
 import { NextPageLoading } from "@/app/[lang]/loader";
+import useCookies from "@/hooks/useCookies";
+import { Options } from "@/app/lib/constants";
 
 type Props = {
   id?: string;
   coverImgFileId?: string;
+  mainPage?: boolean;
 };
 
-export default function SideControl({ id, coverImgFileId }: Props) {
+export default function SideControl({
+  id,
+  coverImgFileId,
+  mainPage = false,
+}: Props) {
   const { d } = useDictionary();
-  const { next } = useScreenPath();
+  const { next, back } = useScreenPath();
+  const { getCookie } = useCookies();
   const [isMoveNext, setIsMoveNext] = useState(false);
+
+  const isSignedIn = getCookie("isSignedIn");
 
   const handleCreate = useCallback(() => {
     setIsMoveNext(true);
@@ -37,15 +47,38 @@ export default function SideControl({ id, coverImgFileId }: Props) {
   const handleDelete = useCallback(() => {
     if (id && confirm("Are you sure?") === true) {
       deletePost(id, coverImgFileId ? coverImgFileId : "");
-      next(`/`);
     }
     return;
-  }, [id, coverImgFileId, next]);
+  }, [id, coverImgFileId]);
 
-  const handleLogout = useCallback(async () => {
+  const handleback = useCallback(async () => {
     setIsMoveNext(true);
-    await logout();
-  }, []);
+    back();
+  }, [back]);
+
+  if (!isSignedIn || isSignedIn === Options.No) {
+    return (
+      <>
+        {!mainPage && (
+          <div className="fixed right-2 bottom-0 md:right-16 flex flex-col">
+            <FloatIconWithTooltip
+              icon={
+                <>
+                  <ArrowUturnRightIcon
+                    className="m-auto h-5 w-5 flex-shrink-0 text-white"
+                    aria-hidden="true"
+                  />
+                </>
+              }
+              tooltip={d("tooltips.back")}
+              onClick={handleback}
+              variant="primary"
+            />
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
     <>
@@ -102,21 +135,23 @@ export default function SideControl({ id, coverImgFileId }: Props) {
           </div>
         </>
       )}
-      <div className="fixed right-2 bottom-0 md:right-16 flex flex-col">
-        <FloatIconWithTooltip
-          icon={
-            <>
-              <ArrowUturnRightIcon
-                className="m-auto h-5 w-5 flex-shrink-0 text-white"
-                aria-hidden="true"
-              />
-            </>
-          }
-          tooltip={d("tooltips.logout")}
-          onClick={handleLogout}
-          variant="danger"
-        />
-      </div>
+      {!mainPage && (
+        <div className="fixed right-2 bottom-0 md:right-16 flex flex-col">
+          <FloatIconWithTooltip
+            icon={
+              <>
+                <ArrowUturnRightIcon
+                  className="m-auto h-5 w-5 flex-shrink-0 text-white"
+                  aria-hidden="true"
+                />
+              </>
+            }
+            tooltip={d("tooltips.back")}
+            onClick={handleback}
+            variant="primary"
+          />
+        </div>
+      )}
     </>
   );
 }
