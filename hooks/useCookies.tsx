@@ -42,8 +42,6 @@ export default function useCookies() {
       // Get cookie string
       const cookieString = cookieSerialize(key, value, options);
 
-      console.log({ cookieString });
-
       // Set cookie
       document.cookie = cookieString;
     },

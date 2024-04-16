@@ -7,7 +7,6 @@ import { deleteFile } from "./lib/google-drive";
 import { cookies } from "next/headers";
 import { CurrentUser, Post } from "@/app/lib/model";
 import { decrypt, encrypt } from "./lib/crypto";
-import { NextResponse } from "next/server";
 
 /**
  * Actions: `Create` Post
@@ -15,34 +14,35 @@ import { NextResponse } from "next/server";
  * @returns - Redirect to post detail page
  */
 export async function createPost(formData: FormData): Promise<Post> {
-  // get session data
+  // Get current locale
+  const lang = cookies().get("lang")?.value;
+  // Get session data
   const encryptedSessionData = cookies().get("session")?.value;
   const sessionData: any = encryptedSessionData
     ? JSON.parse(decrypt(encryptedSessionData))
     : null;
 
-  // append required data to FormData
+  // Append required data to FormData
   formData.append("userId", sessionData.user.id);
   formData.append("author", sessionData.user.name);
 
-  // call `post` api
+  // Call `post` api
   const res = await fetch(`${process.env.URL}/api/post`, {
     method: "POST",
     cache: "no-cache",
     body: formData,
   });
 
-  // if respone not ok
+  // Ff respone not ok
   if (!res.ok) {
     const error = await res.json();
-    // this will activate the closest `error.js` Error Boundary
+    // This will activate the closest `error.js` Error Boundary
     throw new Error(error.message);
   }
 
-  // handle on successfully data
+  // Handle on successfully data
   const data = await res.json();
-
-  redirect(`/post/${data.id}`);
+  redirect(`${process.env.URL}/post/${data.id}?lang=${lang}`);
 }
 
 /**
@@ -55,17 +55,19 @@ export async function editPost(
   formData: FormData,
   fileId: string
 ): Promise<Post> {
-  // get session data
+  // Get current locale
+  const lang = cookies().get("lang")?.value;
+  // Get session data
   const encryptedSessionData = cookies().get("session")?.value;
   const sessionData: any = encryptedSessionData
     ? JSON.parse(decrypt(encryptedSessionData))
     : null;
 
-  // append required data to FormData
+  // Append required data to FormData
   formData.append("userId", sessionData.user.id);
   formData.append("author", sessionData.user.name);
 
-  // call `post` api
+  // Call `post` api
   const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
     method: "PATCH",
     cache: "no-cache",
@@ -82,9 +84,8 @@ export async function editPost(
   // Delete previous cover image on drive
   await deleteFile(fileId);
 
-  // redirect to post detail page
-  revalidatePath(`/post/${id}`);
-  redirect(`/post/${id}`);
+  // Redirect to post detail page
+  redirect(`${process.env.URL}/post/${id}?lang=${lang}`);
 }
 
 export async function getPosts(page: number, limit: number): Promise<Post[]> {
@@ -136,8 +137,7 @@ export async function deletePost(id: string, fileId: string) {
     throw new Error(error.message);
   }
 
-  revalidatePath("/");
-  redirect("/");
+  redirect(`${process.env.URL}/`);
 }
 
 export async function getSearchPosts(searchTerm: string): Promise<Post[]> {
@@ -199,6 +199,10 @@ export async function login(
   formData: FormData,
   prevLink: string | null
 ): Promise<CurrentUser> {
+  // Get current locale
+  const lang = cookies().get("lang")?.value;
+
+  // Call `auth` api
   const res = await fetch(`${process.env.URL}/api/auth`, {
     method: "POST",
     cache: "no-cache",
@@ -233,10 +237,10 @@ export async function login(
 
   /** Return to the previous screen */
   if (prevLink) {
-    redirect(prevLink);
+    redirect(`${process.env.URL}/${prevLink}?lang=${lang}`);
   } else {
     // Or redirect to main page
-    redirect("/");
+    redirect(`${process.env.URL}/?lang=${lang}`);
   }
 }
 
@@ -254,13 +258,6 @@ export async function logout(): Promise<any> {
     // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
   }
-
-  // cookies().set("session", "", {
-  //   httpOnly: true,
-  //   secure: process.env.NODE_ENV === "production",
-  //   maxAge: -1,
-  //   path: "/",
-  // });
 
   cookies().delete("session");
   /** Return to the main page */

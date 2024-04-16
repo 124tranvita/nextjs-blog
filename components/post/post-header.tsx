@@ -11,6 +11,7 @@ import ImageLoadingSkeleton from "../loading-skeleton/image-loading-skeleton";
 import PostReact from "./post-react";
 
 import noImagePlaceholder from "../../public/no-image-placeholder.webp";
+import useScreenPath from "@/hooks/useScreenPath";
 
 type Props = Pick<
   Post,
@@ -27,8 +28,13 @@ export default function PostHeader({
   onClick,
 }: Props) {
   const { lang } = useDictionary();
+  const { nextPathName } = useScreenPath();
   const [coverImg, setCoverImg] = useState<Blob | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const pathName = useMemo(() => {
+    return nextPathName(`/post/${_id}`);
+  }, [_id, nextPathName]);
 
   /** Create object url */
   const createObjectURL = useMemo(() => {
@@ -58,7 +64,7 @@ export default function PostHeader({
           <ImageLoadingSkeleton />
         </>
       ) : (
-        <Link href={`/${lang}/post/${_id}`} onClick={onClick}>
+        <Link href={pathName} onClick={onClick}>
           <div className="relative max-w-full mb-8 rounded-md overflow-hidden h-[312px] md:h-[412px] lg:h-[512px]">
             <Image
               src={createObjectURL}
@@ -72,7 +78,7 @@ export default function PostHeader({
       )}
       <div className="lg:flex lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1">
-          <Link href={`/${lang}/post/${_id}`}>
+          <Link href={pathName}>
             <h2 className="text-3xl md:text-4xl font-bold mb-3 sm:leading-7 md:leading-9 text-gray-900 sm:text-3xl sm:tracking-tight dark:text-gray-100">
               {title}
             </h2>

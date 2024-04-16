@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { createMarkup, truncateText } from "@/app/lib/utils";
 import useDictionary from "@/hooks/useDictionary";
+import useScreenPath from "@/hooks/useScreenPath";
 import { joditPlaintextConverter } from "../jodit-editor";
 
 type Props = {
@@ -13,11 +14,18 @@ type Props = {
 
 export default function PostSummary({ id, content, onClick }: Props) {
   const { d, lang } = useDictionary();
+  const { nextPathName } = useScreenPath();
 
+  /** Get plaintext from html static content */
   const plaintext = useMemo(() => {
     const clearHtmlTags = joditPlaintextConverter(content);
     return truncateText(joditPlaintextConverter(clearHtmlTags), 250);
   }, [content]);
+
+  /** Get transit pathname */
+  const pathName = useMemo(() => {
+    return nextPathName(`/post/${id}`);
+  }, [id, nextPathName]);
 
   return (
     <>
@@ -28,7 +36,7 @@ export default function PostSummary({ id, content, onClick }: Props) {
             dangerouslySetInnerHTML={createMarkup(plaintext)}
           />
         </div>
-        <Link href={`/${lang}/post/${id}`} onClick={onClick}>
+        <Link href={pathName} onClick={onClick}>
           <p className="font-normal text-center text-gray-500 dark:text-gray-400 underline underline-offset-2">
             {d("readMore")}
           </p>

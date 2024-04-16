@@ -11,14 +11,25 @@ export default function useScreenPath() {
 
   const next = useCallback(
     (path: string) => {
-      router.push(`/${lang}${path}`);
+      router.push(`${path}?lang=${lang}`);
     },
-    [lang, router]
+    [router, lang]
   );
 
   const back = useCallback(() => {
     router.back();
   }, [router]);
 
-  return { next, back };
+  const nextPathName = useCallback(
+    (pathName: string, quertOpts?: string) => {
+      if (quertOpts) {
+        return `${pathName}?lang=${lang}${quertOpts}`;
+      }
+
+      return `${pathName}?lang=${lang}`;
+    },
+    [lang]
+  );
+
+  return { next, back, nextPathName };
 }

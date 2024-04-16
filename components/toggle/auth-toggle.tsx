@@ -1,18 +1,18 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { logout } from "@/app/actions";
 import useCookies from "@/hooks/useCookies";
-import useDictionary from "@/hooks/useDictionary";
 import { Options } from "@/app/lib/constants";
 import {
   ArrowLeftStartOnRectangleIcon,
   ArrowRightEndOnRectangleIcon,
 } from "@heroicons/react/20/solid";
+import useScreenPath from "@/hooks/useScreenPath";
 
 export default function AuthToggle() {
   const { getCookie, deleteCookie } = useCookies();
-  const { lang } = useDictionary();
+  const { nextPathName } = useScreenPath();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,8 +25,6 @@ export default function AuthToggle() {
     setIsLoading(true);
     deleteCookie("isSignedIn");
     const res = await logout();
-
-    console.log({ res });
 
     if (res.status === "success") {
       setIsLoading(false);
@@ -61,7 +59,7 @@ export default function AuthToggle() {
 
   if (!isSignedIn || isSignedIn === Options.No) {
     return (
-      <Link href={`/${lang}/login?prev=${pathname}`}>
+      <Link href={nextPathName("login", `&prev=${pathname}`)}>
         <button className="mx-1 w-8 h-auto rounded-full p-[5px] text-slate-800 dark:text-slate-50 hover:bg-slate-800 hover:text-slate-50 duration-300">
           <ArrowLeftStartOnRectangleIcon />
         </button>

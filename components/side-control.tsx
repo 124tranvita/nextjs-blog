@@ -10,7 +10,7 @@ import { FloatIconWithTooltip } from "@/app/ui/button";
 import useDictionary from "@/hooks/useDictionary";
 import useScreenPath from "@/hooks/useScreenPath";
 import { deletePost, logout } from "@/app/actions";
-import { NextPageLoading } from "@/app/[lang]/loader";
+import { NextPageLoading } from "@/app/loader";
 import useCookies from "@/hooks/useCookies";
 import { Options } from "@/app/lib/constants";
 

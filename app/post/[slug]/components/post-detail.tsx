@@ -4,7 +4,7 @@
 import dynamic from "next/dynamic";
 import { Post } from "@/app/lib/model";
 import { Article } from "@/components/common";
-import { ContentLoading, HeaderLoading } from "@/app/[lang]/loader";
+import { ContentLoading, HeaderLoading } from "@/app/loader";
 
 const PostHeader = dynamic(() => import("@/components/post/post-header"), {
   loading: () => <HeaderLoading />,

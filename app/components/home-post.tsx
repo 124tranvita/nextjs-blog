@@ -8,11 +8,7 @@ import { Article } from "@/components/common";
 import { Post } from "@/app/lib/model";
 import { LIMIT, PAGE_INIT } from "@/app/lib/constants";
 
-import {
-  ContentLoading,
-  HeaderLoading,
-  MorePostLoading,
-} from "@/app/[lang]/loader";
+import { ContentLoading, HeaderLoading, MorePostLoading } from "@/app/loader";
 import { getPosts } from "@/app/actions";
 
 const PostHeader = dynamic(() => import("@/components/post/post-header"), {

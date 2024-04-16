@@ -19,7 +19,7 @@ export const BrandName: FC<Props> = ({ className }) => {
   return (
     <>
       <div className={className}>
-        <a href={`/${lang}`}>
+        <a href={`/?lang=${lang}`}>
           <h1 className="text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white">
             <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">
               My

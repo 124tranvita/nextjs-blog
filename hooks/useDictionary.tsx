@@ -1,15 +1,17 @@
 // hooks/useDictionary.tsx
 "use client";
 
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Locale, i18n } from "@/i18n";
-import { getPathValue, hasPath } from "./_lib/utils";
 import { getDictionary } from "@/app/dictionaries";
+import { getPathValue, hasPath } from "./_lib/utils";
+import useCookies from "./useCookies";
 
 export default function useDictionary() {
-  const params = useParams();
-  const lang = params.lang as Locale;
+  const searchParams = useSearchParams();
+  const lang = searchParams.get("lang") as Locale;
+  const { setCookie } = useCookies();
 
   const [dict, setDict] = useState<Awaited<ReturnType<typeof getDictionary>>>();
 
@@ -17,10 +19,13 @@ export default function useDictionary() {
     const getDict = async (lang: Locale) => {
       const dict = await getDictionary(lang);
       setDict(dict);
+
+      // set lang to cookie
+      setCookie("lang", lang, { path: "/" });
     };
 
     getDict(lang ? lang : i18n.defaultLocale);
-  }, [lang]);
+  }, [lang, setCookie]);
 
   const d = useCallback(
     (key: string) => {
