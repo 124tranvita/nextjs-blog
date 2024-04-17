@@ -1,10 +1,8 @@
 // app/api/post/route.ts
 
-import { ObjectId } from "mongodb";
-import connect, { mongooseConnectState } from "@/app/lib/_mongodb";
-import clientPromise from "@/app/lib/mongodb";
-import { deleteFile, fileUpload } from "@/app/lib/google-drive";
-import { blodToReadable } from "@/app/lib/utils";
+import connect, { mongooseConnectState } from "@/common/lib/_mongodb";
+import { deleteFile, fileUpload } from "@/common/lib/google-drive";
+import { blodToReadable } from "@/common/lib/utils";
 import Post from "../_lib/models/post";
 import handleErrors from "../_lib/utils/error-handler";
 import AppError from "../_lib/utils/app-error";

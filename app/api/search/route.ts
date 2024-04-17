@@ -1,4 +1,4 @@
-import clientPromise from "@/app/lib/mongodb";
+import clientPromise from "@/common/lib/mongodb";
 
 export const dynamic = "force-dynamic"; // defaults to auto
 export async function GET(request: Request) {

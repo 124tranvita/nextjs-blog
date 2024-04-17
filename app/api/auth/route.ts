@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import connect, { mongooseConnectState } from "@/app/lib/_mongodb";
+import connect, { mongooseConnectState } from "@/common/lib/_mongodb";
 import User from "../_lib/models/user";
 import handleErrors from "../_lib/utils/error-handler";
 import AppError from "../_lib/utils/app-error";

@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { i18n } from "./i18n";
-import { Options, Routes } from "./app/lib/constants";
+import { Options, Routes } from "./common/lib/constants";
 
 const locales = i18n.locales;
 const defaultLocale = i18n.defaultLocale;
 
+const isValidLocale = (lang: string) => {
+  const found = i18n.locales.find((locale) => locale === lang);
+
+  return Boolean(found);
+};
+
 export function middleware(request: NextRequest) {
+  /** Get `lang` from cookies */
   const lang = request.nextUrl.searchParams.get("lang");
 
   /** Get `isSignedIn` from cookies */
@@ -14,13 +21,10 @@ export function middleware(request: NextRequest) {
 
   /** Get pathname */
   const { pathname } = request.nextUrl;
-  // const pathnameHasLocale = locales.some(
-  //   (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  // );
 
   console.log({ pathname, lang });
 
-  /** Access to public routes */
+  /** Check if public route */
   const isProtectedRoute = Routes.Protected.some((route) =>
     pathname.startsWith(route)
   );
@@ -41,20 +45,16 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  if (!lang) {
-    console.log("ADD LANG");
+  /** Access to auth route when already singed in */
+  if (pathname.startsWith("/login") && isSignedIn === Options.Yes) {
+    // redirect to `/` if user already logged in
+    return NextResponse.redirect(new URL(`/?lang=${lang}`, request.url));
+  }
+
+  if (!lang || !isValidLocale(lang)) {
     request.nextUrl.searchParams.set("lang", defaultLocale);
     return NextResponse.redirect(request.nextUrl);
   }
-  // /** Access to auth routes */
-  // if (
-  //   Routes.Auth.includes(request.nextUrl.pathname.slice(3)) &&
-  //   isSignedIn === Options.Yes
-  // ) {
-  //   console.log("AUth route logged in");
-  //   // redirect to `/` if user already logged in
-  //   return NextResponse.redirect(new URL(`/?lang=${lang}`, request.url));
-  // }
 
   return;
 }

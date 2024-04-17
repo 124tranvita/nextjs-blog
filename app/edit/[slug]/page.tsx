@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { getPost } from "@/app/actions";
+import { getPost } from "@/actions";
 import { Main } from "@/components/common";
 import EditPost from "./components/edit-post";
 import { NextPageLoading } from "@/app/loader";

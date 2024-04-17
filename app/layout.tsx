@@ -1,8 +1,11 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { NavigationEvents } from "@/common/components/navigation-events";
+import { Navbar } from "@/common/ui/navbar";
+import Providers from "../providers";
+
 import "./globals.css";
-import Providers from "./providers";
-import { Navbar } from "@/app/ui/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +27,9 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           {children}
+          <Suspense fallback={null}>
+            <NavigationEvents />
+          </Suspense>
         </Providers>
       </body>
     </html>

@@ -2,9 +2,8 @@
 
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { Main } from "@/components/common";
-import { NextPageLoading } from "../loader";
-import Login from "./components/log-in";
+import Login from "@/common/ui/login/log-in";
+import { Loader } from "../loader";
 
 // Static metadata
 export const metadata: Metadata = {
@@ -14,10 +13,8 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <Suspense fallback={<NextPageLoading />}>
-      <Main>
-        <Login />
-      </Main>
+    <Suspense fallback={<Loader />}>
+      <Login />
     </Suspense>
   );
 }

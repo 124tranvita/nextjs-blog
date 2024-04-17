@@ -1,4 +1,4 @@
-import connect from "@/app/lib/_mongodb";
+import connect from "@/common/lib/_mongodb";
 import User from "../_lib/models/user";
 import handleErrors from "../_lib/utils/error-handler";
 

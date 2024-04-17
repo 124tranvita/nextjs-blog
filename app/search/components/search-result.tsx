@@ -2,9 +2,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSearchPosts } from "@/app/actions";
-import HomePost from "@/app/components/home-post";
-import { Post } from "@/app/lib/model";
+import { getSearchPosts } from "@/actions";
+import HomePost from "@/app/home-post";
+import { Post } from "@/common/lib/model";
 import { useSearchParams } from "next/navigation";
 import { Article } from "@/components/common";
 import { ContentLoading } from "../../loader";

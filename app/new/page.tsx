@@ -1,9 +1,8 @@
-// app/[lang]/new/page.tsx
+// app/new/page.tsx
 import { Suspense } from "react";
 import { Metadata } from "next";
-import NewPost from "./components/new-post";
-import { Main } from "@/components/common";
-import { NextPageLoading } from "../loader";
+import NewPost from "@/common/ui/new/new";
+import { Loader } from "../loader";
 
 // Static metadata
 export const metadata: Metadata = {
@@ -13,10 +12,8 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <Suspense fallback={<NextPageLoading />}>
-      <Main>
-        <NewPost />
-      </Main>
+    <Suspense fallback={<Loader />}>
+      <NewPost />
     </Suspense>
   );
 }

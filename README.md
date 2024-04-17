@@ -1,3 +1,8 @@
+To-do list:
+
+1. Global loader: https://dev.to/mayankvishwakarmadev/using-the-react-context-api-to-create-a-loader-component-3le4
+2. Abort controller
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

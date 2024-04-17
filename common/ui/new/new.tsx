@@ -1,25 +1,30 @@
-// app/[lang]/edit/[slug]/components/edit-post.tsx
+// app/[lang]/new/components/new-post.tsx
 "use client";
 
-import React, { FC, useCallback, useEffect, useState, useMemo } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Input from "@/components/react-hook-form/input";
-import ScrollableDialog from "@/components/dialog/scrollable-dialog";
-import PostPreview from "@/components/post/post-preview";
-import FileSelector from "@/components/react-hook-form/file-selector";
-import { EditorContainer } from "@/components/common";
-import useScreenPath from "@/common/hooks/useScreenPath";
+// import Input from "@/components/react-hook-form/input";
+// import ScrollableDialog from "@/components/dialog/scrollable-dialog";
+// import PostPreview from "@/components/post/post-preview";
+// import FileSelector from "@/components/react-hook-form/file-selector";
+import { EditorContainer } from "../../components/common/container";
 import useDictionary from "@/common/hooks/useDictionary";
+import useScreenPath from "@/common/hooks/useScreenPath";
 import useImageUpload from "@/common/hooks/useImageUpload";
 import useEditor from "@/common/hooks/useEditor";
-import { editPost } from "@/actions";
-import { Button } from "@/common/ui/button";
 import {
-  Post,
   PostPreview as PostPreviewType,
   initPostPreview,
 } from "@/common/lib/model";
+import { createPost } from "@/actions";
+
 import * as Utils from "@/common/lib/utils";
+import useLoader from "@/common/hooks/useLoader";
+import { Button } from "@/common/components/common/button";
+import Input from "@/common/components/react-hook-form/input";
+import FileSelector from "@/common/components/react-hook-form/file-selector";
+import ScrollableDialog from "@/common/components/dialog/scrollable-dialog";
+import PostPreview from "@/common/components/post-preview";
 
 type FormDataProps = {
   title: string;
@@ -28,21 +33,19 @@ type FormDataProps = {
 };
 
 /**
- * Render the edit post screen
+ * Render the create new post screen
  * @returns - Component
  */
-const EditPost: FC<{ post: Post }> = ({ post }) => {
-  const { _id, title, coverImgFileId, content } = post;
-
+const NewPost: FC = () => {
   const [previewData, setPreviewData] =
     useState<PostPreviewType>(initPostPreview);
-  const [isMoveNext, setIsMoveNext] = useState(false);
 
   const { d } = useDictionary();
   const { next } = useScreenPath();
+  const { showLoader } = useLoader();
   const { processImageData, ImagePreview, imageData, isClearedUploadProcced } =
-    useImageUpload(coverImgFileId);
-  const { getContent, Editor } = useEditor(content);
+    useImageUpload();
+  const { getContent, Editor } = useEditor("", d("editor.placeholder"));
 
   const {
     handleSubmit,
@@ -53,11 +56,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
     clearErrors,
     watch,
     formState: { errors },
-  } = useForm<FormDataProps>({
-    defaultValues: {
-      title,
-    },
-  });
+  } = useForm<FormDataProps>();
   const [cloudImg] = watch(["cloudImg"]);
   const [localImage] = watch(["localImage"]);
 
@@ -71,7 +70,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
 
   /** Hanlde submit form */
   const onSubmit: SubmitHandler<FormDataProps> = useCallback(
-    (data) => {
+    async (data) => {
       const formData = new FormData();
       const editorContent = getContent();
 
@@ -81,13 +80,14 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         formData.append("coverImg", imageData as Blob);
         formData.append("content", editorContent);
 
-        // Call `editPost` action
-        editPost(_id, formData, coverImgFileId);
-        // Set `MovingPage` loading to true
-        setIsMoveNext(true);
+        // Call `createPost` action
+        createPost(formData);
+
+        // Set `MovingPage` loader
+        showLoader("Please wait!");
       }
     },
-    [_id, coverImgFileId, getContent, imageData]
+    [getContent, imageData, showLoader]
   );
 
   /** Handle post preview event */
@@ -98,9 +98,9 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
     setPreviewData({
       title: values.title,
       cover: imageData ? (URL.createObjectURL(imageData) as string) : "",
-      content: editorContent ? editorContent : content,
+      content: editorContent ? editorContent : "",
     });
-  }, [getValues, getContent, imageData, , content]);
+  }, [getValues, getContent, imageData]);
 
   /** Hanlde process image data with url */
   const onBlurCoverImgInput = useCallback(
@@ -140,8 +140,8 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
 
   /** Handle back event */
   const hanldeBack = useCallback(() => {
-    next(`/post/${_id}`);
-  }, [_id, next]);
+    next(`/`);
+  }, [next]);
 
   /** Depend on clear upload image process */
   useEffect(() => {
@@ -152,11 +152,12 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   }, [isClearedUploadProcced, setValue]);
 
   return (
-    <EditorContainer isMoveNext={isMoveNext}>
+    <EditorContainer>
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         <div className="mb-3">
           <Input
             label={d("editor.title")}
+            placeholder={d("editor.placeholder")}
             errors={errors}
             {...register("title", {
               required: d("errors.input"),
@@ -167,12 +168,11 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         <div className="mb-3">
           <Input
             label={d("editor.coverImg")}
-            placeholder={`${title}.jpg`}
+            placeholder={d("editor.placeholderCoverImg")}
             errors={errors}
             {...register("cloudImg", {
               onBlur: (e) => onBlurCoverImgInput(e.target.value),
               validate: (value) =>
-                imageData ||
                 value ||
                 (!value &&
                   getValues().localImage &&
@@ -205,7 +205,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         <Button
           variant="primary"
           type="submit"
-          label={d("editor.save")}
+          label={d("editor.submit")}
           fullWidth
         />
         <Button
@@ -220,4 +220,4 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   );
 };
 
-export default EditPost;
+export default NewPost;
