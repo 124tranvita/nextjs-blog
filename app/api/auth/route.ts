@@ -66,8 +66,6 @@ export async function GET(request: Request) {
     const headersList = headers();
     const token = headersList.get("authorization");
 
-    console.log({ token });
-
     if (!token) {
       return handleErrors(
         new AppError("You are not logged in! Please log in to get access.", 401)

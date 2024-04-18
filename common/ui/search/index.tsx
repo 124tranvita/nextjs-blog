@@ -52,7 +52,6 @@ export default function SearchResult() {
       ([entry]) => {
         if (entry.isIntersecting) {
           loadMorePosts(search);
-          console.log("CALL LOAD POST");
           observer.unobserve(entry.target);
         }
       },

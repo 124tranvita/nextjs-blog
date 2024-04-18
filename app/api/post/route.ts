@@ -68,7 +68,7 @@ export async function POST(request: Request) {
         new AppError("You are not logged in! Please log in to get access.", 401)
       );
     }
-    console.log({ token });
+
     // 2. Decode token
     const decoded = await decodedJwtToken(token.split(" ")[1]);
 
@@ -136,7 +136,7 @@ export async function PATCH(request: Request) {
         new AppError("You are not logged in! Please log in to get access.", 401)
       );
     }
-    console.log({ token });
+
     // 2. Decode token
     const decoded = await decodedJwtToken(token.split(" ")[1]);
 
@@ -182,8 +182,6 @@ export async function PATCH(request: Request) {
       user: userId,
     });
 
-    console.log({ checkData });
-
     if (!checkData) {
       return handleErrors(new AppError("Post not belong to user.", 403));
     }
@@ -224,7 +222,7 @@ export async function DELETE(request: Request) {
         new AppError("You are not logged in! Please log in to get access.", 401)
       );
     }
-    console.log({ token });
+
     // 2. Decode token
     const decoded = await decodedJwtToken(token.split(" ")[1]);
 

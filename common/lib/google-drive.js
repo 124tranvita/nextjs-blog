@@ -44,7 +44,6 @@ export async function listFiles() {
       return;
     }
 
-    console.log("Files:");
     files.map((file) => {
       console.log(`${file.name} (${file.id})`);
     });

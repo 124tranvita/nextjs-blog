@@ -94,7 +94,6 @@ export async function editPost(
 }
 
 export async function getPosts(page: number, limit: number): Promise<Post[]> {
-  console.log({ page, limit });
   const res = await fetch(
     `${process.env.URL}/api/post?page=${page}&limit=${limit}`,
     {
