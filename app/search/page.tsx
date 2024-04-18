@@ -1,8 +1,8 @@
-// app/[lang]/search/page.tsx
+// app/search/page.tsx
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { Main } from "@/components/common";
-import SearchResult from "./components/search-result";
+import { Loader } from "../loader";
+import SearchResult from "@/common/ui/search";
 
 type Props = {
   searchParams: any;
@@ -18,14 +18,10 @@ export async function generateMetadata({
   };
 }
 
-const SearchResultFallback = () => <>your loader</>;
-
 export default function Page() {
   return (
-    <Suspense fallback={<SearchResultFallback />}>
-      <Main>
-        <SearchResult />
-      </Main>
+    <Suspense fallback={<Loader />}>
+      <SearchResult />
     </Suspense>
   );
 }

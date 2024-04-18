@@ -1,5 +1,5 @@
 import { FC, ReactNode, createContext, useState } from "react";
-import LoaderSkeleton from "../components/loading-skeleton/loader-skeleton";
+import LoaderSkeleton from "../components/common/loader/loader-skeleton";
 
 type LoaderContext = {
   showLoader: (message: string) => void;

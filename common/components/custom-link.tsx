@@ -20,8 +20,6 @@ export function Link({
   const { showLoader, hideLoader } = useLoader();
   const { d } = useDictionary();
 
-  console.log({ isPending });
-
   useEffect(() => {
     if (isPending) {
       showLoader(d("loader.processing"));

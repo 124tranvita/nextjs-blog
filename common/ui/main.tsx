@@ -1,21 +1,30 @@
 // @/common/ui/main.tsx
 
 import { ReactNode } from "react";
-import { cookies } from "next/headers";
 import { Container } from "../components/common/container";
 import SideControl from "../components/side-control";
 
 type Props = {
   children: ReactNode;
+  id?: string;
+  coverImgFileId?: string;
+  mainPage?: boolean;
 };
 
-export default function Main({ children }: Props) {
-  const isSignedIn = cookies().get("isSignedIn")?.value;
-
+export default function Main({
+  children,
+  id = "",
+  coverImgFileId = "",
+  mainPage = false,
+}: Props) {
   return (
     <Container>
       {children}
-      {Boolean(isSignedIn) && <SideControl />}
+      <SideControl
+        id={id}
+        coverImgFileId={coverImgFileId}
+        mainPage={mainPage}
+      />
     </Container>
   );
 }

@@ -46,5 +46,10 @@
   },
   "loader": {
     "processing": "Đang xử lý..."
+  },
+  "search": {
+    "placeholder": "Kết quả tìm kiếm cho ",
+    "result": "Tổng kết quả",
+    "noresult": "Không tìm thấy kết quả"
   }
 }

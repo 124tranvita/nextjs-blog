@@ -1,6 +1,7 @@
 // api/_lib/utils/jwt-hanlder.js
 
 import * as jwt from "jsonwebtoken";
+import { promisify } from "node:util";
 
 /**
  * Create JWT sign token
@@ -24,6 +25,10 @@ const createSendToken = (user) => {
   user.password = undefined;
 
   return { token };
+};
+
+export const decodedJwtToken = async (token) => {
+  return await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 };
 
 export default createSendToken;

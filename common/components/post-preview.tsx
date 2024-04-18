@@ -17,8 +17,6 @@ export default function PostPreview({ previewData, onPreview }: Props) {
     onPreview();
   }, [onPreview]);
 
-  console.log({ previewData });
-
   return (
     <Article>
       <ViewImage src={previewData.cover} />

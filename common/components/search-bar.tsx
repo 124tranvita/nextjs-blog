@@ -1,16 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, KeyboardEvent, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import useDictionary from "@/common/hooks/useDictionary";
-import useScreenPath from "@/common/hooks/useScreenPath";
 import { SearchIcon } from "@/common/ui/icons";
 import { BasicInput } from "@/common/ui/inputs";
 
 export default function SearchBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { d } = useDictionary();
-  const { next } = useScreenPath();
   const [searchTerm, setSearchTerm] = useState("");
 
   /** Reset input field when transit to other screen */
@@ -31,8 +30,8 @@ export default function SearchBar() {
    */
   const handleSearch = useCallback(() => {
     if (!searchTerm) return;
-    next(`/search?q=${searchTerm}`);
-  }, [next, searchTerm]);
+    router.push(`/search?q=${searchTerm}`);
+  }, [router, searchTerm]);
 
   /**
    * Run search query when press enter
@@ -43,10 +42,10 @@ export default function SearchBar() {
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         if (!searchTerm) return;
-        next(`/search?q=${searchTerm}`);
+        router.push(`/search?q=${searchTerm}`);
       }
     },
-    [next, searchTerm]
+    [router, searchTerm]
   );
 
   return (

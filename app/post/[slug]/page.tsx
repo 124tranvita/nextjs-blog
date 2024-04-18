@@ -3,8 +3,9 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
 import { getPost } from "@/actions";
-import { Loader } from "../../loader";
+import { PostViewLoader } from "../../loader";
 import PostDetail from "@/common/ui/post";
+import Main from "@/common/ui/main";
 
 type Props = {
   params: { slug: string };
@@ -24,11 +25,17 @@ export default async function Page({ params }: Props) {
   const post = await getPost(params.slug);
 
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense
+      fallback={
+        <Main>
+          <PostViewLoader />
+        </Main>
+      }
+    >
       {post && (
-        <>
+        <Main id={post._id} coverImgFileId={post.coverImgFileId}>
           <PostDetail post={post} />
-        </>
+        </Main>
       )}
     </Suspense>
   );

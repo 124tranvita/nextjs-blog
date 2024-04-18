@@ -18,11 +18,11 @@ export default function LanguageToggle() {
 
     // If not a `search` url, return original pathname
     if (reg.test(pathname)) {
-      return pathname;
+      return `${pathname}?`;
     }
 
     // Add search params to the `search` pathname
-    return `${pathname}?q=${search}`;
+    return `${pathname}?q=${search}&`;
   }, [pathname, search]);
 
   /** Check if is already mounted */
@@ -35,7 +35,7 @@ export default function LanguageToggle() {
 
   if (lang === "vi") {
     return (
-      <Link href={`${standardizedPathname}?lang=en`}>
+      <Link href={`${standardizedPathname}lang=en`}>
         <button className="mx-1 w-8 h-auto rounded-full p-1 text-slate-800 dark:text-slate-50 hover:bg-slate-800 hover:text-slate-50 duration-300">
           <span className="font-semibold">Vi</span>
         </button>
@@ -45,7 +45,7 @@ export default function LanguageToggle() {
 
   if (lang === "en") {
     return (
-      <Link href={`${standardizedPathname}?lang=vi`}>
+      <Link href={`${standardizedPathname}lang=vi`}>
         <button className="mx-1 w-8 h-auto rounded-full p-1 text-slate-800 dark:text-slate-50 hover:bg-slate-800 hover:text-slate-50 duration-300">
           <span className="font-semibold">En</span>
         </button>

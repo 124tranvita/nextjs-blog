@@ -13,16 +13,10 @@ import noImagePlaceholder from "../../public/no-image-placeholder.webp";
 type Props = {
   src?: string;
   coverImgFileId?: string;
-  pathName?: string;
   alt?: string;
 };
 
-export function ViewImage({
-  src = "",
-  coverImgFileId = "",
-  pathName = "",
-  alt = "",
-}: Props) {
+export function ViewImage({ src = "", coverImgFileId = "", alt = "" }: Props) {
   const [coverImg, setCoverImg] = useState<Blob | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -55,17 +49,15 @@ export function ViewImage({
           <ImageLoadingSkeleton />
         </>
       ) : (
-        <Link href={pathName}>
-          <div className="relative max-w-full mb-8 rounded-md overflow-hidden h-[312px] md:h-[412px] lg:h-[512px]">
-            <Image
-              src={src ? src : createObjectURL}
-              alt={`${alt}_image`}
-              fill={true}
-              sizes="100vw"
-              style={{ objectFit: "cover" }}
-            />
-          </div>
-        </Link>
+        <div className="relative max-w-full mb-8 rounded-md overflow-hidden h-[312px] md:h-[412px] lg:h-[512px]">
+          <Image
+            src={src ? src : createObjectURL}
+            alt={`${alt}_image`}
+            fill={true}
+            sizes="100vw"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
       )}
     </>
   );

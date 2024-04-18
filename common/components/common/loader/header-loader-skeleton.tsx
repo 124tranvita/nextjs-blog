@@ -1,6 +1,6 @@
 import { CalendarIcon, PencilIcon, UserIcon } from "@heroicons/react/20/solid";
 
-export default function HeaderLoadingSkeleton() {
+export default function HeaderLoaderSkeleton() {
   return (
     <div className="mb-8">
       <div

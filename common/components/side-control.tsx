@@ -26,18 +26,10 @@ export default function SideControl({
   mainPage = false,
 }: Props) {
   const { d } = useDictionary();
-  const { next, back } = useScreenPath();
   const { getCookie } = useCookies();
   const { showLoader } = useLoader();
 
   const isSignedIn = getCookie("isSignedIn");
-
-  const handleEdit = useCallback(() => {
-    if (!id) return;
-
-    showLoader(d("loader.processing"));
-    next(`/edit/${id}`);
-  }, [d, id, next, showLoader]);
 
   const handleDelete = useCallback(() => {
     if (id && confirm("Are you sure?") === true) {
@@ -46,11 +38,6 @@ export default function SideControl({
     }
     return;
   }, [id, showLoader, d, coverImgFileId]);
-
-  const handleback = useCallback(async () => {
-    showLoader(d("loader.processing"));
-    back();
-  }, [back, d, showLoader]);
 
   if (!isSignedIn || isSignedIn === Options.No) {
     return (
@@ -67,8 +54,9 @@ export default function SideControl({
                 </>
               }
               tooltip={d("tooltips.back")}
-              onClick={handleback}
+              pathname="/"
               variant="primary"
+              replace={true}
             />
           </div>
         )}
@@ -92,7 +80,7 @@ export default function SideControl({
               }
               tooltip={d("tooltips.edit")}
               variant="primary"
-              onClick={handleEdit}
+              pathname={`/edit/${id}`}
             />
           </div>
           <div className="fixed right-2 bottom-0 md:right-16 md:bottom-16 flex flex-col">
@@ -108,6 +96,7 @@ export default function SideControl({
               tooltip={d("tooltips.delete")}
               onClick={handleDelete}
               variant="danger"
+              pathname=""
             />
           </div>
         </>
@@ -142,8 +131,9 @@ export default function SideControl({
               </>
             }
             tooltip={d("tooltips.back")}
-            onClick={handleback}
             variant="primary"
+            pathname="/"
+            replace={true}
           />
         </div>
       )}

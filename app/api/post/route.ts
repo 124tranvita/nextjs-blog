@@ -1,11 +1,14 @@
 // app/api/post/route.ts
 
 import connect, { mongooseConnectState } from "@/common/lib/_mongodb";
-import { deleteFile, fileUpload } from "@/common/lib/google-drive";
+import { fileUpload } from "@/common/lib/google-drive";
 import { blodToReadable } from "@/common/lib/utils";
 import Post from "../_lib/models/post";
+import User from "../_lib/models/user";
 import handleErrors from "../_lib/utils/error-handler";
 import AppError from "../_lib/utils/app-error";
+import { headers } from "next/headers";
+import { decodedJwtToken } from "../_lib/utils/jwt-handler";
 
 export const dynamic = "force-dynamic"; // defaults to auto
 
@@ -49,12 +52,39 @@ export async function GET(request: Request) {
 }
 
 /**
- * POST Request (Create new post)
+ * POST Request (Create new post) - Need protected
  * @param request - Request data
  * @returns - Response (new created post)
  */
 export async function POST(request: Request) {
   try {
+    /** Get token */
+    const headersList = headers();
+    const token = headersList.get("authorization");
+
+    // 1. Check if token is existed
+    if (!token) {
+      return handleErrors(
+        new AppError("You are not logged in! Please log in to get access.", 401)
+      );
+    }
+    console.log({ token });
+    // 2. Decode token
+    const decoded = await decodedJwtToken(token.split(" ")[1]);
+
+    // 3. Find user belong to token
+    const user = await User.findById(decoded.id);
+
+    // 4. Check if token belong to valid user
+    if (!user) {
+      return handleErrors(
+        new AppError(
+          "The user belonging to this token does no longer exist.",
+          401
+        )
+      );
+    }
+
     /** Connect to database */
     if (mongooseConnectState() === "disconnected") {
       await connect();
@@ -96,6 +126,33 @@ export async function POST(request: Request) {
  */
 export async function PATCH(request: Request) {
   try {
+    /** Get token */
+    const headersList = headers();
+    const token = headersList.get("authorization");
+
+    // 1. Check if token is existed
+    if (!token) {
+      return handleErrors(
+        new AppError("You are not logged in! Please log in to get access.", 401)
+      );
+    }
+    console.log({ token });
+    // 2. Decode token
+    const decoded = await decodedJwtToken(token.split(" ")[1]);
+
+    // 3. Find user belong to token
+    const user = await User.findById(decoded.id);
+
+    // 4. Check if token belong to valid user
+    if (!user) {
+      return handleErrors(
+        new AppError(
+          "The user belonging to this token does no longer exist.",
+          401
+        )
+      );
+    }
+
     /** connect to database */
     if (mongooseConnectState() === "disconnected") {
       await connect();
@@ -122,8 +179,10 @@ export async function PATCH(request: Request) {
     /** if post no belong to current user */
     const checkData = await Post.findOne({
       _id: id,
-      userId: userId,
+      user: userId,
     });
+
+    console.log({ checkData });
 
     if (!checkData) {
       return handleErrors(new AppError("Post not belong to user.", 403));
@@ -140,7 +199,6 @@ export async function PATCH(request: Request) {
       content,
       author,
       updatedAt: new Date(),
-      user: userId,
     });
 
     return Response.json(post);
@@ -156,6 +214,33 @@ export async function PATCH(request: Request) {
  */
 export async function DELETE(request: Request) {
   try {
+    /** Get token */
+    const headersList = headers();
+    const token = headersList.get("authorization");
+
+    // 1. Check if token is existed
+    if (!token) {
+      return handleErrors(
+        new AppError("You are not logged in! Please log in to get access.", 401)
+      );
+    }
+    console.log({ token });
+    // 2. Decode token
+    const decoded = await decodedJwtToken(token.split(" ")[1]);
+
+    // 3. Find user belong to token
+    const user = await User.findById(decoded.id);
+
+    // 4. Check if token belong to valid user
+    if (!user) {
+      return handleErrors(
+        new AppError(
+          "The user belonging to this token does no longer exist.",
+          401
+        )
+      );
+    }
+
     /** connect to database */
     if (mongooseConnectState() === "disconnected") {
       await connect();
@@ -164,7 +249,6 @@ export async function DELETE(request: Request) {
     /** Get query params */
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
-    const fileId = url.searchParams.get("fileId");
 
     /** Check if post is exsiting */
     if (!id) {
@@ -173,9 +257,6 @@ export async function DELETE(request: Request) {
 
     /** Delete post */
     const post = await Post.findByIdAndDelete(id);
-
-    /** Delete image on google drive */
-    await deleteFile(fileId);
 
     return Response.json(post);
   } catch (error: Error | any) {

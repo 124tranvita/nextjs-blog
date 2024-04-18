@@ -1,7 +1,7 @@
 // hooks/useUploadImage.tsx
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchImage } from "@/actions";
 import * as Utils from "@/common/lib/utils";
 import useUnchanged from "./useUnchanged";
@@ -98,6 +98,10 @@ export default function useImageUpload(googleFileId: string = "") {
     []
   );
 
+  const isLoadingImg = useMemo(() => {
+    return Boolean(!imageData && !error && isShowPreImage);
+  }, [error, imageData, isShowPreImage]);
+
   /** Image preview component */
   const ImagePreview = (
     <>
@@ -124,5 +128,6 @@ export default function useImageUpload(googleFileId: string = "") {
     ImagePreview,
     imageData,
     isClearedUploadProcced,
+    isLoadingImg,
   };
 }

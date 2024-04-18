@@ -2,19 +2,11 @@
 "use client";
 
 import { createMarkup } from "@/common/lib/utils";
-import {
-  ComponentPropsWithRef,
-  FC,
-  ForwardedRef,
-  ReactNode,
-  forwardRef,
-} from "react";
+import { ComponentPropsWithRef, FC, ForwardedRef, ReactNode } from "react";
 
 interface Props extends ComponentPropsWithRef<"section"> {
   children: ReactNode;
 }
-
-type Ref = ForwardedRef<HTMLDivElement>;
 
 export const Container: FC<Props> = ({ children }) => {
   return (
@@ -24,19 +16,15 @@ export const Container: FC<Props> = ({ children }) => {
   );
 };
 
-export const Article = forwardRef(function (props: Props, ref: Ref): ReactNode {
-  const { children } = props;
+export const Article: FC<Props> = ({ children }) => {
   return (
     <>
-      <section
-        className="relative max-w-screen-md mx-auto py-8 pb-0 px-4 md:px-8"
-        ref={ref}
-      >
+      <section className="relative max-w-screen-md mx-auto py-8 pb-0 px-4 md:px-8">
         {children}
       </section>
     </>
   );
-});
+};
 
 export const EditorContainer: FC<Props> = ({ children }) => {
   return (
@@ -66,5 +54,3 @@ export const Content: FC<{ content: string }> = ({ content }) => {
     </div>
   );
 };
-
-Article.displayName = "Article";

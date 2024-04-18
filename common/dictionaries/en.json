@@ -46,5 +46,10 @@
   },
   "loader": {
     "processing": "Processing..."
+  },
+  "search": {
+    "placeholder": "Search result for ",
+    "result": "Total result",
+    "noresult": "No result"
   }
 }

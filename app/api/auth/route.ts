@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import connect, { mongooseConnectState } from "@/common/lib/_mongodb";
 import User from "../_lib/models/user";
 import handleErrors from "../_lib/utils/error-handler";
 import AppError from "../_lib/utils/app-error";
-import createSendToken from "../_lib/utils/jwt-handler";
+import createSendToken, { decodedJwtToken } from "../_lib/utils/jwt-handler";
+import { headers } from "next/headers";
 
 /**
  * POST Request (Login user)
@@ -63,11 +63,35 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request) {
   try {
+    const headersList = headers();
+    const token = headersList.get("authorization");
+
+    console.log({ token });
+
+    if (!token) {
+      return handleErrors(
+        new AppError("You are not logged in! Please log in to get access.", 401)
+      );
+    }
+
+    const decoded = await decodedJwtToken(token.split(" ")[1]);
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return handleErrors(
+        new AppError(
+          "The user belonging to this token does no longer exist.",
+          401
+        )
+      );
+    }
+
     return Response.json(
       {
         status: "success",
       },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error: Error | any) {
     return handleErrors(error);

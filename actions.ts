@@ -2,7 +2,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { deleteFile } from "./common/lib/google-drive";
 import { cookies } from "next/headers";
 import { CurrentUser, Post } from "@/common/lib/model";
@@ -31,6 +30,9 @@ export async function createPost(formData: FormData): Promise<Post> {
     method: "POST",
     cache: "no-cache",
     body: formData,
+    headers: {
+      Authorization: `Bearer ${sessionData.jwt}`,
+    },
   });
 
   // Ff respone not ok
@@ -72,6 +74,9 @@ export async function editPost(
     method: "PATCH",
     cache: "no-cache",
     body: formData,
+    headers: {
+      Authorization: `Bearer ${sessionData.jwt}`,
+    },
   });
 
   // if respone not ok
@@ -123,13 +128,21 @@ export async function getPost(id: string): Promise<Post> {
 }
 
 export async function deletePost(id: string, fileId: string) {
-  const res = await fetch(
-    `${process.env.URL}/api/post?id=${id}&fileId=${fileId}`,
-    {
-      method: "DELETE",
-      cache: "no-cache",
-    }
-  );
+  // Get current locale
+  const lang = cookies().get("lang")?.value;
+  // Get session data
+  const encryptedSessionData = cookies().get("session")?.value;
+  const sessionData: any = encryptedSessionData
+    ? JSON.parse(decrypt(encryptedSessionData))
+    : null;
+
+  const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
+    method: "DELETE",
+    cache: "no-cache",
+    headers: {
+      Authorization: `Bearer ${sessionData.jwt}`,
+    },
+  });
 
   if (!res.ok) {
     const error = await res.json();
@@ -137,12 +150,19 @@ export async function deletePost(id: string, fileId: string) {
     throw new Error(error.message);
   }
 
-  redirect(`${process.env.URL}/`);
+  /** Delete image on google drive */
+  await deleteFile(fileId);
+
+  redirect(`${process.env.URL}/?lang=${lang}`);
 }
 
-export async function getSearchPosts(searchTerm: string): Promise<Post[]> {
+export async function getSearchPosts(
+  searchTerm: string,
+  page: number,
+  limit: number
+): Promise<Post[]> {
   const res = await fetch(
-    `${process.env.URL}/api/search?searchTerm=${searchTerm}`,
+    `${process.env.URL}/api/search?searchTerm=${searchTerm}&page=${page}&limit=${limit}`,
     {
       method: "GET",
       cache: "no-cache",
@@ -155,19 +175,6 @@ export async function getSearchPosts(searchTerm: string): Promise<Post[]> {
   }
 
   return res.json();
-}
-
-export async function uploadImg(formData: FormData) {
-  const res = await fetch(`${process.env.URL}/api/upload`, {
-    method: "POST",
-    cache: "no-cache",
-    body: formData,
-  });
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
 }
 
 export async function fetchImage(url: string) {
@@ -249,17 +256,10 @@ export async function login(
  * @returns - Redirect to main page
  */
 export async function logout(): Promise<any> {
-  const res = await fetch(`${process.env.URL}/api/auth`, {
-    method: "GET",
-    cache: "no-cache",
-  });
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
+  // Get current locale
+  const lang = cookies().get("lang")?.value;
 
   cookies().delete("session");
   /** Return to the main page */
-  return res.json();
+  redirect(`${process.env.URL}/?lang=${lang}`);
 }

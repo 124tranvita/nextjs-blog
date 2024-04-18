@@ -1,15 +1,15 @@
 // app/[lang]/loader.tsx
 
-import ContentLoadingSkeleton from "@/common/components/loading-skeleton/content-loading-skeleton";
-import HeaderLoadingSkeleton from "@/common/components/loading-skeleton/header-loading-skeleton";
-import LoaderSkeleton from "@/common/components/loading-skeleton/loader-skeleton";
-import MorePostLoadingSkeleton from "@/common/components/loading-skeleton/more-post-loading-skeleton";
+import ContentLoaderSkeleton from "@/common/components/common/loader/content-loader-skeleton";
+import HeaderLoaderSkeleton from "@/common/components/common/loader/header-loader-skeleton";
+import LoaderSkeleton from "@/common/components/common/loader/loader-skeleton";
+import MorePostLoaderSkeleton from "@/common/components/common/loader/more-post-loader-skeleton";
 
 export function PostViewLoader() {
   return (
     <>
-      <HeaderLoadingSkeleton />
-      <ContentLoadingSkeleton />
+      <HeaderLoaderSkeleton />
+      <ContentLoaderSkeleton />
     </>
   );
 }
@@ -22,10 +22,10 @@ export function Loader() {
   );
 }
 
-export function MorePostLoading() {
+export function MorePostLoader() {
   return (
     <>
-      <MorePostLoadingSkeleton />
+      <MorePostLoaderSkeleton />
     </>
   );
 }

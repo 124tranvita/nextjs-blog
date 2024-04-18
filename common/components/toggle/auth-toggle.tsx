@@ -64,7 +64,7 @@ export default function AuthToggle() {
 
   if (!isSignedIn || isSignedIn === Options.No) {
     return (
-      <Link href={nextPathName("login", `&prev=${pathname}`)}>
+      <Link href={nextPathName("/login", `&prev=${pathname}`)}>
         <button className="mx-1 w-8 h-auto rounded-full p-[5px] text-slate-800 dark:text-slate-50 hover:bg-slate-800 hover:text-slate-50 duration-300">
           <ArrowLeftStartOnRectangleIcon />
         </button>

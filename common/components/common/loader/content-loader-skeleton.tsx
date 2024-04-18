@@ -1,4 +1,4 @@
-export default function ContentLoadingSkeleton() {
+export default function ContentLoaderSkeleton() {
   return (
     <div role="status" className="space-y-2.5 animate-pulse max-w-lg my-4">
       <div className="flex items-center w-full">

@@ -1,4 +1,4 @@
-// app/[lang]/components/home-post.tsx
+// @common/ui/home/index.tsx
 // https://medium.com/@ferlat.simon/infinite-scroll-with-nextjs-server-actions-a-simple-guide-76a894824cfd
 "use client";
 
@@ -6,7 +6,7 @@ import { FC, useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { Post } from "@/common/lib/model";
 import { LIMIT, PAGE_INIT } from "@/common/lib/constants";
 
-import { MorePostLoading, PostViewLoader } from "@/app/loader";
+import { MorePostLoader, PostViewLoader } from "@/app/loader";
 import { getPosts } from "@/actions";
 import PostView from "@/common/components/post-view";
 
@@ -16,9 +16,8 @@ type Props = {
 
 const Home: FC<Props> = ({ initialPosts }) => {
   const [isLoading, setIsLoading] = useState(false);
-
   const [page, setPage] = useState<number>(PAGE_INIT + 1);
-  const [posts, setPost] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<Post[]>(initialPosts);
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -29,7 +28,7 @@ const Home: FC<Props> = ({ initialPosts }) => {
 
     if (apiPosts && apiPosts.length > 0) {
       setIsLoading(false);
-      setPost([...posts, ...apiPosts]);
+      setPosts([...posts, ...apiPosts]);
       setPage((prevPage) => prevPage + PAGE_INIT);
       return;
     }
@@ -74,7 +73,7 @@ const Home: FC<Props> = ({ initialPosts }) => {
       ) : (
         <></>
       )}
-      {isLoading && <MorePostLoading />}
+      {isLoading && <MorePostLoader />}
     </>
   );
 };

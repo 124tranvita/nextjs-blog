@@ -9,9 +9,15 @@ type Props = {
   btnLabel: string;
   title: string;
   children: ReactNode;
+  disabled?: boolean;
 };
 
-export default function ScrollableDialog({ btnLabel, title, children }: Props) {
+export default function ScrollableDialog({
+  btnLabel,
+  title,
+  children,
+  disabled = false,
+}: Props) {
   const { d } = useDictionary();
   let [isOpen, setIsOpen] = useState(false);
 
@@ -32,6 +38,7 @@ export default function ScrollableDialog({ btnLabel, title, children }: Props) {
           label={btnLabel}
           variant="primary"
           fullWidth
+          disabled={disabled}
         />
       </div>
 

@@ -1,24 +1,25 @@
-// app/[lang]/edit/[slug]/components/edit-post.tsx
+// @common/ui/edit/edit-post.tsx
 "use client";
 
 import React, { FC, useCallback, useEffect, useState, useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Input from "@/components/react-hook-form/input";
-import ScrollableDialog from "@/components/dialog/scrollable-dialog";
-import PostPreview from "@/components/post/post-preview";
-import FileSelector from "@/components/react-hook-form/file-selector";
-import { EditorContainer } from "@/components/common";
-import useScreenPath from "@/common/hooks/useScreenPath";
-import useDictionary from "@/common/hooks/useDictionary";
-import useImageUpload from "@/common/hooks/useImageUpload";
-import useEditor from "@/common/hooks/useEditor";
 import { editPost } from "@/actions";
-import { Button } from "@/common/ui/button";
 import {
   Post,
   PostPreview as PostPreviewType,
   initPostPreview,
 } from "@/common/lib/model";
+import useScreenPath from "@/common/hooks/useScreenPath";
+import useDictionary from "@/common/hooks/useDictionary";
+import useImageUpload from "@/common/hooks/useImageUpload";
+import useLoader from "@/common/hooks/useLoader";
+import useEditor from "@/common/hooks/useEditor";
+import Input from "@/common/components/react-hook-form/input";
+import FileSelector from "@/common/components/react-hook-form/file-selector";
+import ScrollableDialog from "@/common/components/dialog/scrollable-dialog";
+import PostPreview from "@/common/components/post-preview";
+import { EditorContainer } from "@/common/components/common/container";
+import { Button } from "@/common/components/common/button";
 import * as Utils from "@/common/lib/utils";
 
 type FormDataProps = {
@@ -36,12 +37,17 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
 
   const [previewData, setPreviewData] =
     useState<PostPreviewType>(initPostPreview);
-  const [isMoveNext, setIsMoveNext] = useState(false);
 
   const { d } = useDictionary();
   const { next } = useScreenPath();
-  const { processImageData, ImagePreview, imageData, isClearedUploadProcced } =
-    useImageUpload(coverImgFileId);
+  const { showLoader } = useLoader();
+  const {
+    processImageData,
+    ImagePreview,
+    imageData,
+    isClearedUploadProcced,
+    isLoadingImg,
+  } = useImageUpload(coverImgFileId);
   const { getContent, Editor } = useEditor(content);
 
   const {
@@ -84,10 +90,10 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         // Call `editPost` action
         editPost(_id, formData, coverImgFileId);
         // Set `MovingPage` loading to true
-        setIsMoveNext(true);
+        showLoader(d("loader.processing"));
       }
     },
-    [_id, coverImgFileId, getContent, imageData]
+    [_id, coverImgFileId, d, getContent, imageData, showLoader]
   );
 
   /** Handle post preview event */
@@ -152,7 +158,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   }, [isClearedUploadProcced, setValue]);
 
   return (
-    <EditorContainer isMoveNext={isMoveNext}>
+    <EditorContainer>
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         <div className="mb-3">
           <Input
@@ -198,6 +204,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
           <ScrollableDialog
             btnLabel={d("editor.preview")}
             title={d("editor.preview")}
+            disabled={isLoadingImg}
           >
             <PostPreview previewData={previewData} onPreview={onPreview} />
           </ScrollableDialog>
@@ -207,6 +214,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
           type="submit"
           label={d("editor.save")}
           fullWidth
+          disabled={isLoadingImg}
         />
         <Button
           variant="danger"
