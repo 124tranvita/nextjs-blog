@@ -1,34 +1,41 @@
-import { connectToDb } from "@/app/lib/mongodb";
+import connect, { mongooseConnectState } from "@/common/lib/_mongodb";
+import Post from "../_lib/models/post";
 
 export const dynamic = "force-dynamic"; // defaults to auto
+
 export async function GET(request: Request) {
   try {
     /** Connect to database */
-    const { client } = await connectToDb();
-    const db = client.db(
-      process.env.NODE_ENV === "development" ? "blog" : "blog_prod"
-    );
+    if (mongooseConnectState() === "disconnected") {
+      await connect();
+    }
 
     /** Get query params */
     const url = new URL(request.url);
     const searchTerm = url.searchParams.get("searchTerm");
+    const page = url.searchParams.get("page");
+    const limit = url.searchParams.get("limit");
+
+    const skip = (Number(page) - 1) * Number(limit);
 
     /** Query by search params */
     if (searchTerm) {
-      const posts = await db
-        .collection("posts")
-        .aggregate([
-          {
-            $search: {
-              index: "search_posts",
-              text: {
-                query: searchTerm,
-                path: ["title"],
-              },
+      const posts = await Post.aggregate([
+        {
+          $search: {
+            index: "search_posts",
+            regex: {
+              query: `(.*)${searchTerm}(.*)`,
+              path: ["title"],
+              allowAnalyzedField: true,
             },
           },
-        ])
-        .toArray();
+        },
+      ])
+        .skip(skip)
+        .limit(Number(limit))
+        .sort({ createdAt: -1 })
+        .sort({ updatedAt: -1 });
 
       return Response.json(posts);
     }
