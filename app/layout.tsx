@@ -25,9 +25,9 @@ export default function RootLayout({
     <html lang={lang} suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-          <Navbar />
-          {children}
           <Suspense fallback={null}>
+            <Navbar />
+            {children}
             <NavigationEvents />
           </Suspense>
         </Providers>

@@ -1,7 +1,7 @@
 // app/[lang]/login/components/log-in.tsx
 "use client";
 
-import { FC, useState } from "react";
+import { FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { login } from "@/actions";
