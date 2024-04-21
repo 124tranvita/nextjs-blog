@@ -14,9 +14,15 @@ type Props = {
   src?: string;
   coverImgFileId?: string;
   alt?: string;
+  pathname?: string;
 };
 
-export function ViewImage({ src = "", coverImgFileId = "", alt = "" }: Props) {
+export function ViewImage({
+  src = "",
+  coverImgFileId = "",
+  alt = "",
+  pathname = "",
+}: Props) {
   const [coverImg, setCoverImg] = useState<Blob | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -50,13 +56,16 @@ export function ViewImage({ src = "", coverImgFileId = "", alt = "" }: Props) {
         </>
       ) : (
         <div className="relative max-w-full mb-8 rounded-md overflow-hidden h-[312px] md:h-[412px] lg:h-[512px]">
-          <Image
-            src={src ? src : createObjectURL}
-            alt={`${alt}_image`}
-            fill={true}
-            sizes="100vw"
-            style={{ objectFit: "cover" }}
-          />
+          <Link href={pathname}>
+            <Image
+              src={src ? src : createObjectURL}
+              alt={`${alt}_image`}
+              fill={true}
+              sizes="100vw"
+              style={{ objectFit: "cover" }}
+              className="relative max-w-full mb-8 rounded-md overflow-hidden h-[312px] md:h-[412px] lg:h-[512px]"
+            />
+          </Link>
         </div>
       )}
     </>

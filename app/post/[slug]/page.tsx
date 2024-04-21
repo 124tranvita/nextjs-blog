@@ -2,10 +2,13 @@
 
 import { Suspense } from "react";
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 import { getPost } from "@/actions";
 import { PostViewLoader } from "../../loader";
+import { decrypt } from "@/common/lib/crypto";
 import PostDetail from "@/common/ui/post";
 import Main from "@/common/ui/main";
+import user from "@/app/api/_lib/models/user";
 
 type Props = {
   params: { slug: string };
@@ -24,16 +27,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const post = await getPost(params.slug);
 
+  // Get session data
+  const encryptedSessionData = cookies().get("session")?.value;
+  const sessionData: any = encryptedSessionData
+    ? JSON.parse(decrypt(encryptedSessionData))
+    : null;
+
   return (
-    <Suspense
-      fallback={
-        <Main>
-          <PostViewLoader />
-        </Main>
-      }
-    >
+    <Suspense fallback={null}>
       {post && (
-        <Main id={post._id} coverImgFileId={post.coverImgFileId}>
+        <Main
+          postId={post._id}
+          coverImgFileId={post.coverImgFileId}
+          belongUsr={post.user === sessionData.user._id}
+        >
           <PostDetail post={post} />
         </Main>
       )}

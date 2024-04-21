@@ -7,6 +7,7 @@ export type Post = {
   author: string;
   createdAt: string | Date;
   updatedAt: string | Date;
+  user: string;
 };
 
 export type User = {

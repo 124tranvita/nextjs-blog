@@ -30,10 +30,12 @@ export default function LoaderSkeleton({ message = "" }: Props) {
             ></path>
           </svg>
           <div className="flex mt-3">
-            <PaperAirplaneIcon className="animate-move-right -ml-1 mr-3 h-5 w-5 rotate-45" />
+            <PaperAirplaneIcon className="animate-move-right -ml-1 mr-3 h-5 w-5 rotate-45 dark:text-slate-900" />
           </div>
           <div>
-            <span className="animate-pulse font-semibold">{message}</span>
+            <span className="animate-pulse font-semibold dark:text-slate-900">
+              {message}
+            </span>
           </div>
         </div>
       </div>

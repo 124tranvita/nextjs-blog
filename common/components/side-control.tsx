@@ -15,13 +15,15 @@ import { Options } from "../lib/constants";
 import { FloatIconWithTooltip } from "./common/button";
 
 type Props = {
-  id?: string;
+  postId?: string;
+  belongUsr?: boolean;
   coverImgFileId?: string;
   mainPage?: boolean;
 };
 
 export default function SideControl({
-  id,
+  postId,
+  belongUsr = false,
   coverImgFileId,
   mainPage = false,
 }: Props) {
@@ -32,18 +34,18 @@ export default function SideControl({
   const isSignedIn = getCookie("isSignedIn");
 
   const handleDelete = useCallback(() => {
-    if (id && confirm("Are you sure?") === true) {
+    if (postId && confirm("Are you sure?") === true) {
       showLoader(d("loader.processing"));
-      deletePost(id, coverImgFileId ? coverImgFileId : "");
+      deletePost(postId, coverImgFileId ? coverImgFileId : "");
     }
     return;
-  }, [id, showLoader, d, coverImgFileId]);
+  }, [postId, showLoader, d, coverImgFileId]);
 
   if (!isSignedIn || isSignedIn === Options.No) {
     return (
       <>
         {!mainPage && (
-          <div className="fixed right-2 bottom-0 md:right-16 flex flex-col">
+          <div className="fixed right-2 bottom-0 md:bottom-2 flex flex-col">
             <FloatIconWithTooltip
               icon={
                 <>
@@ -65,62 +67,61 @@ export default function SideControl({
   }
 
   return (
-    <>
-      {id ? (
+    <div className="fixed right-2 bottom-0 md:bottom-2 flex flex-col">
+      {postId && belongUsr ? (
         <>
-          <div className="fixed right-2 bottom-16 md:right-16 md:bottom-32 flex flex-col">
-            <FloatIconWithTooltip
-              icon={
-                <>
-                  <PencilIcon
-                    className="m-auto h-5 w-5 flex-shrink-0 text-white"
-                    aria-hidden="true"
-                  />
-                </>
-              }
-              tooltip={d("tooltips.edit")}
-              variant="primary"
-              pathname={`/edit/${id}`}
-            />
-          </div>
-          <div className="fixed right-2 bottom-0 md:right-16 md:bottom-16 flex flex-col">
-            <FloatIconWithTooltip
-              icon={
-                <>
-                  <TrashIcon
-                    className="m-auto h-5 w-5 flex-shrink-0 text-white"
-                    aria-hidden="true"
-                  />
-                </>
-              }
-              tooltip={d("tooltips.delete")}
-              onClick={handleDelete}
-              variant="danger"
-              pathname=""
-            />
-          </div>
+          <FloatIconWithTooltip
+            icon={
+              <>
+                <PencilIcon
+                  className="m-auto h-5 w-5 flex-shrink-0 text-white"
+                  aria-hidden="true"
+                />
+              </>
+            }
+            tooltip={d("tooltips.edit")}
+            variant="primary"
+            pathname={`/edit/${postId}`}
+          />
+          <FloatIconWithTooltip
+            icon={
+              <>
+                <TrashIcon
+                  className="m-auto h-5 w-5 flex-shrink-0 text-white"
+                  aria-hidden="true"
+                />
+              </>
+            }
+            tooltip={d("tooltips.delete")}
+            onClick={handleDelete}
+            variant="danger"
+            pathname=""
+          />
         </>
       ) : (
+        <></>
+      )}
+      {mainPage && isSignedIn === Options.Yes ? (
         <>
-          <div className="fixed right-2 bottom-4 md:right-16 md:bottom-20 flex flex-col">
-            <FloatIconWithTooltip
-              icon={
-                <>
-                  <PencilIcon
-                    className="m-auto h-5 w-5 flex-shrink-0 text-white"
-                    aria-hidden="true"
-                  />
-                </>
-              }
-              tooltip={d("tooltips.create")}
-              variant="primary"
-              pathname="/new"
-            />
-          </div>
+          <FloatIconWithTooltip
+            icon={
+              <>
+                <PencilIcon
+                  className="m-auto h-5 w-5 flex-shrink-0 text-white"
+                  aria-hidden="true"
+                />
+              </>
+            }
+            tooltip={d("tooltips.create")}
+            variant="primary"
+            pathname="/new"
+          />
         </>
+      ) : (
+        <></>
       )}
       {!mainPage && (
-        <div className="fixed right-2 bottom-0 md:right-16 flex flex-col">
+        <div className="">
           <FloatIconWithTooltip
             icon={
               <>
@@ -137,6 +138,6 @@ export default function SideControl({
           />
         </div>
       )}
-    </>
+    </div>
   );
 }

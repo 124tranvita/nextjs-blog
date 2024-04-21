@@ -29,7 +29,7 @@ export const Article: FC<Props> = ({ children }) => {
 export const EditorContainer: FC<Props> = ({ children }) => {
   return (
     <>
-      <section className="relative max-w-screen-lg mx-auto my-12">
+      <section className="relative max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg mx-auto my-12">
         {children}
       </section>
     </>

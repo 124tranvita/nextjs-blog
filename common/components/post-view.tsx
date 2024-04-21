@@ -64,9 +64,7 @@ export default function PostView({ post, isSummary = false }: Props) {
     <Article>
       <div className="relative">
         <PostReact />
-        <Link href={`/post/${_id}`}>
-          <ViewImage coverImgFileId={coverImgFileId} />
-        </Link>
+        <ViewImage coverImgFileId={coverImgFileId} pathname={`/post/${_id}`} />
       </div>
       <Link href={`/post/${_id}`}>
         <Typography text={title} type="title" />
