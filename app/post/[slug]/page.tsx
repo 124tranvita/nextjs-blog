@@ -39,7 +39,9 @@ export default async function Page({ params }: Props) {
         <Main
           postId={post._id}
           coverImgFileId={post.coverImgFileId}
-          belongUsr={post.user === sessionData.user._id}
+          belongUsr={
+            sessionData && sessionData.user._id === post.user ? true : false
+          }
         >
           <PostDetail post={post} />
         </Main>

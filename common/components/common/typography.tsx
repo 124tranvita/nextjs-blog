@@ -24,13 +24,13 @@ enum Type {
 const SizeMap = {
   [Size.Large]: "text-xl",
   [Size.Small]: "text-xs",
-  [Size.Normal]: "text-base",
-  [Size.Subtext]: "text-md",
+  [Size.Normal]: "text-md",
+  [Size.Subtext]: "text-sm",
 };
 
 const TypeMap = {
   [Type.Title]:
-    "font-bold mb-3 text-3xl md:text-4xl sm:leading-7 md:leading-9 sm:tracking-tight text-gray-900 dark:text-gray-100",
+    "font-bold mb-3 text-3xl md:text-4xl sm:tracking-tight text-gray-900 dark:text-gray-100",
   [Type.Description]: "text-gray-500 mb-3 text-lg",
   [Type.Name]: "text-slate-600 font-semibold",
   [Type.Muted]: "text-slate-400",
