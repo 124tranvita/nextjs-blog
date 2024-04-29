@@ -95,18 +95,23 @@ export async function POST(request: Request) {
 
     const userId = formData.get("userId") as string;
     const title = formData.get("title") as string;
-    const coverImg = formData.get("coverImg") as Blob;
+    const cloudImg = formData.get("cloudImg") as string;
+    const localImg = formData.get("localImg") as Blob;
     const content = formData.get("content") as string;
     const author = formData.get("author") as string;
 
-    /** Upload image to google drive */
-    const readable = await blodToReadable(coverImg);
-    const googleFileId = await fileUpload(title, coverImg.type, readable);
+    /** Process upload `localImg` to google drive */
+    let googleFileId;
+    if (localImg) {
+      const readable = await blodToReadable(localImg);
+      googleFileId = await fileUpload(title, localImg.type, readable);
+    }
 
     /** Create post */
     const post = await Post.create({
       title,
-      coverImgFileId: googleFileId,
+      localImg: googleFileId,
+      cloudImg,
       content,
       author,
       createdAt: new Date(),
@@ -167,16 +172,17 @@ export async function PATCH(request: Request) {
 
     const userId = formData.get("userId") as string;
     const title = formData.get("title") as string;
-    const coverImg = formData.get("coverImg") as Blob;
+    const cloudImg = formData.get("cloudImg") as string;
+    const localImg = formData.get("localImg") as Blob;
     const content = formData.get("content") as string;
     const author = formData.get("author") as string;
 
-    /** if post's id not provide */
+    /** If post's id not provide */
     if (!id) {
       return handleErrors(new AppError("Invalid Post's Id.", 400));
     }
 
-    /** if post no belong to current user */
+    /** If post no belong to current user */
     const checkData = await Post.findOne({
       _id: id,
       user: userId,
@@ -186,14 +192,18 @@ export async function PATCH(request: Request) {
       return handleErrors(new AppError("Post not belong to user.", 403));
     }
 
-    /** upload image to google drive */
-    const readable = await blodToReadable(coverImg);
-    const googleFileId = await fileUpload(title, coverImg.type, readable);
+    /** Process upload `localImg` to google drive */
+    let googleFileId;
+    if (localImg) {
+      const readable = await blodToReadable(localImg);
+      googleFileId = await fileUpload(title, localImg.type, readable);
+    }
 
     /** update post */
     const post = await Post.findByIdAndUpdate(id, {
       title,
-      coverImgFileId: googleFileId,
+      localImg: googleFileId,
+      cloudImg,
       content,
       author,
       updatedAt: new Date(),

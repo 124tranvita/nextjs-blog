@@ -1,34 +1,44 @@
 // app/components/custom-image.tsx
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
+import noImagePlaceholder from "../../public/no-image-placeholder.webp";
 import { Link } from "./custom-link";
 
-import noImagePlaceholder from "../../public/no-image-placeholder.webp";
-import ImageLoadingSkeleton from "./loading-skeleton/image-loading-skeleton";
-
 type Props = {
-  coverImgFileId: string;
+  cloudImg?: string;
+  localImg?: string;
   alt?: string;
   pathname?: string;
 };
 
 export function ViewImage({
-  coverImgFileId = "",
+  cloudImg = "",
+  localImg = "",
   alt = "",
   pathname = "",
 }: Props) {
+  const src = useMemo(() => {
+    if (localImg) {
+      return process.env.NEXT_PUBLIC_GOOGLE_IMG_URL
+        ? process.env.NEXT_PUBLIC_GOOGLE_IMG_URL.replace("<IMAGEURL>", localImg)
+        : "";
+    }
+
+    if (cloudImg) {
+      return cloudImg;
+    }
+
+    return noImagePlaceholder;
+  }, [cloudImg, localImg]);
+
   return (
     <>
       <div className="relative max-w-full mb-8 rounded-md overflow-hidden h-[312px] md:h-[412px] lg:h-[512px]">
         <Link href={pathname}>
           <Image
-            src={
-              process.env.NEXT_PUBLIC_GOOGLE_IMG_URL?.replace(
-                "<IMAGEURL>",
-                coverImgFileId
-              ) || noImagePlaceholder
-            }
+            src={src}
             alt={`${alt}_image`}
             fill={true}
             sizes="100vw"

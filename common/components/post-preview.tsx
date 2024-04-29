@@ -3,9 +3,9 @@
 
 import { useEffect } from "react";
 import { PostPreview } from "@/common/lib/model";
-import { ViewImage } from "./view-image";
 import Typography from "./common/typography";
 import { Article, Content } from "./common/container";
+import { ViewImage } from "./view-image";
 
 type Props = {
   previewData: PostPreview;
@@ -19,7 +19,10 @@ export default function PostPreview({ previewData, onPreview }: Props) {
 
   return (
     <Article>
-      <ViewImage src={previewData.cover} />
+      <ViewImage
+        cloudImg={previewData.cloudImg}
+        localImg={previewData.localImg}
+      />
       <Typography text={previewData.title} type="title" />
       <Content content={previewData.content} />
     </Article>

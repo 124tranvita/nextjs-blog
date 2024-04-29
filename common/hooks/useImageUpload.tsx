@@ -1,86 +1,42 @@
 // hooks/useUploadImage.tsx
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { fetchImage } from "@/actions";
-import * as Utils from "@/common/lib/utils";
-import useUnchanged from "./useUnchanged";
-import * as ImagePreviewComponent from "../components/image-preview";
-import { downloadFile } from "../lib/google-drive";
+import { useCallback, useEffect, useState } from "react";
+import { ImagePreviewMain } from "../components/image-preview";
 
-export default function useImageUpload(googleFileId: string = "") {
-  const { isUnChanged, setInitUnChangeValue } = useUnchanged();
+export default function useImageUpload({ cloudImg = "", localImg = "" }) {
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [isShowPreImage, setIsShowPreImage] = useState<boolean>(false);
+  const [isLoadingImg, setIsLoadingImg] = useState<boolean>(false);
   const [isClearedUploadProcced, setIsClearedUploadProcced] =
     useState<boolean>(false);
 
-  const [cloudImgUrl, setCloudImgUrl] = useState<string>("");
-  const [imageData, setImageData] = useState<Blob | File | undefined>(
-    undefined
-  );
-  const [isShowPreImage, setIsShowPreImage] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-
   /** Fetch image data from google drive if `googleFileId` is provided */
   useEffect(() => {
-    // No run if not have `googleFileId`
-    if (!googleFileId) return;
+    // No run if not have prev image source
+    if (!cloudImg && !localImg) return;
 
     // Display image preview screen
     setIsShowPreImage(true);
 
-    // Get file from Google drive function
-    const getFile = async (fileId: string) => {
-      try {
-        const res = await downloadFile(fileId);
+    // If `localImg`: Set `imageUrl` as google drive url based on file Id
+    if (localImg) {
+      const url = process.env.NEXT_PUBLIC_GOOGLE_IMG_URL
+        ? process.env.NEXT_PUBLIC_GOOGLE_IMG_URL.replace("<IMAGEURL>", localImg)
+        : "";
 
-        if (res) {
-          const imgData = Utils.base64ToBlob(res.base64, res.type);
-          setImageData(imgData);
-        }
-      } catch (error: any) {
-        setError(error.message);
-      }
-    };
+      return setImageUrl(url);
+    }
 
-    getFile(googleFileId);
-  }, [googleFileId]);
-
-  /** If cloud image's url is provided, run this useEffect to fetch online image data */
-  useEffect(() => {
-    // No run if not have `cloudImgUrl`
-    if (!cloudImgUrl) return;
-
-    // If new provided url similar with previous url
-    if (isUnChanged(cloudImgUrl)) return;
-
-    setError("");
-    setImageData(undefined);
-
-    // Fecth image data function
-    const getImage = async () => {
-      try {
-        const base64Img = await fetchImage(cloudImgUrl);
-        const imgData = Utils.base64ToBlob(base64Img, "image/jpeg") as File;
-        setImageData(imgData);
-      } catch (error: any) {
-        setError(error.message);
-      }
-    };
-
-    // Run fecth data function
-    getImage();
-  }, [cloudImgUrl, isUnChanged]);
+    setImageUrl(cloudImg);
+  }, [cloudImg, localImg]);
 
   /** Refresh all data to init when `X` button is clicked */
   const proccessClearData = useCallback(() => {
     setIsShowPreImage(false);
-    setIsShowPreImage(false);
-    setImageData(undefined);
-    setError("");
-    setCloudImgUrl("");
-    setInitUnChangeValue();
+    setImageUrl("");
     setIsClearedUploadProcced(true);
-  }, [setInitUnChangeValue]);
+  }, []);
 
   /** Process image data with provided value */
   const processImageData = useCallback(
@@ -88,36 +44,25 @@ export default function useImageUpload(googleFileId: string = "") {
       setIsClearedUploadProcced(false);
 
       if (typeof value === "string") {
-        setCloudImgUrl(value);
+        setImageUrl(value);
         setIsShowPreImage(true);
       } else {
-        setImageData(value);
+        const url = URL.createObjectURL(value as File);
+        setImageUrl(url);
         setIsShowPreImage(true);
       }
     },
     []
   );
 
-  const isLoadingImg = useMemo(() => {
-    return Boolean(!imageData && !error && isShowPreImage);
-  }, [error, imageData, isShowPreImage]);
-
   /** Image preview component */
   const ImagePreview = (
     <>
-      {!imageData && !error && isShowPreImage && (
-        <ImagePreviewComponent.ImagePreviewLoading />
-      )}
-      {!imageData && error && (
-        <ImagePreviewComponent.ImagePreviewError
-          error={error}
+      {imageUrl && isShowPreImage && (
+        <ImagePreviewMain
+          src={imageUrl}
           proccessClearData={proccessClearData}
-        />
-      )}
-      {imageData && isShowPreImage && (
-        <ImagePreviewComponent.ImagePreviewMain
-          imageData={imageData as File}
-          proccessClearData={proccessClearData}
+          setIsLoadingImg={setIsLoadingImg}
         />
       )}
     </>
@@ -126,7 +71,6 @@ export default function useImageUpload(googleFileId: string = "") {
   return {
     processImageData,
     ImagePreview,
-    imageData,
     isClearedUploadProcced,
     isLoadingImg,
   };

@@ -53,8 +53,16 @@ export function PostInfo({
 }
 
 export default function PostView({ post, isSummary = false }: Props) {
-  const { coverImgFileId, title, author, createdAt, updatedAt, content, _id } =
-    post;
+  const {
+    title,
+    author,
+    cloudImg,
+    localImg,
+    createdAt,
+    updatedAt,
+    content,
+    _id,
+  } = post;
 
   const parsedContent = useMemo(() => {
     return isSummary ? truncateText(stripHtmlTags(content), 250) : content;
@@ -64,7 +72,11 @@ export default function PostView({ post, isSummary = false }: Props) {
     <Article>
       <div className="relative">
         <PostReact />
-        <ViewImage coverImgFileId={coverImgFileId} pathname={`/post/${_id}`} />
+        <ViewImage
+          cloudImg={cloudImg}
+          localImg={localImg}
+          pathname={`/post/${_id}`}
+        />
       </div>
       <Link href={`/post/${_id}`}>
         <Typography text={title} type="title" />
