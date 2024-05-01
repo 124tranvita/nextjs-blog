@@ -128,7 +128,7 @@ export async function getPost(id: string): Promise<Post> {
   return res.json();
 }
 
-export async function deletePost(id: string, fileId: string) {
+export async function deletePost(id: string, localImg: string) {
   // Get current locale
   const lang = cookies().get("lang")?.value;
   // Get session data
@@ -151,8 +151,10 @@ export async function deletePost(id: string, fileId: string) {
     throw new Error(error.message);
   }
 
-  /** Delete image on google drive */
-  await deleteFile(fileId);
+  /** If `localImg`: Delete from google drive */
+  if (localImg) {
+    await deleteFile(localImg);
+  }
 
   redirect(`${process.env.URL}/?lang=${lang}`);
 }

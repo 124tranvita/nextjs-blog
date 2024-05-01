@@ -4,11 +4,9 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { getPost } from "@/actions";
-import { PostViewLoader } from "../../loader";
 import { decrypt } from "@/common/lib/crypto";
 import PostDetail from "@/common/ui/post";
 import Main from "@/common/ui/main";
-import user from "@/app/api/_lib/models/user";
 
 type Props = {
   params: { slug: string };
@@ -38,7 +36,7 @@ export default async function Page({ params }: Props) {
       {post && (
         <Main
           postId={post._id}
-          coverImgFileId={post.coverImgFileId}
+          localImg={post.localImg}
           belongUsr={
             sessionData && sessionData.user._id === post.user ? true : false
           }
