@@ -28,31 +28,6 @@ oauth2Client.setCredentials({
 const drive = google.drive({ version: "v3", auth: oauth2Client });
 
 /**
- * List file and folder on the drive
- * @returns  - List of file and folder
- */
-export async function listFiles() {
-  try {
-    const res = await drive.files.list({
-      pageSize: 10,
-      fields: "nextPageToken, files(id, name)",
-    });
-
-    const files = res.data.files;
-    if (!files || files.length === 0) {
-      console.log("No files found.");
-      return;
-    }
-
-    files.map((file) => {
-      console.log(`${file.name} (${file.id})`);
-    });
-  } catch (error) {
-    console.error({ error });
-  }
-}
-
-/**
  * Get the specific folder in the drive by given folder name
  * @param {string} folderName - Folder name
  * @returns - Name, Id of the queried folder.
@@ -112,10 +87,101 @@ export async function fileUpload(name, type, data) {
       media: media,
     });
 
+    if (file.status !== 200) {
+      console.error({ file });
+    }
+
+    const fileId = file.data.id;
+
+    drive.permissions.create({
+      fileId,
+      requestBody: {
+        role: "reader",
+        type: "anyone",
+      },
+    });
+
     return file.data.id;
   } catch (error) {
     console.error({ error });
   }
+}
+
+/**
+ * Delete a file
+ * @param {string} realFileId - file id
+ * @return - Downloaded file as `ArrayBuffer`
+ * */
+export async function deleteFile(fileId) {
+  try {
+    const file = await drive.files.delete({
+      fileId: fileId,
+      fields: "files(id, name)",
+    });
+
+    return file.status;
+  } catch (error) {
+    console.error({ error });
+  }
+}
+
+/** NOT USE IN CODE */
+
+/**
+ * List file and folder on the drive
+ * @returns  - List of file and folder
+ */
+export async function listFiles() {
+  try {
+    const res = await drive.files.list({
+      pageSize: 10,
+      fields: "nextPageToken, files(id, name)",
+    });
+
+    const files = res.data.files;
+    if (!files || files.length === 0) {
+      console.log("No files found.");
+      return;
+    }
+
+    files.map((file) => {
+      console.log(`${file.name} (${file.id})`);
+    });
+  } catch (error) {
+    console.error({ error });
+  }
+}
+
+/**
+ * Get web link of file in google drive
+ * @param {string} realFileId - file id
+ * @return - Web link url
+ * */
+export async function getFileLink(realFileId) {
+  const fileId = realFileId;
+
+  try {
+    await drive.permissions.create({
+      fileId,
+      requestBody: {
+        role: "reader",
+        type: "anyone",
+      },
+    });
+
+    const res = await drive.files.get({
+      fileId: fileId,
+      fields: "webViewLink, webContentLink",
+    });
+
+    const webContentLink = res.data.webContentLink;
+    const viewLink = webContentLink.replace("download", "view");
+
+    return viewLink;
+  } catch (error) {
+    console.error({ error });
+  }
+  //https://stackoverflow.com/questions/72864657/hosting-pictures-with-react-and-google-drive
 }
 
 /**
@@ -148,40 +214,50 @@ export async function downloadFile(realFileId) {
   }
 }
 
-/**
- * Downloads a file
- * @param {string} realFileId - file id
- * @return - Downloaded file as `ArrayBuffer`
- * */
-export async function getFileLink(realFileId) {
-  const fileId = realFileId;
-
-  try {
-    const file = await drive.files.get({
-      fileId: fileId,
-      fields: "webViewLink, webContentLink",
-    });
-
-    return file;
-  } catch (error) {
-    console.error({ error });
+/** ------------------ 
+ * create file response
+ * {
+  file: {
+    config: {
+      url: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+      method: 'POST',
+      userAgentDirectives: [Array],
+      paramsSerializer: [Function (anonymous)],
+      data: [PassThrough],
+      headers: [Object],
+      params: [Object],
+      validateStatus: [Function (anonymous)],
+      retry: true,
+      body: [PassThrough],
+      responseType: 'json'
+    },
+    data: {
+      kind: 'drive#file',
+      id: '1gvLgdLr3GQ3ASfbalAiQrVVE8vuaUXm3',
+      name: 'Người ta dễ buồn vì những điều đã cũ.jpeg',
+      mimeType: 'image/jpeg'
+    },
+    headers: {
+      'access-control-allow-credentials': 'true',
+      'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000',
+      'cache-control': 'no-cache, no-store, max-age=0, must-revalidate',
+      'content-length': '171',
+      'content-type': 'application/json; charset=UTF-8',
+      date: 'Sun, 21 Apr 2024 15:56:00 GMT',
+      expires: 'Mon, 01 Jan 1990 00:00:00 GMT',
+      pragma: 'no-cache',
+      server: 'ESF',
+      vary: 'Origin, X-Origin',
+      'x-content-type-options': 'nosniff',
+      'x-frame-options': 'SAMEORIGIN',
+      'x-guploader-uploadid': 'ABPtcPqcjmeW1Im_sdEC12WGkbVMSiUxqpXQc6Tc0lIgNa9sArFkfR6lN_iVPWncoGya1mV-mTWEbKvFrw',
+      'x-xss-protection': '0'
+    },
+    status: 200,
+    statusText: 'OK',
+    request: {
+      responseURL: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart'
+    }
   }
 }
-
-/**
- * Delete a file
- * @param {string} realFileId - file id
- * @return - Downloaded file as `ArrayBuffer`
- * */
-export async function deleteFile(fileId) {
-  try {
-    const file = await drive.files.delete({
-      fileId: fileId,
-      fields: "files(id, name)",
-    });
-
-    return file.status;
-  } catch (error) {
-    console.error({ error });
-  }
-}
+*/

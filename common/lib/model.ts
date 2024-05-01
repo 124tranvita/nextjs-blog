@@ -1,12 +1,13 @@
 export type Post = {
   _id: string;
   title: string;
-  coverImgFileId: string;
-  cover: Buffer | Blob;
+  cloudImg: string;
+  localImg: string;
   content: string;
   author: string;
   createdAt: string | Date;
   updatedAt: string | Date;
+  user: string;
 };
 
 export type User = {
@@ -25,12 +26,14 @@ export type CurrentUser = {
 
 export type PostPreview = {
   title: string;
-  cover: string;
+  cloudImg: string;
+  localImg: string;
   content: string;
 };
 
 export const initPostPreview: PostPreview = {
   title: "",
-  cover: "",
+  cloudImg: "",
+  localImg: "",
   content: "",
 };

@@ -6,14 +6,16 @@ import SideControl from "../components/side-control";
 
 type Props = {
   children: ReactNode;
-  id?: string;
+  postId?: string;
+  belongUsr?: boolean;
   coverImgFileId?: string;
   mainPage?: boolean;
 };
 
 export default function Main({
   children,
-  id = "",
+  postId = "",
+  belongUsr = false,
   coverImgFileId = "",
   mainPage = false,
 }: Props) {
@@ -21,7 +23,8 @@ export default function Main({
     <Container>
       {children}
       <SideControl
-        id={id}
+        postId={postId}
+        belongUsr={belongUsr}
         coverImgFileId={coverImgFileId}
         mainPage={mainPage}
       />

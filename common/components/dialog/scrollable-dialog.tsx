@@ -67,14 +67,14 @@ export default function ScrollableDialog({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative w-full max-w-md md:max-w-2xl lg:max-w-5xl transform overflow-hidden rounded-xl bg-white dark:bg-slate-800 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="fixed w-full max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg transform overflow-hidden rounded-xl bg-white dark:bg-slate-800 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="div"
                     className="absolute top-0 left-0 z-[9999] h-[52px] bg-white dark:bg-slate-900 w-full p-4 shadow-md text-lg font-bold leading-6 text-gray-900 dark:text-gray-50"
                   >
                     {title}
                   </Dialog.Title>
-                  <div className="mt-[50px] pl-4 pr-2 py-2 overflow-y-scroll max-h-[82vh]">
+                  <div className="mt-[50px] pl-4 pr-2 py-2 overflow-y-scroll max-h-[75vh] md:max-h-[80vh]">
                     {children}
                   </div>
 

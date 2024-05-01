@@ -55,7 +55,7 @@ export async function createPost(formData: FormData): Promise<Post> {
 export async function editPost(
   id: string,
   formData: FormData,
-  fileId: string
+  localImg?: string
 ): Promise<Post> {
   // Get current locale
   const lang = cookies().get("lang")?.value;
@@ -86,8 +86,10 @@ export async function editPost(
     throw new Error(error.message);
   }
 
-  // Delete previous cover image on drive
-  await deleteFile(fileId);
+  // If `localImg`: Delete previous image on drive
+  if (localImg) {
+    await deleteFile(localImg);
+  }
 
   // Redirect to post detail page
   redirect(`${process.env.URL}/post/${id}?lang=${lang}`);

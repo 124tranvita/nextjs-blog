@@ -25,7 +25,7 @@ import * as Utils from "@/common/lib/utils";
 type FormDataProps = {
   title: string;
   cloudImg: string;
-  localImage: File[];
+  localImg: File[];
 };
 
 /**
@@ -33,7 +33,7 @@ type FormDataProps = {
  * @returns - Component
  */
 const EditPost: FC<{ post: Post }> = ({ post }) => {
-  const { _id, title, coverImgFileId, content } = post;
+  // const { _id, title, cloudImg, localImg, content } = post;
 
   const [previewData, setPreviewData] =
     useState<PostPreviewType>(initPostPreview);
@@ -44,11 +44,13 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   const {
     processImageData,
     ImagePreview,
-    imageData,
     isClearedUploadProcced,
     isLoadingImg,
-  } = useImageUpload(coverImgFileId);
-  const { getContent, Editor } = useEditor(content);
+  } = useImageUpload({
+    cloudImg: post.cloudImg,
+    localImg: post.localImg,
+  });
+  const { getContent, Editor } = useEditor(post.content);
 
   const {
     handleSubmit,
@@ -61,19 +63,19 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
     formState: { errors },
   } = useForm<FormDataProps>({
     defaultValues: {
-      title,
+      title: post.title,
     },
   });
   const [cloudImg] = watch(["cloudImg"]);
-  const [localImage] = watch(["localImage"]);
+  const [localImg] = watch(["localImg"]);
 
   /** Disable flag for image input field */
   const disable = useMemo(() => {
     return {
-      cloudImg: Boolean(localImage && localImage.length > 0),
-      localImage: Boolean(cloudImg),
+      cloudImg: Boolean(localImg && localImg.length > 0),
+      localImg: Boolean(cloudImg),
     };
-  }, [cloudImg, localImage]);
+  }, [cloudImg, localImg]);
 
   /** Hanlde submit form */
   const onSubmit: SubmitHandler<FormDataProps> = useCallback(
@@ -84,16 +86,17 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
       // Process when editor has content.
       if (editorContent) {
         formData.append("title", data.title);
-        formData.append("coverImg", imageData as Blob);
         formData.append("content", editorContent);
+        formData.append("cloudImg", cloudImg);
+        formData.append("localImg", localImg && localImg[0]);
 
         // Call `editPost` action
-        editPost(_id, formData, coverImgFileId);
+        editPost(post._id, formData, post.localImg);
         // Set `MovingPage` loading to true
         showLoader(d("loader.processing"));
       }
     },
-    [_id, coverImgFileId, d, getContent, imageData, showLoader]
+    [post, cloudImg, d, getContent, localImg, showLoader]
   );
 
   /** Handle post preview event */
@@ -103,10 +106,14 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
     // Set preview value
     setPreviewData({
       title: values.title,
-      cover: imageData ? (URL.createObjectURL(imageData) as string) : "",
-      content: editorContent ? editorContent : content,
+      cloudImg: cloudImg ? cloudImg : post.cloudImg,
+      localImg:
+        localImg && localImg[0]
+          ? (URL.createObjectURL(localImg[0]) as string)
+          : post.localImg,
+      content: editorContent ? editorContent : post.content,
     });
-  }, [getValues, getContent, imageData, , content]);
+  }, [getValues, getContent, localImg, cloudImg, post]);
 
   /** Hanlde process image data with url */
   const onBlurCoverImgInput = useCallback(
@@ -146,13 +153,13 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
 
   /** Handle back event */
   const hanldeBack = useCallback(() => {
-    next(`/post/${_id}`);
-  }, [_id, next]);
+    next(`/post/${post._id}`);
+  }, [post._id, next]);
 
   /** Depend on clear upload image process */
   useEffect(() => {
     if (isClearedUploadProcced) {
-      setValue("localImage", []);
+      setValue("localImg", []);
       setValue("cloudImg", "");
     }
   }, [isClearedUploadProcced, setValue]);
@@ -173,16 +180,16 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         <div className="mb-3">
           <Input
             label={d("editor.coverImg")}
-            placeholder={`${title}.jpg`}
+            placeholder={`${post.title}.jpg`}
             errors={errors}
             {...register("cloudImg", {
               onBlur: (e) => onBlurCoverImgInput(e.target.value),
               validate: (value) =>
-                imageData ||
+                localImg ||
                 value ||
                 (!value &&
-                  getValues().localImage &&
-                  getValues().localImage.length > 0)
+                  getValues().localImg &&
+                  getValues().localImg.length > 0)
                   ? true
                   : d("errors.coverImg"),
             })}
@@ -192,10 +199,10 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         <div className="mb-3">
           <FileSelector
             errors={errors}
-            {...register("localImage", {
+            {...register("localImg", {
               onChange: (e) => onChangeFileSelector(e.target.files),
             })}
-            disabled={disable.localImage}
+            disabled={disable.localImg}
           />
         </div>
         <div className="mb-3">{ImagePreview}</div>

@@ -11,9 +11,11 @@ const postSchema = new mongoose.Schema(
       ],
       minlength: [4, "A user name must have more or equal than 4 characters."],
     },
-    coverImgFileId: {
+    localImg: {
       type: String,
-      required: [true, "Missing post cover image file Id!"],
+    },
+    cloudImg: {
+      type: String,
     },
     content: {
       type: String,

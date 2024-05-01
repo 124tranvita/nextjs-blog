@@ -20,7 +20,6 @@ export const BrandName: FC<Props> = ({ className }) => {
   return (
     <>
       <div className={className}>
-        {/* <a href={`/?lang=${lang}`}> */}
         <Link href={`/?lang=${lang}`}>
           <h1 className="text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white">
             <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">
@@ -29,7 +28,6 @@ export const BrandName: FC<Props> = ({ className }) => {
             Blog
           </h1>
         </Link>
-        {/* </a> */}
         <span className=" bg-gray-700 text-white text-xl font-semibold rounded-md px-2 py-1 mx-1">
           {`/`}
         </span>
@@ -42,7 +40,7 @@ export const Navbar: FC = () => {
   return (
     <Disclosure
       as="nav"
-      className="bg-white sticky top-0 z-40 h-[75px] max-w-full rounded-none px-4 py-[5px] shadow-lg dark:bg-gray-900"
+      className="bg-white sticky top-0 z-40 max-w-full rounded-none px-4 py-[5px] shadow-lg dark:bg-gray-900"
     >
       {({ open }) => (
         <>
@@ -89,9 +87,14 @@ export const Navbar: FC = () => {
           </div>
 
           {/* Mobile panel */}
-          {/* <Disclosure.Panel className="sm:hidden">
+          <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
-              {NAVIGATION.map((item) => (
+              <div className="md:hidden sm:ml-6 sm:block">
+                <div className="flex space-x-4 items-center">
+                  <SearchBar />
+                </div>
+              </div>
+              {/* {NAVIGATION.map((item) => (
                 <Disclosure.Button
                   key={item.name}
                   as="a"
@@ -106,9 +109,9 @@ export const Navbar: FC = () => {
                 >
                   {item.name}
                 </Disclosure.Button>
-              ))}
+              ))} */}
             </div>
-          </Disclosure.Panel> */}
+          </Disclosure.Panel>
         </>
       )}
     </Disclosure>
