@@ -8,7 +8,7 @@ type Props = {
   children: ReactNode;
   postId?: string;
   belongUsr?: boolean;
-  coverImgFileId?: string;
+  localImg?: string;
   mainPage?: boolean;
 };
 
@@ -16,7 +16,7 @@ export default function Main({
   children,
   postId = "",
   belongUsr = false,
-  coverImgFileId = "",
+  localImg = "",
   mainPage = false,
 }: Props) {
   return (
@@ -25,7 +25,7 @@ export default function Main({
       <SideControl
         postId={postId}
         belongUsr={belongUsr}
-        coverImgFileId={coverImgFileId}
+        localImg={localImg}
         mainPage={mainPage}
       />
     </Container>

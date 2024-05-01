@@ -17,14 +17,14 @@ import { FloatIconWithTooltip } from "./common/button";
 type Props = {
   postId?: string;
   belongUsr?: boolean;
-  coverImgFileId?: string;
+  localImg?: string;
   mainPage?: boolean;
 };
 
 export default function SideControl({
   postId,
   belongUsr = false,
-  coverImgFileId,
+  localImg,
   mainPage = false,
 }: Props) {
   const { d } = useDictionary();
@@ -36,10 +36,10 @@ export default function SideControl({
   const handleDelete = useCallback(() => {
     if (postId && confirm("Are you sure?") === true) {
       showLoader(d("loader.processing"));
-      deletePost(postId, coverImgFileId ? coverImgFileId : "");
+      deletePost(postId, localImg ? localImg : "");
     }
     return;
-  }, [postId, showLoader, d, coverImgFileId]);
+  }, [postId, showLoader, d, localImg]);
 
   if (!isSignedIn || isSignedIn === Options.No) {
     return (
