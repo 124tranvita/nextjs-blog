@@ -5,10 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import useDictionary from "@/common/hooks/useDictionary";
 import { SearchIcon } from "@/common/ui/icons";
 import { BasicInput } from "@/common/ui/inputs";
+import useLoader from "../hooks/useLoader";
 
 export default function SearchBar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { showLoader } = useLoader();
   const { d } = useDictionary();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -30,8 +32,9 @@ export default function SearchBar() {
    */
   const handleSearch = useCallback(() => {
     if (!searchTerm) return;
+    showLoader(d("loader.processing"));
     router.push(`/search?q=${searchTerm}`);
-  }, [router, searchTerm]);
+  }, [d, router, searchTerm, showLoader]);
 
   /**
    * Run search query when press enter
@@ -42,10 +45,11 @@ export default function SearchBar() {
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         if (!searchTerm) return;
+        showLoader(d("loader.processing"));
         router.push(`/search?q=${searchTerm}`);
       }
     },
-    [router, searchTerm]
+    [d, router, searchTerm, showLoader]
   );
 
   return (

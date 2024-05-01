@@ -10,11 +10,13 @@ import { Post } from "@/common/lib/model";
 import { Article } from "@/common/components/common/container";
 import PostView from "@/common/components/post-view";
 import useDictionary from "@/common/hooks/useDictionary";
+import useLoader from "@/common/hooks/useLoader";
 
 export default function SearchResult() {
   const searchParams = useSearchParams();
   const search = searchParams.get("q");
   const { d } = useDictionary();
+  const { hideLoader } = useLoader();
 
   const flagRef = useRef<boolean>(false);
 
@@ -45,6 +47,8 @@ export default function SearchResult() {
 
   /** Infinity scroll by intersection observer api */
   useEffect(() => {
+    // Turn off loader
+    hideLoader();
     // Make sure this useEffect NOT call `getSearchPosts` for the first time (initial time)
     if (!search || !flagRef.current) return;
 
@@ -68,7 +72,7 @@ export default function SearchResult() {
         observer.unobserve(element);
       }
     };
-  }, [loadMorePosts, search]);
+  }, [hideLoader, loadMorePosts, search]);
 
   /** Fetch searched data base on search params */
   useEffect(() => {
