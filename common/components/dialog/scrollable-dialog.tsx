@@ -9,6 +9,7 @@ type Props = {
   btnLabel: string;
   title: string;
   children: ReactNode;
+  onPreview?: () => void;
   disabled?: boolean;
 };
 
@@ -16,6 +17,7 @@ export default function ScrollableDialog({
   btnLabel,
   title,
   children,
+  onPreview,
   disabled = false,
 }: Props) {
   const { d } = useDictionary();
@@ -26,6 +28,9 @@ export default function ScrollableDialog({
   }
 
   function openModal() {
+    if (onPreview) {
+      onPreview();
+    }
     setIsOpen(true);
   }
 
