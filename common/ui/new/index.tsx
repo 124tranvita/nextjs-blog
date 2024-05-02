@@ -106,9 +106,7 @@ const NewPost: FC = () => {
       title: values.title,
       cloudImg,
       localImg:
-        localImg && localImg[0]
-          ? (URL.createObjectURL(localImg[0]) as string)
-          : "",
+        localImg && localImg[0] ? URL.createObjectURL(localImg[0] as File) : "",
       content: editorContent ? editorContent : "",
     });
   }, [getValues, getContent, localImg, cloudImg]);
@@ -209,9 +207,10 @@ const NewPost: FC = () => {
           <ScrollableDialog
             btnLabel={d("editor.preview")}
             title={d("editor.preview")}
+            onPreview={onPreview}
             disabled={isLoadingImg}
           >
-            <PostPreview previewData={previewData} onPreview={onPreview} />
+            <PostPreview previewData={previewData} />
           </ScrollableDialog>
         </div>
         <Button
