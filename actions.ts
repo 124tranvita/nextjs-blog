@@ -15,10 +15,12 @@ const getCurrentUrl = () => {
   return `https://${hostname}`;
 };
 
-const URL =
+const domain =
   process.env.NODE_ENV === "development"
     ? process.env.BASE_URL
     : process.env.VERCEL_URL;
+
+const URL = `https://${domain}`;
 
 /**
  * Actions: `Create` Post
