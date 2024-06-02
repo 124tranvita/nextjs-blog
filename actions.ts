@@ -6,12 +6,12 @@ import { cookies } from "next/headers";
 import { deleteFile } from "@/app/common/lib/google-drive";
 import { CurrentUser, Post } from "@/app/common/lib/model";
 import { decrypt, encrypt } from "@/app/common/lib/crypto";
-import { headers } from "next/headers";
 
-const headersList = headers();
-const hostname = headersList.get("x-forwarded-host");
+const hotsname = process.env.VERCEL_ENV
+  ? process.env.VERCEL_URL
+  : process.env.BASE_URL;
 
-const URL = `https://${hostname}`;
+const URL = `https://${hotsname}`;
 
 /**
  * Actions: `Create` Post
