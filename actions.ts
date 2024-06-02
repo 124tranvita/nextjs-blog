@@ -6,12 +6,19 @@ import { cookies } from "next/headers";
 import { deleteFile } from "@/app/common/lib/google-drive";
 import { CurrentUser, Post } from "@/app/common/lib/model";
 import { decrypt, encrypt } from "@/app/common/lib/crypto";
+import { headers } from "next/headers";
 
-const hotsname = process.env.VERCEL_ENV
-  ? process.env.VERCEL_URL
-  : process.env.BASE_URL;
+const getCurrentUrl = () => {
+  const headersList = headers();
+  const hostname = headersList.get("host"); // to get domain
 
-const URL = `https://${hotsname}`;
+  return `https://${hostname}`;
+};
+
+const URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.BASE_URL
+    : process.env.VERCEL_URL;
 
 /**
  * Actions: `Create` Post
@@ -50,7 +57,7 @@ export async function createPost(formData: FormData): Promise<Post> {
 
   // Handle on successfully data
   const data = await res.json();
-  redirect(`${URL}/post/${data.id}?lang=${lang}`);
+  redirect(`${getCurrentUrl()}/post/${data.id}?lang=${lang}`);
 }
 
 /**
@@ -98,7 +105,7 @@ export async function editPost(
   }
 
   // Redirect to post detail page
-  redirect(`${URL}/post/${id}?lang=${lang}`);
+  redirect(`${getCurrentUrl()}/post/${id}?lang=${lang}`);
 }
 
 export async function getPosts(page: number, limit: number): Promise<Post[]> {
@@ -159,7 +166,7 @@ export async function deletePost(id: string, localImg: string) {
     await deleteFile(localImg);
   }
 
-  redirect(`${URL}/?lang=${lang}`);
+  redirect(`${getCurrentUrl()}/?lang=${lang}`);
 }
 
 export async function getSearchPosts(
@@ -250,10 +257,10 @@ export async function login(
 
   /** Return to the previous screen */
   if (prevLink) {
-    redirect(`${URL}${prevLink}?lang=${lang}`);
+    redirect(`${getCurrentUrl()}${prevLink}?lang=${lang}`);
   } else {
     // Or redirect to main page
-    redirect(`${URL}/?lang=${lang}`);
+    redirect(`${getCurrentUrl()}/?lang=${lang}`);
   }
 }
 
@@ -267,5 +274,5 @@ export async function logout(): Promise<any> {
 
   cookies().delete("session");
   /** Return to the main page */
-  redirect(`${URL}/?lang=${lang}`);
+  redirect(`${getCurrentUrl()}/?lang=${lang}`);
 }
