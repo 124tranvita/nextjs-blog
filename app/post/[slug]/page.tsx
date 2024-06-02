@@ -4,9 +4,9 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { getPost } from "@/actions";
-import { decrypt } from "@/common/lib/crypto";
-import PostDetail from "@/common/ui/post";
-import Main from "@/common/ui/main";
+import { decrypt } from "@/app/common/lib/crypto";
+import PostDetail from "@/app/common/ui/post";
+import Main from "@/app/common/ui/main";
 
 type Props = {
   params: { slug: string };

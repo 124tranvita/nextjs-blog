@@ -1,8 +1,9 @@
 // app/api/post/route.ts
 
-import connect, { mongooseConnectState } from "@/common/lib/_mongodb";
-import { fileUpload } from "@/common/lib/google-drive";
-import { blodToReadable } from "@/common/lib/utils";
+import connect, { mongooseConnectState } from "@/app/common/lib/_mongodb";
+
+import { blodToReadable } from "@/app/common/lib/utils";
+import { fileUpload } from "@/app/common/lib/google-drive";
 import Post from "../_lib/models/post";
 import User from "../_lib/models/user";
 import handleErrors from "../_lib/utils/error-handler";

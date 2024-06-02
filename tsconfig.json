@@ -29,9 +29,9 @@
     ".next/types/**/*.ts",
     "app/api/_lib/utils/controllers/error-controller.js",
     "app/api/_lib/models/user.js",
-    "common/lib/crypto.js",
-    "common/lib/google-drive.js",
-    "common/lib/constants.ts"
+    "app/common/lib/crypto.js",
+    "app/common/lib/google-drive.js",
+    "app/common/lib/constants.ts"
   ],
   "exclude": ["node_modules"]
 }

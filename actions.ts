@@ -2,10 +2,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { deleteFile } from "./common/lib/google-drive";
 import { cookies } from "next/headers";
-import { CurrentUser, Post } from "@/common/lib/model";
-import { decrypt, encrypt } from "./common/lib/crypto";
+import { deleteFile } from "@/app/common/lib/google-drive";
+import { CurrentUser, Post } from "@/app/common/lib/model";
+import { decrypt, encrypt } from "@/app/common/lib/crypto";
 
 /**
  * Actions: `Create` Post

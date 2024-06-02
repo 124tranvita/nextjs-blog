@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { Metadata } from "next";
-import Login from "@/common/ui/login/log-in";
+import Login from "@/app/common/ui/login/log-in";
 import { Loader } from "../loader";
 
 // Static metadata

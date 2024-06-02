@@ -1,7 +1,7 @@
 // app/new/page.tsx
 import { Suspense } from "react";
 import { Metadata } from "next";
-import NewPost from "@/common/ui/new";
+import NewPost from "@/app/common/ui/new";
 import { Loader } from "../loader";
 
 // Static metadata
