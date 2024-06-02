@@ -6,6 +6,8 @@ import { getPost } from "@/actions";
 import { Loader } from "@/app/loader";
 import EditPost from "@/app/common/ui/edit";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: { slug: string };
 };
