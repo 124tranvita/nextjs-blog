@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { useCallback, useState } from "react";
 
-export default function PostReact() {
+export default function PostReact({ ...props }) {
   const [liked, setLiked] = useState(false);
   const [commented, setCommented] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
@@ -29,9 +29,10 @@ export default function PostReact() {
   const onClickBookmark = useCallback(() => {
     setBookmarked(!bookmarked);
   }, [bookmarked]);
+
   return (
-    <div className="absolute top-0 left-0 px-2 w-12 h-[312px] lg:h-[400px]  md:mt-[56px] py-[2.5rem] rounded-s-md md:rounded-none bg-gray-900 bg-opacity-70 hover:bg-opacity-100 flex flex-col justify-between text-gray-500 z-10">
-      <div className="flex flex-col items-center">
+    <div {...props}>
+      <div className="w-9 mx-4 flex items-center">
         {liked ? (
           <>
             <HeartIconSolid
@@ -47,9 +48,9 @@ export default function PostReact() {
             />
           </>
         )}
-        <span>0</span>
+        <span className="ml-1">0</span>
       </div>
-      <div className="flex flex-col items-center">
+      <div className="w-9 mx-4 flex items-center">
         {commented ? (
           <>
             <ChatBubbleBottomCenterIconSolid
@@ -65,24 +66,27 @@ export default function PostReact() {
             />
           </>
         )}
-        <span>0</span>
+        <span className="ml-1">0</span>
       </div>
-      {bookmarked ? (
-        <>
-          <BookmarkIconSolid
-            onClick={onClickBookmark}
-            className="text-gray-50 cursor-pointer"
-          />
-        </>
-      ) : (
-        <>
-          <BookmarkIconOutline
-            onClick={onClickBookmark}
-            className="hover:text-gray-700 cursor-pointer"
-          />
-        </>
-      )}
-      <EllipsisHorizontalIcon className="hover:text-gray-50 cursor-pointer" />
+      <div className="w-6 flex mx-4 items-center">
+        {bookmarked ? (
+          <>
+            <BookmarkIconSolid
+              onClick={onClickBookmark}
+              className="text-gray-50 cursor-pointer"
+            />
+          </>
+        ) : (
+          <>
+            <BookmarkIconOutline
+              onClick={onClickBookmark}
+              className="hover:text-gray-700 cursor-pointer"
+            />
+          </>
+        )}
+        <span></span>
+      </div>
+      <EllipsisHorizontalIcon className="hover:text-gray-50 cursor-pointer w-6" />
     </div>
   );
 }

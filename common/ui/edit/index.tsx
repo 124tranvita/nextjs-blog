@@ -4,11 +4,7 @@
 import React, { FC, useCallback, useEffect, useState, useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { editPost } from "@/actions";
-import {
-  Post,
-  PostPreview as PostPreviewType,
-  initPostPreview,
-} from "@/common/lib/model";
+import { Post, initPost } from "@/common/lib/model";
 import useScreenPath from "@/common/hooks/useScreenPath";
 import useDictionary from "@/common/hooks/useDictionary";
 import useImageUpload from "@/common/hooks/useImageUpload";
@@ -17,10 +13,10 @@ import useEditor from "@/common/hooks/useEditor";
 import Input from "@/common/components/react-hook-form/input";
 import FileSelector from "@/common/components/react-hook-form/file-selector";
 import ScrollableDialog from "@/common/components/dialog/scrollable-dialog";
-import PostPreview from "@/common/components/post-preview";
 import { EditorContainer } from "@/common/components/common/container";
 import { Button } from "@/common/components/common/button";
 import * as Utils from "@/common/lib/utils";
+import PostDetailView from "@/common/components/post-view";
 
 type FormDataProps = {
   title: string;
@@ -35,8 +31,7 @@ type FormDataProps = {
 const EditPost: FC<{ post: Post }> = ({ post }) => {
   // const { _id, title, cloudImg, localImg, content } = post;
 
-  const [previewData, setPreviewData] =
-    useState<PostPreviewType>(initPostPreview);
+  const [previewData, setPreviewData] = useState<Post>(initPost);
 
   const { d } = useDictionary();
   const { next } = useScreenPath();
@@ -105,6 +100,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
     const editorContent = getContent();
     // Set preview value
     setPreviewData({
+      ...initPost,
       title: values.title,
       cloudImg: cloudImg ? cloudImg : post.cloudImg,
       localImg:
@@ -214,7 +210,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
             disabled={isLoadingImg}
             onPreview={onPreview}
           >
-            <PostPreview previewData={previewData} />
+            <PostDetailView post={previewData} view="detail" />
           </ScrollableDialog>
         </div>
         <Button

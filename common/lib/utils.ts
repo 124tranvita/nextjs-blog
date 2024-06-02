@@ -106,10 +106,12 @@ export const isValidUrl = (value: string) => {
  * @returns - String already stripped out html tags
  */
 export const stripHtmlTags = (value: string) => {
-  if (!value || typeof document === "undefined") return "";
+  return value.replace(/(<([^>]+)>)/gi, "");
+  // if (!value || typeof document === "undefined") return "";
 
-  const div = document.createElement("div");
-  div.innerHTML = value;
+  // const div = document.createElement("div");
+  // div.innerHTML = value;
 
-  return div.textContent || div.innerText || "";
+  // return div.textContent || div.innerText || "";
+  // https://css-tricks.com/snippets/javascript/strip-html-tags-in-javascript/
 };

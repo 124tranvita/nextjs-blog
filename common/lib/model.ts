@@ -31,6 +31,18 @@ export type PostPreview = {
   content: string;
 };
 
+export const initPost: Post = {
+  _id: "",
+  title: "",
+  cloudImg: "",
+  localImg: "",
+  content: "",
+  author: "Anonymous",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  user: "Anonymous",
+};
+
 export const initPostPreview: PostPreview = {
   title: "",
   cloudImg: "",

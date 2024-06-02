@@ -8,9 +8,9 @@ import { MorePostLoader, PostViewLoader } from "@/app/loader";
 import { LIMIT, PAGE_INIT } from "@/common/lib/constants";
 import { Post } from "@/common/lib/model";
 import { Article } from "@/common/components/common/container";
-import PostView from "@/common/components/post-view";
 import useDictionary from "@/common/hooks/useDictionary";
 import useLoader from "@/common/hooks/useLoader";
+import PostDetailView from "@/common/components/post-view";
 
 export default function SearchResult() {
   const searchParams = useSearchParams();
@@ -95,7 +95,7 @@ export default function SearchResult() {
 
   return (
     <>
-      <Article>
+      <Article width="medium">
         <div className="mb-3">
           <p className="text-2xl font-semibold text-slate-800 dark:text-slate-50">
             {d("search.placeholder")}{" "}
@@ -115,7 +115,11 @@ export default function SearchResult() {
               posts.map((post: Post) => (
                 <div key={post._id} ref={ref}>
                   <Suspense fallback={<PostViewLoader />}>
-                    <PostView post={post} isSummary={true} />
+                    <PostDetailView
+                      post={post}
+                      view="home"
+                      articleSize="medium"
+                    />
                   </Suspense>
                 </div>
               ))

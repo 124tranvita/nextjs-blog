@@ -11,6 +11,10 @@ const config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "gradient-classic-dark":
+          "linear-gradient(360deg, #1e293b 0%, rgba(255,255,255,0) 100%)",
+        "gradient-classic-light":
+          "linear-gradient(360deg, #f8fafc 0%, rgba(255,255,255,0) 100%)",
       },
       height: {
         "512": "512px",
