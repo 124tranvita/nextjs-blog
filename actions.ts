@@ -6,10 +6,12 @@ import { cookies } from "next/headers";
 import { deleteFile } from "@/app/common/lib/google-drive";
 import { CurrentUser, Post } from "@/app/common/lib/model";
 import { decrypt, encrypt } from "@/app/common/lib/crypto";
+import { headers } from "next/headers";
 
-const URL = process.env.CUSTOM_URL
-  ? process.env.CUSTOM_URL
-  : process.env.BASE_URL;
+const headersList = headers();
+const hostname = headersList.get("x-forwarded-host");
+
+const URL = `https://${hostname}`;
 
 /**
  * Actions: `Create` Post
