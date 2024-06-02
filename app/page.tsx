@@ -14,7 +14,7 @@ export default async function Page() {
   const initialPosts = await getPosts(PAGE_INIT, LIMIT);
 
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={null}>
       <Main mainPage={true}>
         <Home initialPosts={initialPosts} />
       </Main>
