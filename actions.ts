@@ -26,7 +26,7 @@ export async function createPost(formData: FormData): Promise<Post> {
   formData.append("author", sessionData.user.name);
 
   // Call `post` api
-  const res = await fetch(`${process.env.URL}/api/post`, {
+  const res = await fetch(`${process.env.BASE_URL}/api/post`, {
     method: "POST",
     cache: "no-cache",
     body: formData,
@@ -44,7 +44,7 @@ export async function createPost(formData: FormData): Promise<Post> {
 
   // Handle on successfully data
   const data = await res.json();
-  redirect(`${process.env.URL}/post/${data.id}?lang=${lang}`);
+  redirect(`${process.env.BASE_URL}/post/${data.id}?lang=${lang}`);
 }
 
 /**
@@ -70,7 +70,7 @@ export async function editPost(
   formData.append("author", sessionData.user.name);
 
   // Call `post` api
-  const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
+  const res = await fetch(`${process.env.BASE_URL}/api/post?id=${id}`, {
     method: "PATCH",
     cache: "no-cache",
     body: formData,
@@ -92,12 +92,12 @@ export async function editPost(
   }
 
   // Redirect to post detail page
-  redirect(`${process.env.URL}/post/${id}?lang=${lang}`);
+  redirect(`${process.env.BASE_URL}/post/${id}?lang=${lang}`);
 }
 
 export async function getPosts(page: number, limit: number): Promise<Post[]> {
   const res = await fetch(
-    `${process.env.URL}/api/post?page=${page}&limit=${limit}`,
+    `${process.env.BASE_URL}/api/post?page=${page}&limit=${limit}`,
     {
       method: "GET",
       cache: "no-cache",
@@ -114,7 +114,7 @@ export async function getPosts(page: number, limit: number): Promise<Post[]> {
 }
 
 export async function getPost(id: string): Promise<Post> {
-  const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
+  const res = await fetch(`${process.env.BASE_URL}/api/post?id=${id}`, {
     method: "GET",
     cache: "no-cache",
   });
@@ -137,7 +137,7 @@ export async function deletePost(id: string, localImg: string) {
     ? JSON.parse(decrypt(encryptedSessionData))
     : null;
 
-  const res = await fetch(`${process.env.URL}/api/post?id=${id}`, {
+  const res = await fetch(`${process.env.BASE_URL}/api/post?id=${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers: {
@@ -156,7 +156,7 @@ export async function deletePost(id: string, localImg: string) {
     await deleteFile(localImg);
   }
 
-  redirect(`${process.env.URL}/?lang=${lang}`);
+  redirect(`${process.env.BASE_URL}/?lang=${lang}`);
 }
 
 export async function getSearchPosts(
@@ -165,7 +165,7 @@ export async function getSearchPosts(
   limit: number
 ): Promise<Post[]> {
   const res = await fetch(
-    `${process.env.URL}/api/search?searchTerm=${searchTerm}&page=${page}&limit=${limit}`,
+    `${process.env.BASE_URL}/api/search?searchTerm=${searchTerm}&page=${page}&limit=${limit}`,
     {
       method: "GET",
       cache: "no-cache",
@@ -213,7 +213,7 @@ export async function login(
   const lang = cookies().get("lang")?.value;
 
   // Call `auth` api
-  const res = await fetch(`${process.env.URL}/api/auth`, {
+  const res = await fetch(`${process.env.BASE_URL}/api/auth`, {
     method: "POST",
     cache: "no-cache",
     body: formData,
@@ -247,10 +247,10 @@ export async function login(
 
   /** Return to the previous screen */
   if (prevLink) {
-    redirect(`${process.env.URL}/${prevLink}?lang=${lang}`);
+    redirect(`${process.env.BASE_URL}/${prevLink}?lang=${lang}`);
   } else {
     // Or redirect to main page
-    redirect(`${process.env.URL}/?lang=${lang}`);
+    redirect(`${process.env.BASE_URL}/?lang=${lang}`);
   }
 }
 
@@ -264,5 +264,5 @@ export async function logout(): Promise<any> {
 
   cookies().delete("session");
   /** Return to the main page */
-  redirect(`${process.env.URL}/?lang=${lang}`);
+  redirect(`${process.env.BASE_URL}/?lang=${lang}`);
 }

@@ -4,6 +4,8 @@ import { Metadata } from "next";
 import { Loader } from "../loader";
 import SearchResult from "@/app/common/ui/search";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   searchParams: any;
 };

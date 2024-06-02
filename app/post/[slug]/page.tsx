@@ -8,6 +8,8 @@ import { decrypt } from "@/app/common/lib/crypto";
 import PostDetail from "@/app/common/ui/post";
 import Main from "@/app/common/ui/main";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: { slug: string };
 };

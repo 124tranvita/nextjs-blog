@@ -5,6 +5,8 @@ import { Metadata } from "next";
 import Login from "@/app/common/ui/login/log-in";
 import { Loader } from "../loader";
 
+export const dynamic = "force-dynamic";
+
 // Static metadata
 export const metadata: Metadata = {
   title: "Login",
