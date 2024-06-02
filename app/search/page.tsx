@@ -2,7 +2,7 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
 import { Loader } from "../loader";
-import SearchResult from "@/common/ui/search";
+import SearchResult from "@/app/common/ui/search";
 
 type Props = {
   searchParams: any;

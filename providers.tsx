@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
-import { LoaderProvider } from "@/common/context/loader-context";
+import { LoaderProvider } from "@/app/common/context/loader-context";
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (

@@ -1,4 +1,4 @@
-import connect, { mongooseConnectState } from "@/common/lib/_mongodb";
+import connect, { mongooseConnectState } from "@/app/common/lib/_mongodb";
 import Post from "../_lib/models/post";
 
 export const dynamic = "force-dynamic"; // defaults to auto

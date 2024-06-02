@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import { getPost } from "@/actions";
 import { Loader } from "@/app/loader";
-import EditPost from "@/common/ui/edit";
+import EditPost from "@/app/common/ui/edit";
 
 type Props = {
   params: { slug: string };

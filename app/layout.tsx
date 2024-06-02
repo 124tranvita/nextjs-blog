@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { NavigationEvents } from "@/common/components/navigation-events";
-import { Navbar } from "@/common/ui/navbar";
+import { NavigationEvents } from "@/app/common/components/navigation-events";
+import { Navbar } from "@/app/common/ui/navbar";
 import Providers from "../providers";
 
 import "./globals.css";

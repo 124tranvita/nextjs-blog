@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { i18n } from "./i18n";
-import { Options, Routes } from "./common/lib/constants";
+import { Options, Routes } from "@/app/common/lib/constants";
 
 const locales = i18n.locales;
 const defaultLocale = i18n.defaultLocale;
