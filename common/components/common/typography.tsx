@@ -30,7 +30,7 @@ const SizeMap = {
 
 const TypeMap = {
   [Type.Title]:
-    "font-bold mb-3 text-3xl md:text-4xl sm:tracking-tight text-gray-900 dark:text-gray-100",
+    "font-bold mb-3 text-3xl md:text-4xl lg:text-[3rem] sm:tracking-tight text-gray-900 dark:text-gray-100",
   [Type.Description]: "text-gray-500 mb-3 text-lg",
   [Type.Name]: "text-slate-600 font-semibold",
   [Type.Muted]: "text-slate-400",
@@ -44,7 +44,7 @@ const Typography: React.FC<TypographyProps> = ({
   size = "normal",
 }) => {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center justify-center">
       <p className={classNames(TypeMap[type], SizeMap[size])}>{text}</p>
     </div>
   );

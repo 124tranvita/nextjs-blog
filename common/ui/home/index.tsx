@@ -2,17 +2,15 @@
 // https://medium.com/@ferlat.simon/infinite-scroll-with-nextjs-server-actions-a-simple-guide-76a894824cfd
 "use client";
 
-import { FC, useEffect, useState, useCallback, useRef } from "react";
-import dynamic from "next/dynamic";
+import { FC, useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { Post } from "@/common/lib/model";
 import { getPosts } from "@/actions";
 import { MorePostLoader, PostViewLoader } from "@/app/loader";
 import { LIMIT, PAGE_INIT } from "@/common/lib/constants";
-
-const PostView = dynamic(() => import("@/common/components/post-view"), {
-  loading: () => <PostViewLoader />,
-  ssr: false,
-});
+import Typography from "@/common/components/common/typography";
+import useDictionary from "@/common/hooks/useDictionary";
+import PostDetailView from "@/common/components/post-view";
+import { Link } from "@/common/components/custom-link";
 
 type Props = {
   initialPosts: Post[];
@@ -22,6 +20,8 @@ const Home: FC<Props> = ({ initialPosts }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState<number>(PAGE_INIT + 1);
   const [posts, setPosts] = useState<Post[]>(initialPosts);
+
+  const { d } = useDictionary();
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -65,18 +65,23 @@ const Home: FC<Props> = ({ initialPosts }) => {
   }, [loadMorePosts]);
 
   return (
-    <>
+    <Suspense fallback={<PostViewLoader />}>
       {posts.length > 0 ? (
         posts.map((post: Post) => (
           <div key={post._id} ref={ref}>
-            <PostView post={post} isSummary={true} />
+            <PostDetailView post={post} view="home" articleSize="medium" />
+            <Link href={`/post/${post._id}`}>
+              <Typography type="muted" text={d("readMore")} />
+            </Link>
           </div>
         ))
       ) : (
-        <></>
+        <>
+          <PostViewLoader />
+        </>
       )}
       {isLoading && <MorePostLoader />}
-    </>
+    </Suspense>
   );
 };
 
