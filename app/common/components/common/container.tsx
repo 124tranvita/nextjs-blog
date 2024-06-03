@@ -15,7 +15,7 @@ interface Props extends ComponentPropsWithRef<"section"> {
 
 export const Container: FC<Props> = ({ children }) => {
   return (
-    <section className="relative overflow-y-scroll bg-slate-50 dark:bg-slate-800 mb-[10rem]">
+    <section className="relative overflow-y-scroll bg-white dark:bg-slate-800 pb-[10rem]">
       {children}
     </section>
   );
@@ -66,7 +66,7 @@ export const Content: FC<{ content: string; width?: "half" | "full" }> = ({
 }) => {
   const SizeMap = {
     full: "max-w-screen",
-    half: "max-w-screen-md",
+    half: "max-w-screen-md pb-[10rem]",
   };
   return (
     <div
@@ -147,7 +147,7 @@ export const PostHeaderWrapper: FC<PostHeaderWrapperProps> = ({
       >
         <Link href={pathName}>
           <div className={classNames("max-w-screen-md", ViewMapping2[view])}>
-            <p className="font-bold mb-2 text-3xl md:text-4xl text-white dark:text-gray-100 [text-shadow:_1px_1px_8px_rgb(0_0_0_/_40%)]">
+            <p className="font-bold mb-2 text-3xl md:text-4xl text-[#111827] dark:text-gray-100">
               {title}
             </p>
           </div>
