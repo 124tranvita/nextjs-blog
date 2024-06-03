@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { Metadata } from "next";
-import Login from "@/app/common/ui/login/log-in";
+import Login from "@/app/common/ui/login";
 import { Loader } from "../loader";
 
 export const dynamic = "force-dynamic";

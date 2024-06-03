@@ -24,7 +24,8 @@
   "errors": {
     "input": "Title is required.",
     "coverImg": "Over is required.",
-    "invalidUrl": "Invalid URL!"
+    "invalidUrl": "Invalid URL!",
+    "exceedLimitSize": "Your image reach limit of file size (4Mb)"
   },
   "toggles": {
     "themes": {

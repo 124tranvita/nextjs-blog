@@ -11,7 +11,7 @@ import { PostInfo } from "./post-info";
 
 type Props = {
   post: Post;
-  view: "home" | "detail";
+  view: "home" | "detail" | "preview";
   articleSize?: "small" | "medium" | "full";
 };
 
@@ -35,6 +35,8 @@ export const PostDetailView: FC<Props> = ({ post, view, articleSize }) => {
 
   /** Get image's src from post's data */
   const imgSrc = useMemo(() => {
+    if (view === "preview") return cloudImg || localImg;
+
     if (localImg) {
       return process.env.NEXT_PUBLIC_GOOGLE_IMG_URL
         ? process.env.NEXT_PUBLIC_GOOGLE_IMG_URL.replace("<IMAGEURL>", localImg)
@@ -46,7 +48,8 @@ export const PostDetailView: FC<Props> = ({ post, view, articleSize }) => {
     }
 
     return noImagePlaceholder;
-  }, [cloudImg, localImg]);
+  }, [cloudImg, localImg, view]);
+
   return (
     <Article width={articleSize}>
       <PostHeaderWrapper

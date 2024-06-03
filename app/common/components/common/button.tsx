@@ -41,7 +41,11 @@ export const Button: React.FC<ButtonProps> = ({
         className={classNames(
           "inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-md font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
           VariantMap[variant],
-          `${disabled ? "bg-slate-200 hover:bg-slate-200 text-slate-400" : ""}`,
+          `${
+            disabled
+              ? "bg-slate-200 dark:bg-slate-200 text-slate-400 dark:text-slate-300"
+              : ""
+          }`,
           `${fullWidth ? "w-full" : ""}`
         )}
         onClick={onClick}

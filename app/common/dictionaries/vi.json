@@ -24,7 +24,8 @@
   "errors": {
     "input": "Yên cầu nhập dữ liệu",
     "coverImg": "Hãy chọn ảnh bìa",
-    "invalidUrl": "URL không hợp lệ!"
+    "invalidUrl": "URL không hợp lệ!",
+    "exceedLimitSize": "Ảnh của bạn đã vượt quá giới hạn (4Mb)"
   },
   "toggles": {
     "themes": {

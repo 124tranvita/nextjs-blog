@@ -15,7 +15,7 @@ interface Props extends ComponentPropsWithRef<"section"> {
 
 export const Container: FC<Props> = ({ children }) => {
   return (
-    <section className="relative overflow-y-scroll bg-slate-50 dark:bg-slate-800">
+    <section className="relative overflow-y-scroll bg-slate-50 dark:bg-slate-800 mb-[10rem]">
       {children}
     </section>
   );
@@ -109,7 +109,7 @@ type PostHeaderWrapperProps = {
   title: string;
   imgSrc: string | StaticImageData;
   postInfo: ReactNode;
-  view: "home" | "detail";
+  view: "home" | "detail" | "preview";
   pathName: string;
   reactArea?: ReactNode;
   imgAlt?: string;
@@ -126,12 +126,14 @@ export const PostHeaderWrapper: FC<PostHeaderWrapperProps> = ({
 }) => {
   const ViewMapping1 = {
     home: "",
-    detail: "[height:_calc(100%_-_120px)]",
+    detail: "[height:_calc(100%_-_100px)]",
+    preview: "[height:_calc(100%_-_100px)]",
   };
 
   const ViewMapping2 = {
     home: "mx-0",
     detail: "mx-auto",
+    preview: "mx-auto",
   };
   return (
     <div className="relative max-w-full mb-[1rem] overflow-hidden h-[312px] md:h-[412px] lg:h-[512px]">

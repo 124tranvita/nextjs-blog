@@ -115,3 +115,12 @@ export const stripHtmlTags = (value: string) => {
   // return div.textContent || div.innerText || "";
   // https://css-tricks.com/snippets/javascript/strip-html-tags-in-javascript/
 };
+
+/**
+ * Check if object is empty
+ * @param objectName - Object need to be check
+ * @returns - True if object is empty
+ */
+export const isObjectEmpty = (objectName: object) => {
+  return Object.keys(objectName).length === 0;
+};
