@@ -68,3 +68,7 @@ https://medium.com/@ferlat.simon/infinite-scroll-with-nextjs-server-actions-a-si
 
 // https://medium.com/@ferlat.simon/infinite-scroll-with-nextjs-server-actions-a-simple-guide-76a894824cfd
 //https://medium.com/@satyam-dua/lazy-loading-components-in-next-js-with-intersection-observer-and-typescript-9e96f69fa171
+
+Bank Transaction System:
+This system manages banking transactions between banks and customers, including deposits, withdrawals, transfers, loans, credits, payments, and foreign exchange transactions.
+It is built on a technology stack comprising Microservices (Java Spring Boot), Micro frontends (React), and AWS.

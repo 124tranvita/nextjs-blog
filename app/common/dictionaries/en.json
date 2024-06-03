@@ -43,10 +43,13 @@
     "password": "Password",
     "passwordPlaceholder": "Password",
     "loginBtn": "Login",
-    "backBtn": "Back"
+    "backBtn": "Back",
+    "successs": "Login successfully!",
+    "logout": "Logout successfully!"
   },
   "loader": {
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "authentication": "Authenticating..."
   },
   "search": {
     "placeholder": "Search result for ",

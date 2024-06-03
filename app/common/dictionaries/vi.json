@@ -43,10 +43,13 @@
     "password": "Mật khẩu",
     "passwordPlaceholder": "Mật khẩu",
     "loginBtn": "Đăng nhập",
-    "backBtn": "Trở lại"
+    "backBtn": "Trở lại",
+    "successs": "Đăng nhập thành công!",
+    "logout": "Đăng xuất thành công!"
   },
   "loader": {
-    "processing": "Đang xử lý..."
+    "processing": "Đang xử lý...",
+    "authentication": "Đang xác thực..."
   },
   "search": {
     "placeholder": "Kết quả tìm kiếm cho ",

@@ -14,7 +14,7 @@ export type Ref = ForwardedRef<HTMLInputElement>;
 const Input = forwardRef(function (props: Props, ref: Ref) {
   const { name, label, errors } = props;
 
-  const hasError = errors && errors[name] && errors[name]?.message;
+  const hasError = errors && errors[name];
 
   return (
     <div className="mb-5">
@@ -26,10 +26,9 @@ const Input = forwardRef(function (props: Props, ref: Ref) {
       </label>
       <input
         ref={ref}
-        className={classNames({
-          "border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500":
-            true,
-        })}
+        className={`${
+          hasError ? "border-red-500" : "border-gray-300"
+        } border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"`}
         {...props}
       />
       {hasError && (

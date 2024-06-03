@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     // 1) Check if email and password exist
     if (!email || !password) {
       return handleErrors(
-        new AppError("Please provide email and password!", 400)
+        new AppError("Please provide email and password!", 401)
       );
     }
 

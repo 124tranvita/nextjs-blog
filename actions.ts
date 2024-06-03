@@ -7,6 +7,7 @@ import { deleteFile } from "@/app/common/lib/google-drive";
 import { CurrentUser, Post } from "@/app/common/lib/model";
 import { decrypt, encrypt } from "@/app/common/lib/crypto";
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 const getCurrentUrl = () => {
   const headersList = headers();
@@ -59,6 +60,7 @@ export async function createPost(formData: FormData): Promise<Post> {
 
   // Handle on successfully data
   const data = await res.json();
+
   redirect(`${getCurrentUrl()}/post/${data.id}?lang=${lang}`);
 }
 
@@ -122,6 +124,7 @@ export async function getPosts(page: number, limit: number): Promise<Post[]> {
     throw new Error(error.message);
   }
 
+  revalidatePath("/");
   return res.json();
 }
 
@@ -137,6 +140,7 @@ export async function getPost(id: string): Promise<Post> {
     throw new Error(error.message);
   }
 
+  revalidatePath("/");
   return res.json();
 }
 
@@ -217,52 +221,56 @@ export async function fetchImage(url: string) {
  * @param formData - Request FormData
  * @returns - Redirect to main page
  */
-export async function login(
-  formData: FormData,
-  prevLink: string | null
-): Promise<CurrentUser> {
+export async function login(formData: FormData, prevLink: string | null) {
   // Get current locale
   const lang = cookies().get("lang")?.value;
 
-  // Call `auth` api
-  const res = await fetch(`${URL}/api/auth`, {
-    method: "POST",
-    cache: "no-cache",
-    body: formData,
-    credentials: "include",
-  });
+  try {
+    // Call `auth` api
+    const res = await fetch(`${URL}/api/auth`, {
+      method: "POST",
+      cache: "no-cache",
+      body: formData,
+      credentials: "include",
+    });
 
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch image data");
-  }
+    if (!res.ok) {
+      // This will activate the closest `error.js` Error Boundary
+      const { message } = await res.json();
+      throw new Error(message);
+    }
 
-  /** Get data from response */
-  const data = await res.json();
+    /** Get data from response */
+    const data = await res.json();
 
-  const encryptedSessionData = encrypt({
-    jwt: data.token,
-    user: data.user,
-  });
+    const encryptedSessionData = encrypt({
+      jwt: data.token,
+      user: data.user,
+    });
 
-  /** Set session cookie */
-  cookies().set("session", encryptedSessionData, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 7, // One week
-    path: "/",
-  });
+    /** Set session cookie */
+    cookies().set("session", encryptedSessionData, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // One week
+      path: "/",
+    });
 
-  cookies().set("isSignedIn", "1", {
-    maxAge: 60 * 60 * 24 * 7, // One week
-  });
+    cookies().set("isSignedIn", "1", {
+      maxAge: 60 * 60 * 24 * 7, // One week
+    });
 
-  /** Return to the previous screen */
-  if (prevLink) {
-    redirect(`${getCurrentUrl()}${prevLink}?lang=${lang}`);
-  } else {
-    // Or redirect to main page
-    redirect(`${getCurrentUrl()}/?lang=${lang}`);
+    return { success: "Login successfully", status: 200 };
+
+    /** Return to the previous screen */
+    // if (prevLink) {
+    //   redirect(`${getCurrentUrl()}${prevLink}?lang=${lang}`);
+    // } else {
+    //   // Or redirect to main page
+    //   redirect(`${getCurrentUrl()}/?lang=${lang}`);
+    // }
+  } catch (error: Error | any) {
+    return { error: error.message, status: 401 };
   }
 }
 
@@ -271,10 +279,8 @@ export async function login(
  * @returns - Redirect to main page
  */
 export async function logout(): Promise<any> {
-  // Get current locale
-  const lang = cookies().get("lang")?.value;
-
   cookies().delete("session");
-  /** Return to the main page */
-  redirect(`${getCurrentUrl()}/?lang=${lang}`);
+  revalidatePath("/");
+
+  return { status: "success", message: 'Logout successfully!' };
 }

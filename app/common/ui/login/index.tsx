@@ -1,15 +1,16 @@
 // app/[lang]/login/components/log-in.tsx
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, redirect } from "next/navigation";
 import { login } from "@/actions";
 import useDictionary from "@/app/common/hooks/useDictionary";
+import useLoader from "@/app/common/hooks/useLoader";
+import useToastMsg from "@/app/common/hooks/useToastMsg";
 import { Button } from "../../components/common/button";
 import { Container, Form } from "../../components/common/container";
 import Input from "../../components/react-hook-form/input";
-import useLoader from "@/app/common/hooks/useLoader";
 
 /**
  * Declare react-hook-form type
@@ -21,7 +22,8 @@ type FormDataProps = {
 
 const Login: FC = () => {
   const { d } = useDictionary();
-  const { showLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
+  const { showToast } = useToastMsg();
   const searchParams = useSearchParams();
   const prevLink = searchParams.get("prev");
   const {
@@ -30,18 +32,39 @@ const Login: FC = () => {
     formState: { errors },
   } = useForm<FormDataProps>();
 
+  const [response, setResponse] = useState<any>(null);
+
   /**
    * Handle submit login
    */
-  const onSubmit: SubmitHandler<FormDataProps> = (data) => {
+  const onSubmit: SubmitHandler<FormDataProps> = async (data) => {
+    showLoader(d("loader.authentication"));
+
     const formData = new FormData();
 
     formData.append("email", data.email);
     formData.append("password", data.password);
 
-    login(formData, prevLink);
-    showLoader(d("loader.processing"));
+    const result = await login(formData, prevLink);
+
+    setResponse(result);
   };
+
+  /** Handle check response from Api */
+  useEffect(() => {
+    if (response) {
+      hideLoader();
+      // If api return errors
+      if (response.error) {
+        showToast("error", response.error);
+        return;
+      }
+
+      showToast("success", d("login.successs"));
+      redirect("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
 
   return (
     <Container>
