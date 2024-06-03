@@ -16,6 +16,7 @@ import ScrollableDialog from "@/app/common/components/dialog/scrollable-dialog";
 import { EditorContainer } from "@/app/common/components/common/container";
 import { Button } from "@/app/common/components/common/button";
 import * as Utils from "@/app/common/lib/utils";
+import * as Constants from "@/app/common/lib/constants";
 import PostDetailView from "@/app/common/components/post-view";
 
 type FormDataProps = {
@@ -60,6 +61,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
     defaultValues: {
       title: post.title,
     },
+    mode: "onChange",
   });
   const [cloudImg] = watch(["cloudImg"]);
   const [localImg] = watch(["localImg"]);
@@ -71,6 +73,11 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
       localImg: Boolean(cloudImg),
     };
   }, [cloudImg, localImg]);
+
+  /** Disable flag for submit button and preview button */
+  const disbaleBtn = useMemo(() => {
+    return isLoadingImg || !Utils.isObjectEmpty(errors);
+  }, [isLoadingImg, errors]);
 
   /** Hanlde submit form */
   const onSubmit: SubmitHandler<FormDataProps> = useCallback(
@@ -98,18 +105,29 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   const onPreview = useCallback(() => {
     const values = getValues();
     const editorContent = getContent();
+
+    const src = disable.localImg
+      ? cloudImg
+      : disable.cloudImg
+      ? localImg && localImg[0]
+        ? URL.createObjectURL(localImg[0] as File)
+        : ""
+      : post.cloudImg
+      ? post.cloudImg
+      : (process.env.NEXT_PUBLIC_GOOGLE_IMG_URL as string).replace(
+          "<IMAGEURL>",
+          post.localImg
+        );
+
     // Set preview value
     setPreviewData({
       ...initPost,
       title: values.title,
-      cloudImg: cloudImg ? cloudImg : post.cloudImg,
-      localImg:
-        localImg && localImg[0]
-          ? URL.createObjectURL(localImg[0] as File)
-          : post.localImg,
+      cloudImg: src,
+      localImg: src,
       content: editorContent ? editorContent : post.content,
     });
-  }, [getValues, getContent, localImg, cloudImg, post]);
+  }, [getValues, getContent, localImg, cloudImg, post, disable]);
 
   /** Hanlde process image data with url */
   const onBlurCoverImgInput = useCallback(
@@ -136,7 +154,14 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
   const onChangeFileSelector = useCallback(
     async (value: FileList | null) => {
       try {
+        clearErrors();
+
         if (!value) return;
+
+        if (value && value[0] && value[0].size > Constants.LIMIT_FILE_SIZE) {
+          setError("localImg", { message: d("errors.exceedLimitSize") });
+          return;
+        }
 
         const uploadedImg = value && value.length > 0 ? value[0] : undefined;
         processImageData(uploadedImg);
@@ -144,7 +169,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         console.error(error);
       }
     },
-    [processImageData]
+    [processImageData, d, setError, clearErrors]
   );
 
   /** Handle back event */
@@ -207,10 +232,10 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
           <ScrollableDialog
             btnLabel={d("editor.preview")}
             title={d("editor.preview")}
-            disabled={isLoadingImg}
+            disabled={disbaleBtn}
             onPreview={onPreview}
           >
-            <PostDetailView post={previewData} view="detail" />
+            <PostDetailView post={previewData} view="preview" />
           </ScrollableDialog>
         </div>
         <Button
@@ -218,7 +243,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
           type="submit"
           label={d("editor.save")}
           fullWidth
-          disabled={isLoadingImg}
+          disabled={disbaleBtn}
         />
         <Button
           variant="danger"

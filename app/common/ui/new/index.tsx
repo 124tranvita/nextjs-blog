@@ -16,6 +16,7 @@ import ScrollableDialog from "@/app/common/components/dialog/scrollable-dialog";
 import { Button } from "@/app/common/components/common/button";
 import { EditorContainer } from "@/app/common/components/common/container";
 import * as Utils from "@/app/common/lib/utils";
+import * as Constants from "@/app/common/lib/constants";
 import PostDetailView from "@/app/common/components/post-view";
 
 type FormDataProps = {
@@ -54,7 +55,7 @@ const NewPost: FC = () => {
     clearErrors,
     watch,
     formState: { errors },
-  } = useForm<FormDataProps>();
+  } = useForm<FormDataProps>({ mode: "onChange" });
   const [cloudImg] = watch(["cloudImg"]);
   const [localImg] = watch(["localImg"]);
 
@@ -65,6 +66,11 @@ const NewPost: FC = () => {
       localImg: Boolean(cloudImg),
     };
   }, [cloudImg, localImg]);
+
+  /** Disable flag for submit button and preview button */
+  const disbaleBtn = useMemo(() => {
+    return isLoadingImg || !Utils.isObjectEmpty(errors);
+  }, [isLoadingImg, errors]);
 
   /** Hanlde submit form */
   const onSubmit: SubmitHandler<FormDataProps> = useCallback(
@@ -84,7 +90,6 @@ const NewPost: FC = () => {
 
         // Call `createPost` action
         createPost(formData);
-
         // Set `MovingPage` loader
         showLoader(d("loader.processing"));
       }
@@ -132,7 +137,14 @@ const NewPost: FC = () => {
   const onChangeFileSelector = useCallback(
     async (value: FileList | null) => {
       try {
+        clearErrors();
+
         if (!value) return;
+
+        if (value && value[0] && value[0].size > Constants.LIMIT_FILE_SIZE) {
+          setError("localImg", { message: d("errors.exceedLimitSize") });
+          return;
+        }
 
         const uploadedImg = value && value.length > 0 ? value[0] : undefined;
         processImageData(uploadedImg);
@@ -140,7 +152,7 @@ const NewPost: FC = () => {
         console.error(error);
       }
     },
-    [processImageData]
+    [processImageData, setError, clearErrors, d]
   );
 
   /** Handle back event */
@@ -204,7 +216,7 @@ const NewPost: FC = () => {
             btnLabel={d("editor.preview")}
             title={d("editor.preview")}
             onPreview={onPreview}
-            disabled={isLoadingImg}
+            disabled={disbaleBtn}
           >
             <PostDetailView post={previewData} view="detail" />
           </ScrollableDialog>
@@ -214,7 +226,7 @@ const NewPost: FC = () => {
           type="submit"
           label={d("editor.submit")}
           fullWidth
-          disabled={isLoadingImg}
+          disabled={disbaleBtn}
         />
         <Button
           variant="danger"

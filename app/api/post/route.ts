@@ -195,9 +195,11 @@ export async function PATCH(request: Request) {
 
     /** Process upload `localImg` to google drive */
     let googleFileId;
-    if (localImg) {
+    if (localImg.size > 0) {
       const readable = await blodToReadable(localImg);
       googleFileId = await fileUpload(title, localImg.type, readable);
+    } else {
+      googleFileId = "";
     }
 
     /** update post */
