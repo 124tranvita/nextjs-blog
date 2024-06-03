@@ -28,9 +28,9 @@ export const PostDetailView: FC<Props> = ({ post, view, articleSize }) => {
   } = post;
 
   const postContent = useMemo(() => {
-    return view === "detail"
-      ? content
-      : truncateText(stripHtmlTags(content), 250);
+    return view === "home"
+      ? truncateText(stripHtmlTags(content), 250)
+      : content;
   }, [content, view]);
 
   /** Get image's src from post's data */
