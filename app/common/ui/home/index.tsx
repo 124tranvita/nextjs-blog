@@ -2,7 +2,7 @@
 // https://medium.com/@ferlat.simon/infinite-scroll-with-nextjs-server-actions-a-simple-guide-76a894824cfd
 "use client";
 
-import { FC, useEffect, useState, useCallback, useRef, Suspense } from "react";
+import { FC, useEffect, useState, useCallback, useRef } from "react";
 import { Post } from "@/app/common/lib/model";
 import { getPosts } from "@/actions";
 import { MorePostLoader, PostViewLoader } from "@/app/loader";
@@ -65,10 +65,10 @@ const Home: FC<Props> = ({ initialPosts }) => {
   }, [loadMorePosts]);
 
   return (
-    <Suspense fallback={<PostViewLoader />}>
-      {posts.length > 0 ? (
+    <>
+      {posts && posts.length > 0 ? (
         posts.map((post: Post) => (
-          <div key={post._id} ref={ref}>
+          <div key={post._id} ref={ref} className="mb-[3rem]">
             <PostDetailView post={post} view="home" articleSize="medium" />
             <Link href={`/post/${post._id}`}>
               <Typography type="muted" text={d("readMore")} />
@@ -81,7 +81,7 @@ const Home: FC<Props> = ({ initialPosts }) => {
         </>
       )}
       {isLoading && <MorePostLoader />}
-    </Suspense>
+    </>
   );
 };
 

@@ -124,16 +124,3 @@ export const stripHtmlTags = (value: string) => {
 export const isObjectEmpty = (objectName: object) => {
   return Object.keys(objectName).length === 0;
 };
-
-/**
- *
- * @param message
- * @returns
- */
-export const translateActionsErrorCode = (message: string) => {
-  const ERROR = {
-    "Incorrect email or password": "incorrectEmailPassword",
-  };
-
-  return ERROR[message as keyof typeof ERROR];
-};

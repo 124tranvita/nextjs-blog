@@ -3,21 +3,23 @@
 
 import React, { FC, useCallback, useEffect, useState, useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { editPost } from "@/actions";
-import { Post, initPost } from "@/app/common/lib/model";
 import useScreenPath from "@/app/common/hooks/useScreenPath";
 import useDictionary from "@/app/common/hooks/useDictionary";
 import useImageUpload from "@/app/common/hooks/useImageUpload";
 import useLoader from "@/app/common/hooks/useLoader";
 import useEditor from "@/app/common/hooks/useEditor";
+import useToastMsg from "@/app/common/hooks/useToastMsg";
 import Input from "@/app/common/components/react-hook-form/input";
 import FileSelector from "@/app/common/components/react-hook-form/file-selector";
 import ScrollableDialog from "@/app/common/components/dialog/scrollable-dialog";
 import { EditorContainer } from "@/app/common/components/common/container";
 import { Button } from "@/app/common/components/common/button";
+import PostDetailView from "@/app/common/components/post-view";
+import { Post, initPost } from "@/app/common/lib/model";
 import * as Utils from "@/app/common/lib/utils";
 import * as Constants from "@/app/common/lib/constants";
-import PostDetailView from "@/app/common/components/post-view";
 
 type FormDataProps = {
   title: string;
@@ -30,13 +32,14 @@ type FormDataProps = {
  * @returns - Component
  */
 const EditPost: FC<{ post: Post }> = ({ post }) => {
-  // const { _id, title, cloudImg, localImg, content } = post;
-
+  const router = useRouter();
   const [previewData, setPreviewData] = useState<Post>(initPost);
+  const [response, setResponse] = useState<any>(null);
 
   const { d } = useDictionary();
   const { next } = useScreenPath();
-  const { showLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
+  const { showToast } = useToastMsg();
   const {
     processImageData,
     ImagePreview,
@@ -81,7 +84,10 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
 
   /** Hanlde submit form */
   const onSubmit: SubmitHandler<FormDataProps> = useCallback(
-    (data) => {
+    async (data) => {
+      // Show `processing` loader
+      showLoader(d("loader.processing"));
+
       const formData = new FormData();
       const editorContent = getContent();
 
@@ -93,9 +99,9 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         formData.append("localImg", localImg && localImg[0]);
 
         // Call `editPost` action
-        editPost(post._id, formData, post.localImg);
-        // Set `MovingPage` loading to true
-        showLoader(d("loader.processing"));
+        const result = await editPost(post._id, formData, post.localImg);
+
+        setResponse(result);
       }
     },
     [post, cloudImg, d, getContent, localImg, showLoader]
@@ -184,6 +190,23 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
       setValue("cloudImg", "");
     }
   }, [isClearedUploadProcced, setValue]);
+
+  /** Handle check response from Api */
+  useEffect(() => {
+    if (response) {
+      hideLoader();
+      // If api return errors
+      if (response.status !== 200) {
+        showToast("error", response.error);
+        return;
+      }
+
+      // Redirect to homepage on success
+      showToast("success", d("post.editSuccesss"));
+      router.push(`/post/${response.data._id}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
 
   return (
     <EditorContainer>

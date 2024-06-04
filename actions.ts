@@ -1,20 +1,11 @@
 // app/[lang]/actions.ts
 "use server";
 
-import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { deleteFile } from "@/app/common/lib/google-drive";
-import { CurrentUser, Post } from "@/app/common/lib/model";
+import { Post } from "@/app/common/lib/model";
 import { decrypt, encrypt } from "@/app/common/lib/crypto";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-
-const getCurrentUrl = () => {
-  const headersList = headers();
-  const hostname = headersList.get("host"); // to get domain
-
-  return `https://${hostname}`;
-};
 
 const domain =
   process.env.NODE_ENV === "development"
@@ -28,40 +19,42 @@ const URL = `https://${domain}`;
  * @param formData - Request FormData
  * @returns - Redirect to post detail page
  */
-export async function createPost(formData: FormData): Promise<Post> {
-  // Get current locale
-  const lang = cookies().get("lang")?.value;
-  // Get session data
-  const encryptedSessionData = cookies().get("session")?.value;
-  const sessionData: any = encryptedSessionData
-    ? JSON.parse(decrypt(encryptedSessionData))
-    : null;
+export async function createPost(formData: FormData) {
+  try {
+    // Get session data
+    const encryptedSessionData = cookies().get("session")?.value;
+    const sessionData: any = encryptedSessionData
+      ? JSON.parse(decrypt(encryptedSessionData))
+      : null;
 
-  // Append required data to FormData
-  formData.append("userId", sessionData.user.id);
-  formData.append("author", sessionData.user.name);
+    // Append required data to FormData
+    formData.append("userId", sessionData.user.id);
+    formData.append("author", sessionData.user.name);
 
-  // Call `post` api
-  const res = await fetch(`${URL}/api/post`, {
-    method: "POST",
-    cache: "no-cache",
-    body: formData,
-    headers: {
-      Authorization: `Bearer ${sessionData.jwt}`,
-    },
-  });
+    // Call `post` api
+    const res = await fetch(`${URL}/api/post`, {
+      method: "POST",
+      cache: "no-cache",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${sessionData.jwt}`,
+      },
+    });
 
-  // Ff respone not ok
-  if (!res.ok) {
-    const error = await res.json();
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error(error.message);
+    // If respone not ok
+    if (!res.ok) {
+      const error = await res.json();
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error(error.message);
+    }
+
+    // Handle on successfully data
+    const data = await res.json();
+
+    return { data: data, status: 200 };
+  } catch (error: Error | any) {
+    return { error: error.message, status: 401 };
   }
-
-  // Handle on successfully data
-  const data = await res.json();
-
-  redirect(`${getCurrentUrl()}/post/${data.id}?lang=${lang}`);
 }
 
 /**
@@ -73,59 +66,67 @@ export async function editPost(
   id: string,
   formData: FormData,
   localImg?: string
-): Promise<Post> {
-  // Get current locale
-  const lang = cookies().get("lang")?.value;
-  // Get session data
-  const encryptedSessionData = cookies().get("session")?.value;
-  const sessionData: any = encryptedSessionData
-    ? JSON.parse(decrypt(encryptedSessionData))
-    : null;
+) {
+  try {
+    // Get session data
+    const encryptedSessionData = cookies().get("session")?.value;
+    const sessionData: any = encryptedSessionData
+      ? JSON.parse(decrypt(encryptedSessionData))
+      : null;
 
-  // Append required data to FormData
-  formData.append("userId", sessionData.user.id);
-  formData.append("author", sessionData.user.name);
+    // Append required data to FormData
+    formData.append("userId", sessionData.user.id);
+    formData.append("author", sessionData.user.name);
 
-  // Call `post` api
-  const res = await fetch(`${URL}/api/post?id=${id}`, {
-    method: "PATCH",
-    cache: "no-cache",
-    body: formData,
-    headers: {
-      Authorization: `Bearer ${sessionData.jwt}`,
-    },
-  });
+    // Call `post` api
+    const res = await fetch(`${URL}/api/post?id=${id}`, {
+      method: "PATCH",
+      cache: "no-cache",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${sessionData.jwt}`,
+      },
+    });
 
-  // if respone not ok
-  if (!res.ok) {
-    const error = await res.json();
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error(error.message);
+    // if respone not ok
+    if (!res.ok) {
+      const error = await res.json();
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error(error.message);
+    }
+
+    // If `localImg`: Delete previous image on drive
+    if (localImg) {
+      await deleteFile(localImg);
+    }
+
+    // Handle on successfully data
+    const data = await res.json();
+
+    return { data: data, status: 200 };
+  } catch (error: Error | any) {
+    return { error: error.message, status: 401 };
   }
-
-  // If `localImg`: Delete previous image on drive
-  if (localImg) {
-    await deleteFile(localImg);
-  }
-
-  // Redirect to post detail page
-  redirect(`${getCurrentUrl()}/post/${id}?lang=${lang}`);
 }
 
-export async function getPosts(page: number, limit: number): Promise<Post[]> {
-  const res = await fetch(`${URL}/api/post?page=${page}&limit=${limit}`, {
-    method: "GET",
-    cache: "no-cache",
-  });
+export async function getPosts(page: number, limit: number) {
+  try {
+    const res = await fetch(`${URL}/api/post?page=${page}&limit=${limit}`, {
+      method: "GET",
+      cache: "no-cache",
+    });
 
-  if (!res.ok) {
-    const error = await res.json();
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error(error.message);
+    if (!res.ok) {
+      const error = await res.json();
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error(error.message);
+    }
+
+    revalidatePath("/");
+    return res.json();
+  } catch (error: Error | any) {
+    return { error: error.message, status: 401 };
   }
-
-  revalidatePath("/");
-  return res.json();
 }
 
 export async function getPost(id: string): Promise<Post> {
@@ -145,34 +146,36 @@ export async function getPost(id: string): Promise<Post> {
 }
 
 export async function deletePost(id: string, localImg: string) {
-  // Get current locale
-  const lang = cookies().get("lang")?.value;
-  // Get session data
-  const encryptedSessionData = cookies().get("session")?.value;
-  const sessionData: any = encryptedSessionData
-    ? JSON.parse(decrypt(encryptedSessionData))
-    : null;
+  try {
+    // Get session data
+    const encryptedSessionData = cookies().get("session")?.value;
+    const sessionData: any = encryptedSessionData
+      ? JSON.parse(decrypt(encryptedSessionData))
+      : null;
 
-  const res = await fetch(`${URL}/api/post?id=${id}`, {
-    method: "DELETE",
-    cache: "no-cache",
-    headers: {
-      Authorization: `Bearer ${sessionData.jwt}`,
-    },
-  });
+    const res = await fetch(`${URL}/api/post?id=${id}`, {
+      method: "DELETE",
+      cache: "no-cache",
+      headers: {
+        Authorization: `Bearer ${sessionData.jwt}`,
+      },
+    });
 
-  if (!res.ok) {
-    const error = await res.json();
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error(error.message);
+    if (!res.ok) {
+      const error = await res.json();
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error(error.message);
+    }
+
+    /** If `localImg`: Delete from google drive */
+    if (localImg) {
+      await deleteFile(localImg);
+    }
+
+    return { status: 200 };
+  } catch (error: Error | any) {
+    return { error: error.message, status: 401 };
   }
-
-  /** If `localImg`: Delete from google drive */
-  if (localImg) {
-    await deleteFile(localImg);
-  }
-
-  redirect(`${getCurrentUrl()}/?lang=${lang}`);
 }
 
 export async function getSearchPosts(
@@ -222,9 +225,6 @@ export async function fetchImage(url: string) {
  * @returns - Redirect to main page
  */
 export async function login(formData: FormData, prevLink: string | null) {
-  // Get current locale
-  const lang = cookies().get("lang")?.value;
-
   try {
     // Call `auth` api
     const res = await fetch(`${URL}/api/auth`, {
@@ -260,15 +260,7 @@ export async function login(formData: FormData, prevLink: string | null) {
       maxAge: 60 * 60 * 24 * 7, // One week
     });
 
-    return { success: "Login successfully", status: 200 };
-
-    /** Return to the previous screen */
-    // if (prevLink) {
-    //   redirect(`${getCurrentUrl()}${prevLink}?lang=${lang}`);
-    // } else {
-    //   // Or redirect to main page
-    //   redirect(`${getCurrentUrl()}/?lang=${lang}`);
-    // }
+    return { status: 200 };
   } catch (error: Error | any) {
     return { error: error.message, status: 401 };
   }
@@ -282,5 +274,5 @@ export async function logout(): Promise<any> {
   cookies().delete("session");
   revalidatePath("/");
 
-  return { status: "success", message: 'Logout successfully!' };
+  return { status: 200 };
 }

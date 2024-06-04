@@ -6,7 +6,7 @@ export enum Options {
   No = "0",
 }
 
-export const LIMIT_FILE_SIZE = 4000000;
+export const LIMIT_FILE_SIZE = 2000000;
 
 export const Routes = {
   Protected: ["/new", "/edit"],

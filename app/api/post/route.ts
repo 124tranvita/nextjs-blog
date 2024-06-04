@@ -65,30 +65,23 @@ export async function POST(request: Request) {
 
     // 1. Check if token is existed
     if (!token) {
-      return handleErrors(
-        new AppError("You are not logged in! Please log in to get access.", 401)
-      );
+      return handleErrors(new AppError("EAUTH4013", 401));
     }
 
     // 2. Decode token
     const decoded = await decodedJwtToken(token.split(" ")[1]);
+
+    /** Connect to database */
+    if (mongooseConnectState() === "disconnected") {
+      await connect();
+    }
 
     // 3. Find user belong to token
     const user = await User.findById(decoded.id);
 
     // 4. Check if token belong to valid user
     if (!user) {
-      return handleErrors(
-        new AppError(
-          "The user belonging to this token does no longer exist.",
-          401
-        )
-      );
-    }
-
-    /** Connect to database */
-    if (mongooseConnectState() === "disconnected") {
-      await connect();
+      return handleErrors(new AppError("EAUTH4014", 401));
     }
 
     /** Get request body */
@@ -138,30 +131,23 @@ export async function PATCH(request: Request) {
 
     // 1. Check if token is existed
     if (!token) {
-      return handleErrors(
-        new AppError("You are not logged in! Please log in to get access.", 401)
-      );
+      return handleErrors(new AppError("EAUTH4013", 401));
     }
 
     // 2. Decode token
     const decoded = await decodedJwtToken(token.split(" ")[1]);
+
+    /** connect to database */
+    if (mongooseConnectState() === "disconnected") {
+      await connect();
+    }
 
     // 3. Find user belong to token
     const user = await User.findById(decoded.id);
 
     // 4. Check if token belong to valid user
     if (!user) {
-      return handleErrors(
-        new AppError(
-          "The user belonging to this token does no longer exist.",
-          401
-        )
-      );
-    }
-
-    /** connect to database */
-    if (mongooseConnectState() === "disconnected") {
-      await connect();
+      return handleErrors(new AppError("EAUTH4014", 401));
     }
 
     /** get query params */
@@ -180,7 +166,7 @@ export async function PATCH(request: Request) {
 
     /** If post's id not provide */
     if (!id) {
-      return handleErrors(new AppError("Invalid Post's Id.", 400));
+      return handleErrors(new AppError("EPOST4001", 400));
     }
 
     /** If post no belong to current user */
@@ -190,7 +176,7 @@ export async function PATCH(request: Request) {
     });
 
     if (!checkData) {
-      return handleErrors(new AppError("Post not belong to user.", 403));
+      return handleErrors(new AppError("EPOST4031", 403));
     }
 
     /** Process upload `localImg` to google drive */
@@ -231,39 +217,32 @@ export async function DELETE(request: Request) {
 
     // 1. Check if token is existed
     if (!token) {
-      return handleErrors(
-        new AppError("You are not logged in! Please log in to get access.", 401)
-      );
+      return handleErrors(new AppError("EAUTH4013", 401));
     }
 
     // 2. Decode token
     const decoded = await decodedJwtToken(token.split(" ")[1]);
-
-    // 3. Find user belong to token
-    const user = await User.findById(decoded.id);
-
-    // 4. Check if token belong to valid user
-    if (!user) {
-      return handleErrors(
-        new AppError(
-          "The user belonging to this token does no longer exist.",
-          401
-        )
-      );
-    }
 
     /** connect to database */
     if (mongooseConnectState() === "disconnected") {
       await connect();
     }
 
+    // 3. Find user belong to token
+    const user = await User.findById(decoded.id);
+
+    // 4. Check if token belong to valid user
+    if (!user) {
+      return handleErrors(new AppError("EAUTH4014", 401));
+    }
+
     /** Get query params */
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
 
-    /** Check if post is exsiting */
+    /** If post's id not provide */
     if (!id) {
-      throw new Error("Post not found.");
+      return handleErrors(new AppError("EPOST4001", 400));
     }
 
     /** Delete post */

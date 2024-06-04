@@ -3,21 +3,22 @@
 
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { createPost } from "@/actions";
-import { Post, initPost } from "@/app/common/lib/model";
 import useDictionary from "@/app/common/hooks/useDictionary";
-import useScreenPath from "@/app/common/hooks/useScreenPath";
 import useImageUpload from "@/app/common/hooks/useImageUpload";
 import useEditor from "@/app/common/hooks/useEditor";
 import useLoader from "@/app/common/hooks/useLoader";
+import useToastMsg from "@/app/common/hooks/useToastMsg";
 import Input from "@/app/common/components/react-hook-form/input";
 import FileSelector from "@/app/common/components/react-hook-form/file-selector";
 import ScrollableDialog from "@/app/common/components/dialog/scrollable-dialog";
 import { Button } from "@/app/common/components/common/button";
 import { EditorContainer } from "@/app/common/components/common/container";
+import PostDetailView from "@/app/common/components/post-view";
+import { Post, initPost } from "@/app/common/lib/model";
 import * as Utils from "@/app/common/lib/utils";
 import * as Constants from "@/app/common/lib/constants";
-import PostDetailView from "@/app/common/components/post-view";
 
 type FormDataProps = {
   title: string;
@@ -30,11 +31,13 @@ type FormDataProps = {
  * @returns - Component
  */
 const NewPost: FC = () => {
+  const router = useRouter();
   const [previewData, setPreviewData] = useState<Post>(initPost);
+  const [response, setResponse] = useState<any>(null);
 
   const { d } = useDictionary();
-  const { next } = useScreenPath();
-  const { showLoader } = useLoader();
+  const { showLoader, hideLoader } = useLoader();
+  const { showToast } = useToastMsg();
   const {
     processImageData,
     ImagePreview,
@@ -75,6 +78,9 @@ const NewPost: FC = () => {
   /** Hanlde submit form */
   const onSubmit: SubmitHandler<FormDataProps> = useCallback(
     async (data) => {
+      // Show `processing` loader
+      showLoader(d("loader.processing"));
+
       const formData = new FormData();
       const editorContent = getContent();
 
@@ -89,9 +95,9 @@ const NewPost: FC = () => {
         );
 
         // Call `createPost` action
-        createPost(formData);
-        // Set `MovingPage` loader
-        showLoader(d("loader.processing"));
+        const result = await createPost(formData);
+
+        setResponse(result);
       }
     },
     [cloudImg, d, getContent, localImg, showLoader]
@@ -101,16 +107,24 @@ const NewPost: FC = () => {
   const onPreview = useCallback(() => {
     const values = getValues();
     const editorContent = getContent();
+
+    const src = disable.localImg
+      ? cloudImg
+      : disable.cloudImg
+      ? localImg && localImg[0]
+        ? URL.createObjectURL(localImg[0] as File)
+        : ""
+      : "";
+
     // Set preview value
     setPreviewData({
       ...initPost,
       title: values.title,
-      cloudImg,
-      localImg:
-        localImg && localImg[0] ? URL.createObjectURL(localImg[0] as File) : "",
+      cloudImg: src,
+      localImg: src,
       content: editorContent ? editorContent : "",
     });
-  }, [getValues, getContent, localImg, cloudImg]);
+  }, [getValues, getContent, localImg, cloudImg, disable]);
 
   /** Hanlde process image data with url */
   const onBlurCoverImgInput = useCallback(
@@ -157,8 +171,8 @@ const NewPost: FC = () => {
 
   /** Handle back event */
   const hanldeBack = useCallback(() => {
-    next(`/`);
-  }, [next]);
+    router.push(`/`);
+  }, [router]);
 
   /** Depend on clear upload image process */
   useEffect(() => {
@@ -167,6 +181,23 @@ const NewPost: FC = () => {
       setValue("cloudImg", "");
     }
   }, [isClearedUploadProcced, setValue]);
+
+  /** Handle check response from Api */
+  useEffect(() => {
+    if (response) {
+      hideLoader();
+      // If api return errors
+      if (response.status !== 200) {
+        showToast("error", response.error);
+        return;
+      }
+
+      // Redirect to homepage on success
+      showToast("success", d("post.successs"));
+      router.push(`/post/${response.data._id}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
 
   return (
     <EditorContainer>
@@ -218,7 +249,7 @@ const NewPost: FC = () => {
             onPreview={onPreview}
             disabled={disbaleBtn}
           >
-            <PostDetailView post={previewData} view="detail" />
+            <PostDetailView post={previewData} view="preview" />
           </ScrollableDialog>
         </div>
         <Button

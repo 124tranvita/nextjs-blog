@@ -36,13 +36,14 @@ export default function AuthToggle() {
     deleteCookie("isSignedIn");
     const res = await logout();
 
-    if (res.status === "success") {
+    if (res.status === 200) {
       setIsLoading(false);
       showToast("success", d("login.logout"));
       router.push("/");
+      router.refresh();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deleteCookie]);
+  }, [deleteCookie, d, router]);
 
   if (!mounted)
     return (

@@ -1,4 +1,5 @@
 import React from "react";
+import useDictionary from "../../hooks/useDictionary";
 
 const ToastIcon: React.FC<{ variant: string }> = ({ variant = "success" }) => {
   const ICON = {
@@ -58,15 +59,25 @@ export default function ToastMsgComponent({
   message: string | undefined;
   hideToast: () => void;
 }) {
+  const { d } = useDictionary();
+
+  const toastMsg = React.useMemo(() => {
+    if (message && message.startsWith("E")) {
+      return d(`errorCode.${message}`);
+    }
+
+    return message;
+  }, [message, d]);
+
   return (
     <>
       <div
         id="toast-success"
-        className="absolute top-5 left-0 right-0 mx-auto z-50 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+        className="fixed top-5 left-0 right-0 mx-auto z-50 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
         role="alert"
       >
         <ToastIcon variant={variant} />
-        <div className="ms-3 text-sm font-normal">{message}</div>
+        <div className="ms-3 text-sm font-normal">{toastMsg}</div>
         <button
           type="button"
           className="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"

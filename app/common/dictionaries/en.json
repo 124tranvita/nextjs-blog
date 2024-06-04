@@ -25,7 +25,7 @@
     "input": "Title is required.",
     "coverImg": "Over is required.",
     "invalidUrl": "Invalid URL!",
-    "exceedLimitSize": "Your image reach limit of file size (4Mb)"
+    "exceedLimitSize": "Your image reach limit of file size (2Mb)"
   },
   "toggles": {
     "themes": {
@@ -55,5 +55,18 @@
     "placeholder": "Search result for ",
     "result": "Total result",
     "noresult": "No result"
+  },
+  "post": {
+    "successs": "Post was created successfully",
+    "editSuccesss": "Post was edited successfully",
+    "delSuccesss": "Post was deleted successfully"
+  },
+  "errorCode": {
+    "EAUTH4011": "User and password are required",
+    "EAUTH4012": "User and password are incorrect",
+    "EAUTH4013": "Login is required",
+    "EAUTH4014": "Not valid user",
+    "EPOST4001": "Invalid post's id",
+    "EPOST4031": "Post not belong to you"
   }
 }

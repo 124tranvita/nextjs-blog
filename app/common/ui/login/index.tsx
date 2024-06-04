@@ -55,11 +55,12 @@ const Login: FC = () => {
     if (response) {
       hideLoader();
       // If api return errors
-      if (response.error) {
+      if (response.status !== 200) {
         showToast("error", response.error);
         return;
       }
 
+      // Redirect to homepage on success
       showToast("success", d("login.successs"));
       redirect("/");
     }
