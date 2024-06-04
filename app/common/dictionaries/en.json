@@ -67,6 +67,7 @@
     "EAUTH4013": "Login is required",
     "EAUTH4014": "Not valid user",
     "EPOST4001": "Invalid post's id",
-    "EPOST4031": "Post not belong to you"
+    "EPOST4031": "Post not belong to you",
+    "ERROR500": "Something went wrong!"
   }
 }
