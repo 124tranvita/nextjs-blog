@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import connect, { mongooseConnectState } from "@/app/common/lib/_mongodb";
 import User from "../_lib/models/user";
@@ -41,7 +40,7 @@ export async function POST(request: Request) {
     // 3) If everything ok, send token to client
     const { token } = createSendToken(user);
 
-    return NextResponse.json(
+    return Response.json(
       {
         status: "success",
         token,
