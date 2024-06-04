@@ -8,7 +8,7 @@ import MorePostLoaderSkeleton from "@/app/common/components/common/loader/more-p
 
 export function PostViewLoader() {
   return (
-    <Article>
+    <Article width="medium">
       <HeaderLoaderSkeleton />
       <ContentLoaderSkeleton />
     </Article>

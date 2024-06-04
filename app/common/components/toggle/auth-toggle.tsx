@@ -3,20 +3,25 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { usePathname } from "next/navigation";
-import { logout } from "@/actions";
-import useCookies from "@/app/common/hooks/useCookies";
-import { Options } from "@/app/common/lib/constants";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowLeftStartOnRectangleIcon,
   ArrowRightEndOnRectangleIcon,
 } from "@heroicons/react/20/solid";
+import { logout } from "@/actions";
+import useCookies from "@/app/common/hooks/useCookies";
+import useToastMsg from "@/app/common/hooks/useToastMsg";
+import useDictionary from "@/app/common/hooks/useDictionary";
+import { Options } from "@/app/common/lib/constants";
 import useScreenPath from "@/app/common/hooks/useScreenPath";
 import { Link } from "../custom-link";
 
 export default function AuthToggle() {
   const { getCookie, deleteCookie } = useCookies();
+  const router = useRouter();
+  const { showToast } = useToastMsg();
   const { nextPathName } = useScreenPath();
+  const { d } = useDictionary();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,10 +36,14 @@ export default function AuthToggle() {
     deleteCookie("isSignedIn");
     const res = await logout();
 
-    if (res.status === "success") {
+    if (res.status === 200) {
       setIsLoading(false);
+      showToast("success", d("login.logout"));
+      router.push("/");
+      router.refresh();
     }
-  }, [deleteCookie]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deleteCookie, d, router]);
 
   if (!mounted)
     return (

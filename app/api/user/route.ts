@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     const password = formData.get("password") as string;
     const passwordConfirm = formData.get("passwordConfirm") as string;
 
-    /** Create post */
+    /** Create user */
     const user = await User.create({
       email,
       name,
@@ -49,10 +49,10 @@ export async function DELETE(request: Request) {
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
 
-    /** Check if post is exsiting */
-    if (!id) {
-      throw new Error("Post not found.");
-    }
+    // /** Check if user is exsiting */
+    // if (!id) {
+    //   throw new Error("Post not found.");
+    // }
 
     /** Delete post */
     const user = await User.findByIdAndDelete(id);

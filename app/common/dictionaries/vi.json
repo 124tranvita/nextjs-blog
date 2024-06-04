@@ -25,7 +25,7 @@
     "input": "Yên cầu nhập dữ liệu",
     "coverImg": "Hãy chọn ảnh bìa",
     "invalidUrl": "URL không hợp lệ!",
-    "exceedLimitSize": "Ảnh của bạn đã vượt quá giới hạn (4Mb)"
+    "exceedLimitSize": "Ảnh của bạn đã vượt quá giới hạn (2Mb)"
   },
   "toggles": {
     "themes": {
@@ -43,14 +43,30 @@
     "password": "Mật khẩu",
     "passwordPlaceholder": "Mật khẩu",
     "loginBtn": "Đăng nhập",
-    "backBtn": "Trở lại"
+    "backBtn": "Trở lại",
+    "successs": "Đăng nhập thành công!",
+    "logout": "Đăng xuất thành công!"
   },
   "loader": {
-    "processing": "Đang xử lý..."
+    "processing": "Đang xử lý...",
+    "authentication": "Đang xác thực..."
   },
   "search": {
     "placeholder": "Kết quả tìm kiếm cho ",
     "result": "Tổng kết quả",
     "noresult": "Không tìm thấy kết quả"
+  },
+  "post": {
+    "successs": "Bài viết được tạo thành công",
+    "editSuccesss": "Bài viết đã được cập nhật thành công",
+    "delSuccesss": "Bài viết đã được xóa thành công"
+  },
+  "errorCode": {
+    "EAUTH4011": "Tên đăng nhập và mật khẩu không được trống",
+    "EAUTH4012": "Tên đăng nhập và mật khẩu không chính xác",
+    "EAUTH4013": "Yêu cầu đăng nhập",
+    "EAUTH4014": "Người dùng không hợp lệ",
+    "EPOST4001": "Id của bài viết không hợp lệ",
+    "EPOST4031": "Bạn không phải chủ bài viết"
   }
 }

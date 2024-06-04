@@ -15,7 +15,7 @@ interface Props extends ComponentPropsWithRef<"section"> {
 
 export const Container: FC<Props> = ({ children }) => {
   return (
-    <section className="relative overflow-y-scroll bg-white dark:bg-slate-800 pb-[10rem]">
+    <section className="relative overflow-y-scroll bg-slate-50 dark:bg-slate-800 pb-[10rem]">
       {children}
     </section>
   );
@@ -66,7 +66,7 @@ export const Content: FC<{ content: string; width?: "half" | "full" }> = ({
 }) => {
   const SizeMap = {
     full: "max-w-screen",
-    half: "max-w-screen-md pb-[10rem]",
+    half: "max-w-screen-md",
   };
   return (
     <div
@@ -125,45 +125,45 @@ export const PostHeaderWrapper: FC<PostHeaderWrapperProps> = ({
   reactArea,
 }) => {
   const ViewMapping1 = {
-    home: "",
-    detail: "[height:_calc(100%_-_100px)]",
-    preview: "[height:_calc(100%_-_100px)]",
+    home: "bg-gradient-classic-dark",
+    detail:
+      "[height:_calc(100%_-_100px)] bg-gradient-classic-light dark:bg-gradient-classic-dark",
+    preview:
+      "[height:_calc(100%_-_100px)] bg-gradient-classic-light dark:bg-gradient-classic-dark",
   };
 
   const ViewMapping2 = {
-    home: "mx-0",
-    detail: "mx-auto",
-    preview: "mx-auto",
+    home: "mx-0 [&>*]:text-gray-100",
+    detail: "mx-auto [&>*]:text-gray-800 dark:[&>*]:text-gray-200",
+    preview: "mx-auto [&>*]:text-gray-800 dark:[&>*]:text-gray-200",
   };
   return (
     <div className="relative max-w-full mb-[1rem] overflow-hidden h-[312px] md:h-[412px] lg:h-[512px]">
       {reactArea ? reactArea : <></>}
-      {/* title area */}
-      <div
-        className={classNames(
-          "absolute z-10 bottom-0 top-auto left-0 p-4 pt-[3rem] flex flex-col justify-center w-full bg-gradient-classic-light dark:bg-gradient-classic-dark",
-          ViewMapping1[view]
-        )}
-      >
-        <Link href={pathName}>
+      <Link href={pathName}>
+        {/* title area */}
+        <div
+          className={classNames(
+            "absolute z-10 bottom-0 top-auto left-0 p-4 pt-[3rem] flex flex-col justify-center w-full",
+            ViewMapping1[view]
+          )}
+        >
           <div className={classNames("max-w-screen-md", ViewMapping2[view])}>
-            <p className="font-bold mb-2 text-3xl md:text-4xl text-[#111827] dark:text-gray-100">
-              {title}
-            </p>
+            <p className="font-bold mb-2 text-3xl md:text-4xl">{title}</p>
           </div>
-        </Link>
-        {postInfo}
-      </div>
-      {/* image area */}
-      <Image
-        src={imgSrc}
-        alt={`${imgAlt}_image`}
-        fill={true}
-        sizes="100vw"
-        style={{ objectFit: "cover" }}
-        blurDataURL={BLUR_DATA_URL}
-        placeholder="blur"
-      />
+          {postInfo}
+        </div>
+        {/* image area */}
+        <Image
+          src={imgSrc}
+          alt={`${imgAlt}_image`}
+          fill={true}
+          sizes="100vw"
+          style={{ objectFit: "cover" }}
+          blurDataURL={BLUR_DATA_URL}
+          placeholder="blur"
+        />
+      </Link>
     </div>
   );
 };

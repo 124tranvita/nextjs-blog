@@ -2,10 +2,9 @@
 import { Suspense } from "react";
 import { getPosts } from "@/actions";
 import Main from "@/app/common/ui/main";
-
-import { LIMIT, PAGE_INIT } from "@/app/common/lib/constants";
-import { Loader } from "./loader";
 import Home from "@/app/common/ui/home";
+import { LIMIT, PAGE_INIT } from "@/app/common/lib/constants";
+import { PostViewLoader } from "./loader";
 
 // https://github.com/vercel/next.js/issues/44062
 export const dynamic = "force-dynamic";
@@ -14,10 +13,10 @@ export default async function Page() {
   const initialPosts = await getPosts(PAGE_INIT, LIMIT);
 
   return (
-    <Suspense fallback={null}>
-      <Main mainPage={true}>
+    <Main mainPage={true}>
+      <Suspense fallback={<PostViewLoader />}>
         <Home initialPosts={initialPosts} />
-      </Main>
-    </Suspense>
+      </Suspense>
+    </Main>
   );
 }

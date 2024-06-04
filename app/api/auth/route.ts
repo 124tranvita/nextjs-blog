@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import connect, { mongooseConnectState } from "@/app/common/lib/_mongodb";
 import User from "../_lib/models/user";
 import handleErrors from "../_lib/utils/error-handler";
 import AppError from "../_lib/utils/app-error";
 import createSendToken, { decodedJwtToken } from "../_lib/utils/jwt-handler";
-import { headers } from "next/headers";
 
 /**
  * POST Request (Login user)
@@ -26,9 +26,7 @@ export async function POST(request: Request) {
 
     // 1) Check if email and password exist
     if (!email || !password) {
-      return handleErrors(
-        new AppError("Please provide email and password!", 400)
-      );
+      return handleErrors(new AppError("EAUTH4011", 401));
     }
 
     // 2) Check if user exists && password is correct
@@ -37,7 +35,7 @@ export async function POST(request: Request) {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-      return handleErrors(new AppError("Incorrect email or password", 401));
+      return handleErrors(new AppError("EAUTH4012", 401));
     }
 
     // 3) If everything ok, send token to client
@@ -67,9 +65,7 @@ export async function GET(request: Request) {
     const token = headersList.get("authorization");
 
     if (!token) {
-      return handleErrors(
-        new AppError("You are not logged in! Please log in to get access.", 401)
-      );
+      return handleErrors(new AppError("EAUTH4013", 401));
     }
 
     const decoded = await decodedJwtToken(token.split(" ")[1]);
