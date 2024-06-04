@@ -1,6 +1,5 @@
 import { Error } from "mongoose";
 import AppError from "./app-error";
-import { NextResponse } from "next/server";
 
 /**
  * Hanlde when Cast Error is happened
@@ -59,23 +58,26 @@ const sendErrorDev = (err) => {
 const sendErrorProd = (err) => {
   // Operational, trusted error: send message to client
   if (err.isOperational) {
-    return NextResponse.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
+    return {
+      json: {
+        status: err.status,
+        message: err.message,
+      },
+      status: { status: err.statusCode },
+    };
   } else {
     // Programing or the unknown error: don't leak error details
     // 1) Log error
     console.error("ERROR", err);
 
     // 2) Send generic message
-    return NextResponse.json(
-      {
+    return {
+      json: {
         status: "error",
         message: "Something went very wrong!",
       },
-      { status: 500 }
-    );
+      status: { status: 500 },
+    };
   }
 };
 
@@ -105,7 +107,7 @@ const handleErrors = (err) => {
     if (error.name === "ValidationError")
       error = handleValidationErrorDB(error);
 
-    sendErrorProd(error);
+    res = sendErrorProd(error);
   }
 
   return Response.json(res.json, res.status);
