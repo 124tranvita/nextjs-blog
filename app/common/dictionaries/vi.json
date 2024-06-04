@@ -63,10 +63,11 @@
   },
   "errorCode": {
     "EAUTH4011": "Tên đăng nhập và mật khẩu không được trống",
-    "EAUTH4012": "Tên đăng nhập và mật khẩu không chính xác",
+    "EAUTH4012": "Tên đăng nhập hoặc mật khẩu không chính xác",
     "EAUTH4013": "Yêu cầu đăng nhập",
     "EAUTH4014": "Người dùng không hợp lệ",
     "EPOST4001": "Id của bài viết không hợp lệ",
-    "EPOST4031": "Bạn không phải chủ bài viết"
+    "EPOST4031": "Bạn không phải chủ bài viết",
+    "ERROR500": "Có lỗi hệ thống xảy ra!"
   }
 }

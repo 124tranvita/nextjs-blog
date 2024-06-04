@@ -18,6 +18,10 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPost(params.slug);
 
+  if (post.error) {
+    throw new Error(post.error);
+  }
+
   return {
     title: post.title,
     description: post.title,
@@ -26,6 +30,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const post = await getPost(params.slug);
+
+  if (post.error) {
+    throw new Error(post.error);
+  }
 
   // Get session data
   const encryptedSessionData = cookies().get("session")?.value;

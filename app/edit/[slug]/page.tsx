@@ -16,6 +16,10 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPost(params.slug);
 
+  if (post.error) {
+    throw new Error(post.error);
+  }
+
   return {
     title: `Edit - ${post.title}`,
     description: post.title,
@@ -24,6 +28,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const post = await getPost(params.slug);
+
+  if (post.error) {
+    throw new Error(post.error);
+  }
 
   return (
     <Suspense fallback={<Loader />}>

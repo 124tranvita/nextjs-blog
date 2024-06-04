@@ -129,20 +129,23 @@ export async function getPosts(page: number, limit: number) {
   }
 }
 
-export async function getPost(id: string): Promise<Post> {
-  const res = await fetch(`${URL}/api/post?id=${id}`, {
-    method: "GET",
-    cache: "no-cache",
-  });
+export async function getPost(id: string) {
+  try {
+    const res = await fetch(`${URL}/api/post?id=${id}`, {
+      method: "GET",
+      cache: "no-cache",
+    });
 
-  if (!res.ok) {
-    const error = await res.json();
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error(error.message);
+    if (!res.ok) {
+      const error = await res.json();
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error(error.message);
+    }
+
+    return res.json();
+  } catch (error: Error | any) {
+    return { error: error.message, status: 401 };
   }
-
-  revalidatePath("/");
-  return res.json();
 }
 
 export async function deletePost(id: string, localImg: string) {
@@ -182,41 +185,49 @@ export async function getSearchPosts(
   searchTerm: string,
   page: number,
   limit: number
-): Promise<Post[]> {
-  const res = await fetch(
-    `${URL}/api/search?searchTerm=${searchTerm}&page=${page}&limit=${limit}`,
-    {
-      method: "GET",
-      cache: "no-cache",
+) {
+  try {
+    const res = await fetch(
+      `${URL}/api/search?searchTerm=${searchTerm}&page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        cache: "no-cache",
+      }
+    );
+
+    if (!res.ok) {
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error("Failed to fetch data");
     }
-  );
 
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+    return res.json();
+  } catch (error: Error | any) {
+    return { error: error.message, status: 401 };
   }
-
-  return res.json();
 }
 
 export async function fetchImage(url: string) {
-  const res = await fetch(url, {
-    method: "GET",
-    cache: "no-cache",
-  });
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      cache: "no-cache",
+    });
 
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+    if (!res.ok) {
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error("Failed to fetch data");
+    }
+
+    const blob = await res.blob();
+
+    let buffer = Buffer.from(await blob.arrayBuffer());
+
+    return "data:" + blob.type + ";base64," + buffer.toString("base64");
+
+    // https://stackoverflow.com/questions/54099802/blob-to-base64-in-nodejs-without-filereader
+  } catch (error: Error | any) {
+    return { error: error.message, status: 401 };
   }
-
-  const blob = await res.blob();
-
-  let buffer = Buffer.from(await blob.arrayBuffer());
-
-  return "data:" + blob.type + ";base64," + buffer.toString("base64");
-
-  // https://stackoverflow.com/questions/54099802/blob-to-base64-in-nodejs-without-filereader
 }
 
 /**
