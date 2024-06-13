@@ -11,6 +11,7 @@ import useToastMsg from "@/app/common/hooks/useToastMsg";
 import { Button } from "../../components/common/button";
 import { Container, Form } from "../../components/common/container";
 import Input from "../../components/react-hook-form/input";
+import { ResponseStat } from "../../lib/constants";
 
 /**
  * Declare react-hook-form type
@@ -45,7 +46,7 @@ const Login: FC = () => {
     formData.append("email", data.email);
     formData.append("password", data.password);
 
-    const result = await login(formData, prevLink);
+    const result = await login(formData);
 
     setResponse(result);
   };
@@ -55,14 +56,14 @@ const Login: FC = () => {
     if (response) {
       hideLoader();
       // If api return errors
-      if (response.status !== 200) {
+      if (response.message === ResponseStat.Error) {
         showToast("error", response.error);
         return;
       }
 
       // Redirect to homepage on success
+      redirect(`${prevLink}`);
       showToast("success", d("login.successs"));
-      redirect("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);

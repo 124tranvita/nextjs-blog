@@ -4,6 +4,7 @@ import { FC } from "react";
 import { UserIcon, CalendarIcon, PencilIcon } from "@heroicons/react/24/solid";
 import { formatDate } from "@/app/common/lib/utils";
 import { IconWithTextWrapper, IconWithText } from "../common/container";
+import { Author } from "../../lib/model";
 
 type PostInfoProps = {
   author: string;

@@ -21,13 +21,9 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: [true, "Missing post content!"],
     },
-    author: {
-      type: String,
-      required: [true, "Missing post auther!"],
-    },
     createdAt: Date,
     updatedAt: Date,
-    user: {
+    author: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
       required: [true, "Post must belong to one user."],
@@ -38,5 +34,15 @@ const postSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+// https://mongoosejs.com/docs/populate.html#populating-multiple-paths-middleware
+// https://github.com/Automattic/mongoose/issues/11078#issuecomment-1002748007
+postSchema.pre(/^find/, function (next) {
+  if (this.options._recursed) {
+    return next();
+  }
+  this.populate({ path: "author", options: { _recursed: true } });
+  next();
+});
 
 export default mongoose.models.Post || mongoose.model("Post", postSchema);

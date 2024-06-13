@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { getPost } from "@/actions";
 import { decrypt } from "@/app/common/lib/crypto";
+import { ResponseStat } from "@/app/common/lib/constants";
 import PostDetail from "@/app/common/ui/post";
 import Main from "@/app/common/ui/main";
 
@@ -16,22 +17,24 @@ type Props = {
 
 // set dynamic metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await getPost(params.slug);
+  const res = await getPost(params.slug);
+  const post = JSON.parse(res);
 
-  if (post.error) {
+  if (post.message === ResponseStat.Error) {
     throw new Error(post.error);
   }
 
   return {
-    title: post.title,
-    description: post.title,
+    title: post.data.title,
+    description: post.data.title,
   };
 }
 
 export default async function Page({ params }: Props) {
-  const post = await getPost(params.slug);
+  const res = await getPost(params.slug);
+  const post = JSON.parse(res);
 
-  if (post.error) {
+  if (post.message === ResponseStat.Error) {
     throw new Error(post.error);
   }
 
@@ -45,13 +48,15 @@ export default async function Page({ params }: Props) {
     <Suspense fallback={null}>
       {post && (
         <Main
-          postId={post._id}
-          localImg={post.localImg}
+          postId={post.data._id}
+          localImg={post.data.localImg}
           belongUsr={
-            sessionData && sessionData.user._id === post.user ? true : false
+            sessionData && sessionData.user._id === post.data.author._id
+              ? true
+              : false
           }
         >
-          <PostDetail post={post} />
+          <PostDetail post={post.data} />
         </Main>
       )}
     </Suspense>

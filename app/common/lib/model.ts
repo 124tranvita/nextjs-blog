@@ -4,13 +4,12 @@ export type Post = {
   cloudImg: string;
   localImg: string;
   content: string;
-  author: string;
   createdAt: string | Date;
   updatedAt: string | Date;
-  user: string;
+  author: Omit<Author, "createdAt">;
 };
 
-export type User = {
+export type Author = {
   _id: string;
   email: string;
   name: string;
@@ -20,7 +19,7 @@ export type User = {
 export type CurrentUser = {
   token: string;
   data: {
-    user: User;
+    user: Author;
   };
 };
 
@@ -31,16 +30,22 @@ export type PostPreview = {
   content: string;
 };
 
+export const initAuthor: Author = {
+  _id: "",
+  email: "",
+  name: "",
+  createdAt: "",
+};
+
 export const initPost: Post = {
   _id: "",
   title: "",
   cloudImg: "",
   localImg: "",
   content: "",
-  author: "Anonymous",
   createdAt: new Date(),
   updatedAt: new Date(),
-  user: "Anonymous",
+  author: initAuthor,
 };
 
 export const initPostPreview: PostPreview = {

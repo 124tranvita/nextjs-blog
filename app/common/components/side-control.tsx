@@ -10,7 +10,7 @@ import { deletePost } from "@/actions";
 import useDictionary from "../hooks/useDictionary";
 import useCookies from "../hooks/useCookies";
 import useLoader from "../hooks/useLoader";
-import { Options } from "../lib/constants";
+import { Options, ResponseStat } from "../lib/constants";
 import { FloatIconWithTooltip } from "./common/button";
 import { useRouter, redirect } from "next/navigation";
 import useToastMsg from "../hooks/useToastMsg";
@@ -42,8 +42,8 @@ export default function SideControl({
     if (postId && confirm("Are you sure?") === true) {
       // Show `processing` loader
       showLoader(d("loader.processing"));
-      const result = await deletePost(postId, localImg ? localImg : "");
-      setResponse(result);
+      const res = await deletePost(postId, localImg ? localImg : "");
+      setResponse(JSON.parse(res));
     }
     return;
   }, [postId, showLoader, d, localImg]);
@@ -53,13 +53,14 @@ export default function SideControl({
     if (response) {
       hideLoader();
       // If api return errors
-      if (response.status !== 200) {
+      if (response.message === ResponseStat.Error) {
         showToast("error", response.error);
         return;
       }
 
       // Redirect to homepage on success
       showToast("success", d("post.delSuccesss"));
+      showLoader(d("loader.processing"));
       router.push(`/`);
       router.refresh();
     }

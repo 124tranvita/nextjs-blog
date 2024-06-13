@@ -34,6 +34,7 @@ export default function SearchBar() {
     if (!searchTerm) return;
     showLoader(d("loader.processing"));
     router.push(`/search?q=${searchTerm}`);
+    router.refresh();
   }, [d, router, searchTerm, showLoader]);
 
   /**
@@ -47,6 +48,7 @@ export default function SearchBar() {
         if (!searchTerm) return;
         showLoader(d("loader.processing"));
         router.push(`/search?q=${searchTerm}`);
+        router.refresh();
       }
     },
     [d, router, searchTerm, showLoader]
