@@ -62,8 +62,9 @@ const Login: FC = () => {
       }
 
       // Redirect to homepage on success
-      redirect(`${prevLink}`);
+      showLoader(d("loader.authentication"));
       showToast("success", d("login.successs"));
+      redirect(`${prevLink}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
