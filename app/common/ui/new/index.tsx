@@ -97,7 +97,7 @@ const NewPost: FC = () => {
         // Call `createPost` action
         const result = await createPost(formData);
 
-        setResponse(result);
+        setResponse(JSON.parse(result));
       }
     },
     [cloudImg, d, getContent, localImg, showLoader]
@@ -182,18 +182,21 @@ const NewPost: FC = () => {
     }
   }, [isClearedUploadProcced, setValue]);
 
+  console.log({ response });
+
   /** Handle check response from Api */
   useEffect(() => {
     if (response) {
       hideLoader();
       // If api return errors
-      if (response.status !== 200) {
+      if (response.message === Constants.ResponseStat.Error) {
         showToast("error", response.error);
         return;
       }
 
       // Redirect to homepage on success
       showToast("success", d("post.successs"));
+      showLoader(d("loader.processing"));
       router.push(`/post/${response.data._id}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

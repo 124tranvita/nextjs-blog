@@ -28,11 +28,12 @@ const Home: FC<Props> = ({ initialPosts }) => {
   /** Call `getPosts` api */
   const loadMorePosts = useCallback(async () => {
     setIsLoading(true);
-    const apiPosts = await getPosts(page, LIMIT);
+    const res = await getPosts(page, LIMIT);
+    const loadedPost = JSON.parse(res);
 
-    if (apiPosts && apiPosts.length > 0) {
+    if (loadedPost.data && loadedPost.data.length > 0) {
       setIsLoading(false);
-      setPosts([...posts, ...apiPosts]);
+      setPosts([...posts, ...loadedPost.data]);
       setPage((prevPage) => prevPage + PAGE_INIT);
       return;
     }

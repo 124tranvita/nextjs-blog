@@ -22,7 +22,7 @@ export default function SearchResult() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMorePost, setIsLoadingMorePost] = useState(false);
-  const [page, setPage] = useState<number>(PAGE_INIT);
+  const [page, setPage] = useState<number>(PAGE_INIT + 1);
   const [posts, setPosts] = useState<Post[]>([]);
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -31,11 +31,12 @@ export default function SearchResult() {
   const loadMorePosts = useCallback(
     async (search: string) => {
       setIsLoadingMorePost(true);
-      const apiPosts = await getSearchPosts(search, page, LIMIT);
+      const res = await getSearchPosts(search, page, LIMIT);
+      const apiPosts = JSON.parse(res);
 
-      if (apiPosts && apiPosts.length > 0) {
+      if (apiPosts.data && apiPosts.data.length > 0) {
         setIsLoadingMorePost(false);
-        setPosts([...posts, ...apiPosts]);
+        setPosts([...posts, ...apiPosts.data]);
         setPage((prevPage) => prevPage + PAGE_INIT);
         return;
       }
@@ -76,15 +77,12 @@ export default function SearchResult() {
 
   /** Fetch searched data base on search params */
   useEffect(() => {
-    // Make sure useEffect call `getSearchPosts` for only first time (initial time)
-    if (flagRef.current) return;
-
     async function fetchData(search: string) {
-      const response = await getSearchPosts(search, page, LIMIT);
-      setPosts(response);
+      const res = await getSearchPosts(search, PAGE_INIT, LIMIT);
+      const posts = JSON.parse(res);
+      setPosts(posts.data);
       setIsLoading(false);
       flagRef.current = true;
-      setPage((prevPage) => prevPage + 1);
     }
     if (search) {
       setIsLoading(true);
@@ -110,7 +108,7 @@ export default function SearchResult() {
           <>
             <span className="text-mb italic text-gray-400">{`${d(
               "search.result"
-            )}: ${posts.length}`}</span>
+            )}: ${posts.length || 0}`}</span>
             {posts && posts.length > 0 ? (
               posts.map((post: Post) => (
                 <div key={post._id} ref={ref}>

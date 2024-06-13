@@ -60,7 +60,7 @@ export const PostDetailView: FC<Props> = ({ post, view, articleSize }) => {
         pathName={`/post/${_id}`}
         postInfo={
           <PostInfo
-            author={author}
+            author={author && author.name ? author.name : "unauthor"}
             createdAt={createdAt}
             updatedAt={updatedAt}
           />

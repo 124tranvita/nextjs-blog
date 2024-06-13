@@ -101,7 +101,7 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
         // Call `editPost` action
         const result = await editPost(post._id, formData, post.localImg);
 
-        setResponse(result);
+        setResponse(JSON.parse(result));
       }
     },
     [post, cloudImg, d, getContent, localImg, showLoader]
@@ -196,14 +196,16 @@ const EditPost: FC<{ post: Post }> = ({ post }) => {
     if (response) {
       hideLoader();
       // If api return errors
-      if (response.status !== 200) {
+      if (response.message === Constants.ResponseStat.Error) {
         showToast("error", response.error);
         return;
       }
 
       // Redirect to homepage on success
+      showLoader(d("loader.processing"));
       showToast("success", d("post.editSuccesss"));
       router.push(`/post/${response.data._id}`);
+      router.refresh();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
