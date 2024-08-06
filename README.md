@@ -2,7 +2,7 @@
 Personal Blog with simple and modern UI building by NextJS 14.
 
 ## Live Demo
-Live page: [My blog](https://blog.nezumi.asia)
+Live page: [My blog](https://nezumi-blog.vercel.app/)
 
 Login info: `user = test1@mail.com` | `password = P@ssword`
 
