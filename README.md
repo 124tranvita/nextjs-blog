@@ -6,6 +6,7 @@ Live page: [My blog](https://nezumi-blog.vercel.app/)
 
 Login info: `user = test1@mail.com` | `password = P@ssword`
 
+(use dark theme <img src="https://static-00.iconduck.com/assets.00/moon-icon-512x512-fm9crgpt.png" align="center" height="12" width="12"/> for better experience)
 ## Table of content
 * [General info](#general-info)
 * [Technologies](#technologies)
